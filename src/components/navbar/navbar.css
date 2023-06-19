@@ -1,4 +1,44 @@
 button {
   border: 0 !important;
-  box-shadow: 0 !important;
+  box-shadow: none !important;
+}
+
+svg {
+  height: 2em !important;
+}
+
+nav .navbar {
+  padding: 18px;
+  transition: 0.32s ease-in-out;
+}
+
+nav .scrolled {
+  padding: 0;
+  background-color: #121212;
+}
+
+nav .nav-link {
+  color: white !important;
+  letter-spacing: 0.8px !important;
+  margin: 0 20px !important;
+  opacity: 0.75;
+}
+
+nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  opacity: 1;
+}
+
+@media (max-width: 992px) {
+  .offcanvas-body a { margin-bottom: 2em; }
+
+  .socials {
+    position: absolute;
+    bottom: 2em;
+    width: 90%;
+    justify-content: space-between;
+    padding: 0 2em;
+  }
+
+  .socials a:first-child svg path { fill: black; }
 }
