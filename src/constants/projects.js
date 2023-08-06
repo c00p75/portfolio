@@ -3,6 +3,7 @@ import conference from '../assets/images/projects/conference.png';
 import leaderboard from '../assets/images/projects/leaderboard.jpg';
 import spaceTravellers from '../assets/images/projects/space-travellers.jpg';
 import awesomeBooks from '../assets/images/projects/awesome-books.png';
+import metrics from '../assets/images/projects/metrics.jpg';
 import project1 from '../assets/images/projects/project-img1.png';
 import project2 from '../assets/images/projects/project-img2.png';
 import project3 from '../assets/images/projects/project-img3.png';
@@ -28,22 +29,19 @@ const projects = {
     },
     {
       type: 'Frontend',
-      date: '2022',
+      date: '2023',
       title: 'Metrics Webapp',
       summary: 'Mobile web application to check a list of metrics',
       description: `
-        This project focuses less on unique and creative design and more on meeting client design and functionality requirements.
-        It is an API first app
-        A Single Page Application (SPA) that works with real live data from the SpaceX API to display rockets, dragons and missions.
-        It lets the user reserve rockets, book dragons and join mission. It also allows a user to view all
-        reserved rockets, dragons, and space missions on the "My Profile" page.
-        In this project, I used redux to manage application state and used React Router DOM for routes and navigation.
+        This project focuses less on having a unique and creative design and more on meeting client design and functionality
+        requirements. It is an API first mobile web app that fetches and displays country population data. The metrics can be filtered
+        by continent to get country details. The feature I enjoyed implementing the most was the country search feature
+        which filters the list of countries based in the search input.
       `,
-      img: spaceTravellers,
+      img: metrics,
       stack: [['JavaScript', stack.javaScript], ['React', stack.react], ['Redux', stack.redux], ['Bootstrap', stack.bootstrap]],
-      contributors: [['@haliljon', 'https://github.com/haliljon']],
-      demo: 'https://space-x-travellers.onrender.com',
-      source: 'https://github.com/c00p75/Space-Travelers',
+      demo: 'https://metrics-web-app.onrender.com',
+      source: 'https://github.com/c00p75/Metrics-WebApp',
     },
     {
       type: 'Frontend',
@@ -94,114 +92,6 @@ const projects = {
       `,
       img: conference,
       stack: [['HTML', stack.html], ['CSS', stack.css], ['Bootstrap', stack.bootstrap]],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project1,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project2,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project3,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project1,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project2,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project3,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
       demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
       source: 'https://github.com/c00p75/Capstone-project-Conference-page',
     },
