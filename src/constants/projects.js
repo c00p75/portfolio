@@ -1,15 +1,35 @@
 import stack from './stack';
 import conference from '../assets/images/projects/conference.png';
 import leaderboard from '../assets/images/projects/leaderboard.jpg';
+import chowtime from '../assets/images/projects/chowtime.jpg';
 import spaceTravellers from '../assets/images/projects/space-travellers.jpg';
 import awesomeBooks from '../assets/images/projects/awesome-books.png';
 import metrics from '../assets/images/projects/metrics.jpg';
+import viand from '../assets/images/projects/viand.jpg';
+import lib from '../assets/images/projects/oop.png';
 import project1 from '../assets/images/projects/project-img1.png';
 import project2 from '../assets/images/projects/project-img2.png';
 import project3 from '../assets/images/projects/project-img3.png';
 
 const projects = {
   frontend: [
+    {
+      type: 'Frontend',
+      date: '2023',
+      title: 'Viand',
+      summary: 'Resturant landing page',
+      description: `
+      Viand is a simple frontend project for a restaurant landing page built with React.js.
+      I undertook this project not only because I enjoy fine dining from time to time, but also to follow coding best practices
+      for folder and component structure, code splitting and Lazy Loading, as well as Type Checking.
+      One thing I also enjoyed working on was the simple table booking form that pops up when a user clicks the booking button.
+      A future features for this app will be to integrate backend logic for table reservations as well as adding a food menu.
+      `,
+      img: viand,
+      stack: [['React', stack.react], ['JavaScript', stack.javaScript], ['Bootstrap', stack.bootstrap]],
+      demo: 'https://viand.onrender.com',
+      source: 'https://github.com/c00p75/Viand-Resturant',
+    },
     {
       type: 'Frontend',
       date: '2022',
@@ -63,8 +83,26 @@ const projects = {
     {
       type: 'Frontend',
       date: '2022',
+      title: 'ChowTime',
+      summary: 'Food recipe application',
+      description: `
+        ChowTime is an API-first Vanilla JavaScript project that illustrates the consumption of APIs.
+        In this project I use two sperate APIs. I use the MealDB API to fetch meal data and use
+        a public API to store likes and comments associated with a particular meal.
+        One of the challenges I had to overcome in this project was to handle loading many images
+        in an efficient way. This was accomplished by lazy loading images and using a loading animation
+        to improve user experience.
+      `,
+      img: chowtime,
+      stack: [['Webpack', stack.webpack], ['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
+      demo: 'http://georgemsapenda.me/Chow-Time/dist/',
+      source: 'https://github.com/c00p75/Chow-Time',
+    },
+    {
+      type: 'Frontend',
+      date: '2022',
       title: 'Leaderboard',
-      summary: 'The leaderboard website displays scores submitted by different players',
+      summary: 'Displays scores submitted by different players',
       description: `
         The leaderboard website displays scores submitted by different players and also allows
         scores to be submitted and preserved with the help of the external Leaderboard API service.
@@ -74,7 +112,7 @@ const projects = {
         an intermediary that allows two applications to share data.
       `,
       img: leaderboard,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
+      stack: [['Webpack', stack.webpack], ['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
       demo: 'https://c00p75.github.io/Leaderboard/dist',
       source: 'https://github.com/c00p75/Leaderboard',
     },
@@ -98,22 +136,24 @@ const projects = {
   ],
   backend: [
     {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+      type: 'Backend',
+      date: '2023',
+      title: 'School Library',
+      summary: 'Library management tool',
       description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        This is a simple Ruby app undertaken to implement the four fundamental principles of Object Oriented Programming(OOP).
+        It uses a basic UI and records what books are in a library and who borrows them.
+        It allows the user to add new students or teachers, add new books, and saves records of who borrowed a given book and when.
+        It's particularly valuable to me because it helped me gain a deeper understanding of Encapsulation, Abstraction,
+        Inheritance, and Polymorphism. This understanding has allowed me to create solutions that are simpler to implement,
+        understand, and maintain. Additionaly, the library data is stored as a json file, allowing me to implement my knowledge
+        of writing and reading files using ruby.
       `,
-      img: project1,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
+      img: lib,
+      stack: [['Ruby', stack.ruby], ['Rspec', stack.rspec]],
+      contributors: [['@Amen-Musingarimi', 'https://github.com/Amen-Musingarimi']],
+      demo: 'https://codesandbox.io/p/github/c00p75/oop-school-library/draft/sleepy-wind',
+      source: 'https://github.com/c00p75/oop-school-library',
     },
     {
       type: 'Fullstack',
