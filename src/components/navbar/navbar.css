@@ -1,0 +1,301 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+.App > nav {
+  z-index: 99;
+}
+
+button {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+svg {
+  height: 2em !important;
+}
+
+#navbar {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5em 0;
+  transition: 0.32s ease-in-out;
+  background: none !important;
+}
+
+#scrolled-navbar {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5em 0;
+  transition: 0.32s ease-in-out;
+  background-color: #121212 !important;
+}
+
+nav .nav-link {
+  font-weight: lighter;
+  color: white !important;
+  margin: 0 20px !important;
+  opacity: 0.75;
+  padding: 0 25px;
+}
+
+nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.logo {
+  align-self: center;
+  font-family: 'Poppins', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.13em;
+  line-height: 95%;
+  color: white;
+}
+
+.socials a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  background-color: rgba(217, 217, 217, 0.1);
+  border-radius: 50%;
+  border: 1px solid rgb(225, 225, 225, 0.5);
+  margin: 0 0.3em !important;
+}
+
+.socials a svg {
+  z-index: 1;
+  transition: 0.3s ease-in-out;
+}
+
+.socials a::before {
+  content: "";
+  width: 42px;
+  height: 42px;
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 0.3s ease-in-out;
+}
+
+.socials a:hover::before {
+  transform: scale(1);
+}
+
+.socials a:hover path {
+  fill: darkslategray;
+}
+
+.connect-btn {
+  font-weight: 700;
+  color: white;
+  border: 1px solid white !important;
+  padding: 1em 1.5em;
+  position: relative;
+  background-color: transparent;
+  transition: 0.3s ease-in-out;
+  margin: 0 1em;
+  text-decoration: none;
+}
+
+.connect-btn span {
+  z-index: 1;
+}
+
+.connect-btn::before {
+  content: "";
+  width: 0%;
+  height: 100%;
+  position: absolute !important;
+  background-color: white !important;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  transition: 0.3s ease-in-out;
+}
+
+.connect-btn:hover {
+  color: black;
+}
+
+.connect-btn:hover::before {
+  content: "";
+  width: 100% !important;
+}
+
+.mode {
+  position: relative;
+  margin: 0 1em 0 2em;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  width: 4em;
+  height: 2em;
+  outline: none !important;
+}
+
+.mode::before {
+  content: "";
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s ease-in-out;
+  top: 4px;
+}
+
+.mode:hover::before {
+  box-shadow: 0 0 10px -3px black;
+}
+
+.dark-mode-btn {
+  background-color: rgb(0 0 0 / 12%);
+}
+
+.dark-mode-btn::before {
+  background-color: white !important;
+  box-shadow: 0 0 3px -1px black;
+}
+
+nav .close-btn {
+  display: none;
+}
+
+.light-mode-btn::before {
+  background-color: white;
+  transform: translateX(105%);
+}
+
+#light .logo {
+  color: #6070ff;
+}
+
+#light #scrolled-navbar {
+  background-color: white !important;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+}
+
+#light nav .nav-link {
+  color: #344563 !important;
+}
+
+#light .navbar-toggler path {
+  fill: #121212;
+}
+
+#light .socials a {
+  border-color: #344563;
+}
+
+#light .socials a path {
+  fill: #344563;
+}
+
+#light .socials a:hover path {
+  fill: white;
+}
+
+#light .socials a::before {
+  background-color: #344563;
+}
+
+#light .connect-btn {
+  border-color: #344563 !important;
+  color: #344563;
+}
+
+#light .connect-btn::before {
+  background-color: #344563 !important;
+}
+
+#light .connect-btn:hover {
+  color: white;
+}
+
+#light .mode::before {
+  background-color: gainsboro;
+}
+
+@media (max-width: 992px) {
+  .navbar-collapse .navbar-nav {
+    transform: translateY(-100%);
+  }
+
+  .navbar-collapse.show .navbar-nav {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center !important;
+    background-color: #121212;
+    align-items: center;
+    padding-top: 20%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transform: translateY(0);
+    transition: padding 0.1s ease-in-out;
+  }
+
+  nav .nav-link {
+    margin: 2em 0 !important;
+  }
+
+  nav .close-btn {
+    position: absolute;
+    display: block;
+    top: 1em;
+    right: 1em;
+    background: none;
+    transform: scale(1.3);
+    border: none;
+  }
+
+  .contact-links {
+    flex-direction: column-reverse;
+    padding-top: 1.5em;
+  }
+
+  .socials {
+    justify-content: space-between;
+    padding: 0 2em;
+  }
+
+  .socials a {
+    margin: 3em 2em !important;
+    padding: 0;
+  }
+
+  .mode {
+    position: absolute;
+    top: 1em;
+    left: -1em;
+  }
+
+  .non-visible { opacity: 0; }
+
+  .no-scroll {
+    overflow: hidden;
+  }
+
+  #light .navbar-collapse.show .navbar-nav {
+    background-color: white;
+    color: #344563;
+  }
+
+  #light nav .close-btn path:last-child {
+    fill: #121212;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-collapse.show .navbar-nav {
+    padding-top: 0;
+  }
+}
