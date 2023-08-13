@@ -99,6 +99,7 @@ div.grow {
   background: rgb(255 255 255 / 0);
   backdrop-filter: blur(5px);
   border-radius: 50px;
+  z-index: 1;
 }
 
 #light .banner p { color: black; }
@@ -147,7 +148,6 @@ div.grow {
 
   @media (max-width: 768px) {
     .banner {
-      background-position-y: 5em;
       padding-top: 10em !important;
     }
 
@@ -160,12 +160,17 @@ div.grow {
     }
 
     .header-img {
-      width: 120vw;
+      width: 91vw;
       position: relative;
     }
 
     #light .header-img {
+      width: 120vw;
       filter: brightness(1);
+    }
+
+    #light .banner {
+      background-position-y: 5em;
     }
 
     #light .banner .row > div:first-child {

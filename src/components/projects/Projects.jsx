@@ -36,6 +36,7 @@ const Projects = () => {
               solve a unique challenge, and experiment with unique concepts.
               I&apos;m excited to share share my journey with you.
             </p>
+            <span className="current-section" id="current-section-projects" />
             <Tab.Container id="projects-tab" defaultActiveKey="frontend">
               <Nav variant="pills" className="mb-5">
                 <Nav.Item>

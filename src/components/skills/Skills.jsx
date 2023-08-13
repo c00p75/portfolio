@@ -38,6 +38,7 @@ const Skills = () => {
 
   return (
     <section id="skills">
+      <span className="current-section" id="current-section-skills" />
       <Container>
         <Row>
           <Col>
@@ -45,7 +46,7 @@ const Skills = () => {
               <h2>
                 Skills
               </h2>
-              <p>
+              <p className="set-navlink skills-section">
                 Grounded in a commitment to continuous result delivery, growth, and learning,
                 I have gained a solid foundation in both front-end
                 and back-end technologies and cultivated diverse technical and proffesional skills

@@ -10,6 +10,7 @@ const About = () => {
   const { darkMode } = useContext(ThemeContext);
   return (
     <section id="about">
+      <span className="current-section" id="current-section-about" />
       <Container>
         <h2 className="d-block d-md-none">About me</h2>
         <Row className="align-items-center">

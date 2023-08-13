@@ -39,6 +39,7 @@ nav .nav-link {
   margin: 0 20px !important;
   opacity: 0.75;
   padding: 0 25px;
+  transition: font-weight 0.4s ease-in-out;
 }
 
 nav .nav-link:hover,
@@ -302,6 +303,12 @@ nav .close-btn {
 
 @media (max-height: 576px) {
   nav .nav-link {
-    margin: 2vh !important;
+    margin: 4vh !important;
+  }
+}
+
+@media (max-height: 376px) {
+  nav .nav-link {
+    margin: 1vh !important;
   }
 }

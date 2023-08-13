@@ -70,6 +70,7 @@ const Contact = () => {
                 </Col>
                 <Col sm={12} className="px-1">
                   <textarea rows="6" name="message" value={formDetails.message} placeholder="Message" onChange={(e) => onFormUpdate('message', e.target.value)} required />
+                  <span className="current-section" id="current-section-contact" />
                   <button type="submit" disabled={status.submitting} className="d-flex align-items-center justify-content-center">
 
                     {status.submitting && (

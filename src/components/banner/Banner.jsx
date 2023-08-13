@@ -37,6 +37,7 @@ const Banner = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     ticker = setInterval(() => {
       tick();
     }, typeSpeed);
@@ -47,40 +48,44 @@ const Banner = () => {
   }, [text]);
 
   return (
-    <section className="banner" id="home">
-      <Container>
-        <Row className="align-items-center justify-content-center">
-          <Col xs={12} md={6} xl={7} className="mb-1">
-            <h1>
-              Hi. I&apos;m George, a
-              {' '}
-              <span>{text}</span>
-              <span className="blinker" />
-            </h1>
-            <p>
-              I can help you build or maintain your innovative web solutions.
-              Look through some of my work and experience! If you like what you see
-              don’t hestiate to contact me.
-            </p>
-            <a href="#connect">
-              Let&apos;s Connect
-              {' '}
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                <g fill="none" stroke="white">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="m12 15l3-3m0 0l-3-3m3 3H9" fill="white" />
-                </g>
-              </svg>
-            </a>
-          </Col>
-          <Col xs={12} md={6} xl={5}>
-            {darkMode && (<div className="grow"><img src={headerImg} alt="Header Img" className="header-img" loading="lazy" /></div>)}
-            {!darkMode && (<div className="grow"><img src={astro} alt="Header Img" className="header-img" loading="lazy" /></div>)}
-          </Col>
-        </Row>
-      </Container>
-      {!darkMode && (<div className="light-bg-overlay" />)}
-    </section>
+    <>
+      <span className="current-section" id="current-section-home" />
+      <section className="banner" id="home">
+        <Container>
+          <Row className="align-items-center justify-content-center">
+            <Col xs={12} md={6} xl={7} className="mb-1">
+              <h1>
+                Hi. I&apos;m George, a
+                {' '}
+                <span>{text}</span>
+                <span className="blinker" />
+              </h1>
+              <p>
+                I can help you build or maintain your innovative web solutions.
+                Look through some of my work and experience! If you like what you see
+                don’t hestiate to contact me.
+              </p>
+              <a href="#connect">
+                Let&apos;s Connect
+                {' '}
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+                  <g fill="none" stroke="white">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="m12 15l3-3m0 0l-3-3m3 3H9" fill="white" />
+                  </g>
+                </svg>
+              </a>
+            </Col>
+            <Col xs={12} md={6} xl={5}>
+              {darkMode && (<div className="grow"><img src={headerImg} alt="Header Img" className="header-img" loading="lazy" /></div>)}
+              {!darkMode && (<div className="grow"><img src={astro} alt="Header Img" className="header-img" loading="lazy" /></div>)}
+            </Col>
+          </Row>
+        </Container>
+        {!darkMode && (<div className="light-bg-overlay" />)}
+      </section>
+
+    </>
   );
 };
 
