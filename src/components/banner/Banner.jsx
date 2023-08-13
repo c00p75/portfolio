@@ -49,7 +49,7 @@ const Banner = () => {
   return (
     <section className="banner" id="home">
       <Container>
-        <Row className="align-items-center">
+        <Row className="align-items-center justify-content-center">
           <Col xs={12} md={6} xl={7} className="mb-1">
             <h1>
               Hi. I&apos;m George, a
@@ -74,8 +74,8 @@ const Banner = () => {
             </a>
           </Col>
           <Col xs={12} md={6} xl={5}>
-            {darkMode && (<div className="grow"><img src={headerImg} alt="Header Img" className="header-img" /></div>)}
-            {!darkMode && (<div className="grow"><img src={astro} alt="Header Img" className="header-img" /></div>)}
+            {darkMode && (<div className="grow"><img src={headerImg} alt="Header Img" className="header-img" loading="lazy" /></div>)}
+            {!darkMode && (<div className="grow"><img src={astro} alt="Header Img" className="header-img" loading="lazy" /></div>)}
           </Col>
         </Row>
       </Container>

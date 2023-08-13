@@ -12,6 +12,10 @@ import { projectCardObserver } from '../../constants/observer';
 const Projects = () => {
   const { darkMode } = useContext(ThemeContext);
   const [showProject, setShowProject] = useState(false);
+  const ancestor = (e) => e.parentElement.parentElement.parentElement.parentElement.parentElement;
+  const overflowVisible = (element) => ancestor(element).classList.add('project-box-overflow');
+  const overflowHidden = (element) => ancestor(element).classList.remove('project-box-overflow');
+
   const [project, setProject] = useState(null);
   useEffect(() => {
     const projectCards = document.querySelectorAll('.project-img-box');
@@ -56,14 +60,24 @@ const Projects = () => {
                           onClick={() => { setShowProject(true); setProject(project); }}
                           onKeyDown={(e) => { if (e.key === 'Enter') { setShowProject(true); setProject(project); } }}
                         >
-                          <img src={project.img} alt={project.name} />
+                          <img src={project.img} alt={project.name} loading="lazy" />
                           <div className="project-text d-flex flex-column">
                             <h4>{project.title}</h4>
                             <span>{project.summary}</span>
-                            <div className="tech-stack d-flex flex-row justify-content-center">
-                              {project.stack.map((stack, index) => (
-                                <img src={stack[1]} alt="icon" key={`item-${index + 1}`} style={{ zIndex: -index }} />
-                              ))}
+                            <div
+                              onMouseOver={(e) => overflowVisible(e.target)}
+                              onMouseOut={(e) => overflowHidden(e.target)}
+                              onFocus={(e) => overflowVisible(e.target)}
+                              onBlur={(e) => overflowHidden(e.target)}
+                            >
+                              <div className="tech-stack d-flex flex-row justify-content-center">
+                                {project.stack.map((stack, index) => (
+                                  <div className="tooltip" key={`item-${index + 1}`}>
+                                    <img src={stack[1]} alt="icon" style={{ zIndex: -index }} loading="lazy" />
+                                    <span className="tooltiptext">{stack[0]}</span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -83,14 +97,24 @@ const Projects = () => {
                           onClick={() => { setShowProject(true); setProject(project); }}
                           onKeyDown={(e) => { if (e.key === 'Enter') { setShowProject(true); setProject(project); } }}
                         >
-                          <img src={project.img} alt={project.name} />
+                          <img src={project.img} alt={project.name} loading="lazy" />
                           <div className="project-text d-flex flex-column">
                             <h4>{project.title}</h4>
                             <span>{project.summary}</span>
-                            <div className="tech-stack d-flex flex-row justify-content-center">
-                              {project.stack.map((stack, index) => (
-                                <img src={stack[1]} alt="icon" key={`item-${index + 1}`} style={{ zIndex: -index }} />
-                              ))}
+                            <div
+                              onMouseOver={(e) => overflowVisible(e.target)}
+                              onMouseOut={(e) => overflowHidden(e.target)}
+                              onFocus={(e) => overflowVisible(e.target)}
+                              onBlur={(e) => overflowHidden(e.target)}
+                            >
+                              <div className="tech-stack d-flex flex-row justify-content-center">
+                                {project.stack.map((stack, index) => (
+                                  <div className="tooltip" key={`item-${index + 1}`}>
+                                    <img src={stack[1]} alt="icon" style={{ zIndex: -index }} loading="lazy" />
+                                    <span className="tooltiptext">{stack[0]}</span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -110,14 +134,24 @@ const Projects = () => {
                           onClick={() => { setShowProject(true); setProject(project); }}
                           onKeyDown={(e) => { if (e.key === 'Enter') { setShowProject(true); setProject(project); } }}
                         >
-                          <img src={project.img} alt={project.name} />
+                          <img src={project.img} alt={project.name} loading="lazy" />
                           <div className="project-text d-flex flex-column">
                             <h4>{project.title}</h4>
                             <span>{project.summary}</span>
-                            <div className="tech-stack d-flex flex-row justify-content-center">
-                              {project.stack.map((stack, index) => (
-                                <img src={stack[1]} alt="icon" key={`item-${index + 1}`} style={{ zIndex: -index }} />
-                              ))}
+                            <div
+                              onMouseOver={(e) => overflowVisible(e.target)}
+                              onMouseOut={(e) => overflowHidden(e.target)}
+                              onFocus={(e) => overflowVisible(e.target)}
+                              onBlur={(e) => overflowHidden(e.target)}
+                            >
+                              <div className="tech-stack d-flex flex-row justify-content-center">
+                                {project.stack.map((stack, index) => (
+                                  <div className="tooltip" key={`item-${index + 1}`}>
+                                    <img src={stack[1]} alt="icon" style={{ zIndex: -index }} loading="lazy" />
+                                    <span className="tooltiptext">{stack[0]}</span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -130,7 +164,7 @@ const Projects = () => {
           </Col>
         </Row>
       </Container>
-      {darkMode && (<img src={colorSharp2} alt="background" className="bg-right" />)}
+      {darkMode && (<img src={colorSharp2} alt="background" className="bg-right" loading="lazy" />)}
       {project && (<ProjectModal show={showProject} setShow={setShowProject} project={project} />)}
     </section>
   );

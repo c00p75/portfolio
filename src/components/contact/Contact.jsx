@@ -49,8 +49,8 @@ const Contact = () => {
       <Container>
         <Row className="align-items-center">
           <Col md={6} className="img-container">
-            {darkMode && (<div className="grow"><img src={contactImg} alt="Contact me" /></div>)}
-            {!darkMode && (<div className="grow"><img src={contactImg2} alt="Contact me" /></div>)}
+            {darkMode && (<div className="grow"><img src={contactImg} alt="Contact me" loading="lazy" /></div>)}
+            {!darkMode && (<div className="grow"><img src={contactImg2} alt="Contact me" loading="lazy" /></div>)}
           </Col>
           <Col md={6}>
             <h2>Get In Touch</h2>

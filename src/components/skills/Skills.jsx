@@ -58,7 +58,7 @@ const Skills = () => {
                     {skills.frontend.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} />
+                          <img src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -72,7 +72,7 @@ const Skills = () => {
                     {skills.backend.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} />
+                          <img src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -86,7 +86,7 @@ const Skills = () => {
                     {skills.tools.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} />
+                          <img src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -100,7 +100,7 @@ const Skills = () => {
                     {skills.softskills.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} />
+                          <img src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>

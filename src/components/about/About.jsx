@@ -35,11 +35,11 @@ const About = () => {
             <a href={resume} target="_blank" rel="noreferrer" className="btn btn-info">Download my resume</a>
           </Col>
           <Col xs={12} md={6} className="mb-1">
-            <img src={me} alt="George M'sapenda" />
+            <img src={me} alt="George M'sapenda" loading="lazy" />
           </Col>
         </Row>
       </Container>
-      {darkMode && (<img src={colorSharp2} alt="background" className="bg-right" />)}
+      {darkMode && (<img src={colorSharp2} alt="background" className="bg-right" loading="lazy" />)}
     </section>
   );
 };

@@ -231,8 +231,8 @@ nav .close-btn {
   .navbar-collapse.show .navbar-nav {
     position: absolute;
     inset: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100vw !important;
+    height: 100vh !important;
     justify-content: center !important;
     background-color: #121212;
     align-items: center;
@@ -297,5 +297,11 @@ nav .close-btn {
 @media (max-width: 768px) {
   .navbar-collapse.show .navbar-nav {
     padding-top: 0;
+  }
+}
+
+@media (max-height: 576px) {
+  nav .nav-link {
+    margin: 2vh !important;
   }
 }

@@ -1,7 +1,7 @@
 #about {
   border-top-left-radius: 100px;
-  margin-top: -38%;
-  padding-bottom: 50%;
+  margin-top: -15em !important;
+  padding-bottom: 25em;
   padding-top: 5em;
   z-index: 1;
   position: relative;
@@ -41,7 +41,12 @@
 }
 
 @media (max-width: 768px) {
+  #about {
+    margin-top: -18em !important;
+  }
+
   #about h2 {
+    font-size: 2em;
     text-align: center;
   }
 
@@ -54,14 +59,14 @@
     justify-content: center;
     padding: 0.7em;
   }
-}
-
-@media (max-width: 576px) {
-  #about {
-    margin-top: -15%;
-  }
 
   #about .row {
     flex-direction: column-reverse;
   }
 }
+
+/* @media (max-width: 576px) {
+  #about {
+    margin-top: -25%;
+  }
+} */
