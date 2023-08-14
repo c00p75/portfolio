@@ -160,3 +160,9 @@
     color: black !important;
   }
 }
+
+@media (max-width: 768px) {
+  #skills .container {
+    max-width: 100%;
+  }
+}

@@ -12,7 +12,7 @@
 #projects {
   position: relative;
   padding-top: 5em;
-  padding-bottom: 50%;
+  padding-bottom: 25em;
 }
 
 #projects h2 {
@@ -134,6 +134,16 @@
   object-position: top;
 }
 
+.project-box-overflow {
+  overflow: visible;
+}
+
+.project-box-overflow::before,
+.project-box-overflow > img {
+  transition: none;
+  border-radius: 15px;
+}
+
 .project-text {
   position: absolute;
   text-align: center;
@@ -181,8 +191,8 @@
 }
 
 .tech-stack img {
-  width: 1.7em;
-  height: 1.7em;
+  width: 2em;
+  height: 2em;
   border-radius: 50%;
   margin-right: -0.5em;
   filter: drop-shadow(2px 4px 6px black);
@@ -237,6 +247,12 @@
   width: 100%;
   object-fit: cover;
   border-radius: 30px;
+  object-position: top;
+  padding-top: 10%;
+}
+
+.modal-body img.gif {
+  object-fit: none;
 }
 
 .project-info {
@@ -252,6 +268,8 @@
 .modal-tech-stack {
   max-width: 50vw;
   height: auto;
+  flex-wrap: wrap;
+  display: flex;
 }
 
 .modal-tech-stack span {
@@ -277,6 +295,45 @@
 
 .modal-actions a:hover {
   filter: invert();
+}
+
+.modal-actions a:first-child {
+  margin-left: 0;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  opacity: inherit;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 
 #light ::-webkit-scrollbar {
@@ -363,6 +420,10 @@
   fill: black;
 }
 
+.light .modal-tech-stack {
+  margin-bottom: 0.5em;
+}
+
 .light .modal-tech-stack span {
   background-color: rgba(0, 0, 0, 0.15);
 }
@@ -385,22 +446,20 @@
   font-weight: bold;
 }
 
-@media (max-width: 576px) {
-  #projects {
-    padding: 2em 0 10em;
-    padding-bottom: 5em;
-  }
+.light #project-description {
+  color: black !important;
+}
 
-  #projects ::-webkit-scrollbar {
-    height: 4px;
-    background-color: transparent;
-    border-radius: 5px !important;
-  }
+#light .tooltip .tooltiptext {
+  background-color: rgb(0, 0, 0, 0.9);
+  color: #fff;
+}
 
-  #projects ::-webkit-scrollbar-thumb {
-    background: white;
-  }
+#light .tooltip .tooltiptext::after {
+  border-color: black transparent transparent transparent;
+}
 
+@media (max-width: 768px) {
   #projects p {
     text-align: justify;
     padding: 0 1em;
@@ -416,6 +475,21 @@
     background: none;
   }
 
+  #projects {
+    padding: 2em 0 10em;
+    padding-bottom: 25em;
+  }
+
+  #projects ::-webkit-scrollbar {
+    height: 4px;
+    background-color: transparent;
+    border-radius: 5px !important;
+  }
+
+  #projects ::-webkit-scrollbar-thumb {
+    background: white;
+  }
+
   #projects .nav.nav-pills .nav-link {
     background: rgb(255, 255, 255, 10%) !important;
   }
@@ -427,10 +501,8 @@
   .tab-pane > .row {
     flex-wrap: nowrap;
     overflow: auto;
-    padding: 0;
-    padding-left: 1em;
+    padding: 1em;
     padding-top: 0.3em;
-    padding-bottom: 1em;
   }
 
   .nav-link#projects-tab-tab-frontend::before {
@@ -494,6 +566,12 @@
     font-weight: bolder;
   }
 
+  .modal img {
+    height: 100%;
+    min-height: 50vh;
+    border-radius: 0;
+  }
+
   .modal-dialog {
     width: 100%;
     height: auto;
@@ -540,19 +618,15 @@
     filter: invert();
   }
 
-  #light #projects {
-    border-top-right-radius: 60px;
+  .light .modal-actions a {
+    font-weight: bold;
   }
 
   #light #projects p {
     color: black !important;
   }
 
-  .light #project-description {
-    color: black !important;
-  }
-
-  .light .modal-actions a {
-    font-weight: bold;
+  #light #projects {
+    border-top-right-radius: 60px;
   }
 }

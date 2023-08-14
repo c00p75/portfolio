@@ -38,6 +38,7 @@ const Skills = () => {
 
   return (
     <section id="skills">
+      <span className="current-section" id="current-section-skills" />
       <Container>
         <Row>
           <Col>
@@ -45,7 +46,7 @@ const Skills = () => {
               <h2>
                 Skills
               </h2>
-              <p>
+              <p className="set-navlink skills-section">
                 Grounded in a commitment to continuous result delivery, growth, and learning,
                 I have gained a solid foundation in both front-end
                 and back-end technologies and cultivated diverse technical and proffesional skills
@@ -58,7 +59,7 @@ const Skills = () => {
                     {skills.frontend.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} />
+                          <img src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -72,7 +73,7 @@ const Skills = () => {
                     {skills.backend.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} />
+                          <img src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -86,7 +87,7 @@ const Skills = () => {
                     {skills.tools.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} />
+                          <img src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -100,7 +101,7 @@ const Skills = () => {
                     {skills.softskills.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} />
+                          <img src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>

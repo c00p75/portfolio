@@ -39,6 +39,7 @@ nav .nav-link {
   margin: 0 20px !important;
   opacity: 0.75;
   padding: 0 25px;
+  transition: font-weight 0.4s ease-in-out;
 }
 
 nav .nav-link:hover,
@@ -231,8 +232,8 @@ nav .close-btn {
   .navbar-collapse.show .navbar-nav {
     position: absolute;
     inset: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100vw !important;
+    height: 100vh !important;
     justify-content: center !important;
     background-color: #121212;
     align-items: center;
@@ -297,5 +298,17 @@ nav .close-btn {
 @media (max-width: 768px) {
   .navbar-collapse.show .navbar-nav {
     padding-top: 0;
+  }
+}
+
+@media (max-height: 576px) {
+  nav .nav-link {
+    margin: 4vh !important;
+  }
+}
+
+@media (max-height: 376px) {
+  nav .nav-link {
+    margin: 1vh !important;
   }
 }

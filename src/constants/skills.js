@@ -49,6 +49,10 @@ const skills = {
       img: stack.django,
     },
     {
+      name: 'SQL',
+      img: stack.sql,
+    },
+    {
       name: 'PostgreSQL',
       img: stack.postgresql,
     },

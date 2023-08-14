@@ -11,6 +11,7 @@ import python from '../assets/images/teck-stacks/python.png';
 import django from '../assets/images/teck-stacks/django.png';
 import nodejs from '../assets/images/teck-stacks/nodejs.png';
 import postgresql from '../assets/images/teck-stacks/psql.png';
+import sql from '../assets/images/teck-stacks/sql.png';
 import webpack from '../assets/images/teck-stacks/webpack.avif';
 import jest from '../assets/images/teck-stacks/jest.svg';
 import rspec from '../assets/images/teck-stacks/rspec.png';
@@ -56,4 +57,5 @@ export default {
   criticalThinking,
   chromeDev,
   nodejs,
+  sql,
 };

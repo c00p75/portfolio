@@ -39,4 +39,25 @@ const scaleObserver = (element, threshhold, unobserve) => {
   element.forEach((e) => { scaleObserver.observe(e); });
 };
 
-export { projectCardObserver, visibilityObserver, scaleObserver };
+const sectionObserver = (element) => {
+  const AppSectionObserver = new IntersectionObserver((element) => {
+    const navLinks = document.querySelectorAll('nav .nav-link');
+    const removeActive = () => navLinks.forEach((link) => link.classList.remove('active'));
+    const setActive = (index) => { removeActive(); navLinks[index].classList.add('active'); };
+    element.reverse().forEach((e) => {
+      if (e.target.id === 'current-section-home') { setActive(0); }
+      if (e.target.id === 'current-section-skills') { setActive(1); }
+      if (e.target.id === 'current-section-projects') { setActive(2); }
+      if (e.target.id === 'current-section-about') { setActive(3); }
+      if (e.target.id === 'current-section-contact') { removeActive(); }
+    });
+  }, {
+    threshold: 1,
+  });
+
+  element.forEach((e) => { AppSectionObserver.observe(e); });
+};
+
+export {
+  projectCardObserver, visibilityObserver, scaleObserver, sectionObserver,
+};

@@ -77,6 +77,11 @@ a { text-decoration: none !important; }
   opacity: 1 !important;
 }
 
+.current-section {
+  height: 0;
+  width: 0;
+}
+
 @media (max-width: 992px) {
   p {
     text-align: justify;
