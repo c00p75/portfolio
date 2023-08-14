@@ -16,9 +16,10 @@ import viandGif from '../assets/images/projects/viand.gif';
 import lib from '../assets/images/projects/oop.jpg';
 import catalogOfMyThings from '../assets/images/projects/catalog-of-my-things.jpg';
 import libGif from '../assets/images/projects/oop.gif';
-import project1 from '../assets/images/projects/project-img1.png';
-import project2 from '../assets/images/projects/project-img2.png';
-import project3 from '../assets/images/projects/project-img3.png';
+import blog from '../assets/images/projects/blog-app.jpg';
+import blogGif from '../assets/images/projects/blog-app.gif';
+import cycleCruise from '../assets/images/projects/cyclecruise.jpg';
+import cycleCruiseGif from '../assets/images/projects/cyclecruise.gif';
 
 const projects = {
   frontend: [
@@ -154,6 +155,24 @@ const projects = {
     {
       type: 'Backend',
       date: '2023',
+      title: 'Blog App',
+      summary: 'Rails CRUD app',
+      description: `
+        This Ruby on Rails app focuses on implementing the Model View Controller (MVC) architecture and performing
+        Create, Read, Update, and Delete (CRUD) operations while adhering to an entity relationship diagram (ERD).
+        It showcases adeptness with Rails conventions as well as Rails' Object-Relational Mapping (ORM) framework,
+        Active Record. The application is also secure app from n+1 problems and provides API routes accompanied by API documentaion.
+        Additional standout features include Model validations to ensure that all data input is validated
+        prior to database interaction, email-password authentication with the Devise gem, and unit testing with RSpec.
+      `,
+      img: blog,
+      gif: blogGif,
+      stack: [['Ruby on Rails', stack.ror], ['Ruby', stack.ruby], ['PostreSQL', stack.postgresql], ['Rspec', stack.rspec]],
+      source: 'https://github.com/c00p75/oop-school-library',
+    },
+    {
+      type: 'Backend',
+      date: '2023',
       title: 'Catalog of My Things',
       summary: 'Collection management tool',
       description: `
@@ -193,111 +212,24 @@ const projects = {
   fullstack: [
     {
       type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+      date: '2023',
+      title: 'Cycle Cruise',
+      summary: 'Motorcycle booking platform',
       description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      A full-stack app for booking motorcycles. Key features of the app include authenticated users being able to
+      add and delete a motorcycle, as well as view a list of motorcycles and navigate to their details page.
+      Users can also reserve a motorcycle for a specific date and city, and view a list of their reservations.
+      Apart from the technical accomplishments, this collaborative project was undertaken by a group of 4 aiming
+      to work effectively together to deliver a digital product. My contribution to the project focused on the app's layout,
+      the reservations page, and the entity models. Some challenges we overcame while working as a group included unexpected
+      issues causing delays, conflicts within the team, and difficult decisions to be made regarding features and trade-offs.
       `,
-      img: project1,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project2,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project3,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project1,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project2,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
-    },
-    {
-      type: 'Fullstack',
-      date: '2022',
-      title: 'Business Startup',
-      summary: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      description: `
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Some long description abouta dope project. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      `,
-      img: project3,
-      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
-      contributors: [['John Doe', 'https://github.com/c00p75'], ['Jane Doe', 'https://github.com/c00p75']],
-      demo: 'https://c00p75.github.io/Capstone-project-Conference-page/home.html',
-      source: 'https://github.com/c00p75/Capstone-project-Conference-page',
+      img: cycleCruise,
+      gif: cycleCruiseGif,
+      stack: [['Ruby on Rails', stack.ror], ['PostgreSQL', stack.postgresql], ['React', stack.react], ['Redux', stack.redux], ['Rspec', stack.rspec], ['Bootstrap', stack.bootstrap]],
+      contributors: [['@maov19,', 'https://github.com/maov19'], ['@adamilare,', 'https://github.com/adamilare'], ['@veronica365', 'https://github.com/veronica365']],
+      demo: 'https://thecyclecruise.onrender.com/',
+      source: 'https://github.com/c00p75/appointment-app-frontend',
     },
   ],
 };

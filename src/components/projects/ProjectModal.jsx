@@ -34,7 +34,7 @@ const ProjectModal = ({ show, setShow, project }) => {
                   {project.description}
                 </p>
                 {project.contributors && (
-                  <div>
+                  <div className="d-flex">
                     <span className="fw-bold">Collaborators: </span>
                     {project.contributors.map((contributor, index) => (
                       <a className="mx-1 text-info" href={contributor[1]} key={`c-${index + 1}`} target="_blank" rel="noreferrer">{contributor[0]}</a>
@@ -50,10 +50,12 @@ const ProjectModal = ({ show, setShow, project }) => {
             {project.stack.map((stack, index) => (<span key={`stack ${index + 1}`}>{stack[0]}</span>))}
           </div>
           <div className="modal-actions">
-            <a href={project.demo} target="_blank" rel="noreferrer">
-              <span>See Live</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6H7a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-5m-6 0l7.5-7.5M15 3h6v6" /></svg>
-            </a>
+            {project.demo && (
+              <a href={project.demo} target="_blank" rel="noreferrer">
+                <span>See Live</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6H7a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-5m-6 0l7.5-7.5M15 3h6v6" /></svg>
+              </a>
+            )}
             <a href={project.source} target="_blank" rel="noreferrer">
               <span>See Source</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24">
