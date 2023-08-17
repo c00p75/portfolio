@@ -24,6 +24,7 @@ import cycleCruiseGif from '../assets/images/projects/cyclecruise.gif';
 const projects = {
   frontend: [
     {
+      organization: 'Microverse',
       type: 'Frontend',
       date: '2023',
       title: 'Viand',
@@ -42,6 +43,7 @@ const projects = {
       source: 'https://github.com/c00p75/Viand-Resturant',
     },
     {
+      organization: 'Microverse',
       type: 'Frontend',
       date: '2022',
       title: 'Space Travellers Hub',
@@ -60,6 +62,7 @@ const projects = {
       source: 'https://github.com/c00p75/Space-Travelers',
     },
     {
+      organization: 'Microverse',
       type: 'Frontend',
       date: '2023',
       title: 'Metrics Webapp',
@@ -77,6 +80,7 @@ const projects = {
       source: 'https://github.com/c00p75/Metrics-WebApp',
     },
     {
+      organization: 'Microverse',
       type: 'Frontend',
       date: '2022',
       title: 'Awesome Books',
@@ -95,6 +99,7 @@ const projects = {
       source: 'https://github.com/c00p75/Awesome-books-with-ES6',
     },
     {
+      organization: 'Microverse',
       type: 'Frontend',
       date: '2022',
       title: 'ChowTime',
@@ -114,6 +119,7 @@ const projects = {
       source: 'https://github.com/c00p75/ChowTime',
     },
     {
+      organization: 'Microverse',
       type: 'Frontend',
       date: '2022',
       title: 'Leaderboard',
@@ -133,6 +139,7 @@ const projects = {
       source: 'https://github.com/c00p75/Leaderboard',
     },
     {
+      organization: 'Microverse',
       type: 'Frontend',
       date: '2022',
       title: 'Pender Conference',
@@ -153,6 +160,7 @@ const projects = {
   ],
   backend: [
     {
+      organization: 'Microverse',
       type: 'Backend',
       date: '2023',
       title: 'Blog App',
@@ -171,6 +179,7 @@ const projects = {
       source: 'https://github.com/c00p75/oop-school-library',
     },
     {
+      organization: 'Microverse',
       type: 'Backend',
       date: '2023',
       title: 'Catalog of My Things',
@@ -190,6 +199,7 @@ const projects = {
       source: 'https://github.com/zeff96/catalog_of_my_things/tree/draft/hungry-saha',
     },
     {
+      organization: 'Microverse',
       type: 'Backend',
       date: '2023',
       title: 'School Library',
@@ -211,6 +221,7 @@ const projects = {
   ],
   fullstack: [
     {
+      organization: 'Microverse',
       type: 'Fullstack',
       date: '2023',
       title: 'Cycle Cruise',

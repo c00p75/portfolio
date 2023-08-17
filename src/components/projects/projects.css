@@ -246,9 +246,7 @@
   height: 100%;
   width: 100%;
   object-fit: cover;
-  border-radius: 30px;
   object-position: top;
-  padding-top: 10%;
 }
 
 .modal-body img.gif {
@@ -413,7 +411,7 @@
 }
 
 .light .dot path {
-  fill: black;
+  fill: darkslategray;
 }
 
 .light .modal-header button path {
@@ -426,6 +424,10 @@
 
 .light .modal-tech-stack span {
   background-color: rgba(0, 0, 0, 0.15);
+}
+
+.light .project-info > div:first-child span {
+  color: darkslategray;
 }
 
 .light .modal-actions a {
