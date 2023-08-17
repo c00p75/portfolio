@@ -521,7 +521,7 @@
   .project-img-box {
     width: 100%;
     transform: scale(0.8);
-    transition: all 0.5s ease-in-out;
+    transition: all 0.3s ease-in-out;
     height: 93%;
   }
 
@@ -532,6 +532,11 @@
   .tab-pane > .row > * {
     width: 85% !important;
     padding: 0;
+  }
+
+  .project-img-box::before,
+  .project-text {
+    transition: 0.3s ease-in-out;
   }
 
   .project-img-box:hover::before {
@@ -600,7 +605,7 @@
   }
 
   #project-description {
-    text-align: center !important;
+    text-align: justify !important;
   }
 
   .project-info > div:first-child {
