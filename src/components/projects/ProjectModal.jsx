@@ -19,13 +19,17 @@ const ProjectModal = ({ show, setShow, project }) => {
           <Row>
             <Col sm={12} md={6}>
               <a href={project.demo} target="_blank" rel="noreferrer">
-                {project.gif && (<img src={project.gif} alt="project screenshot" className="gif" />)}
-                {!project.gif && (<img src={project.img} alt="project screenshot" />)}
+                {/* {project.gif && (
+                  <img src={project.gif} alt="project screenshot" className="gif" />)} */}
+                {/* {!project.gif && (<img src={project.img} alt="project screenshot" />)} */}
+                <img src={project.img} alt="project screenshot" />
               </a>
             </Col>
             <Col sm={12} md={6}>
               <div className="project-info px-3">
                 <div className="mb-3 fw-bold">
+                  <span>{project.organization}</span>
+                  <span className="dot"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="white" d="M12 10a2 2 0 0 0-2 2a2 2 0 0 0 2 2c1.11 0 2-.89 2-2a2 2 0 0 0-2-2Z" /></svg></span>
                   <span>{project.type}</span>
                   <span className="dot"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="white" d="M12 10a2 2 0 0 0-2 2a2 2 0 0 0 2 2c1.11 0 2-.89 2-2a2 2 0 0 0-2-2Z" /></svg></span>
                   <span>{project.date}</span>
