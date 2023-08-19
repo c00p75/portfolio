@@ -484,8 +484,8 @@
 
   #projects ::-webkit-scrollbar {
     height: 10px;
-    background-color: transparent;
-    border-radius: 0 !important;
+    background-color: gray;
+    border-radius: 5px !important;
   }
 
   #projects ::-webkit-scrollbar-thumb {
@@ -628,6 +628,10 @@
 
   .light .modal-actions a {
     font-weight: bold;
+  }
+
+  #light #projects ::-webkit-scrollbar {
+    background-color: gainsboro !important;
   }
 
   #light #projects p {
