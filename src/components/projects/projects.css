@@ -109,7 +109,7 @@
 }
 
 .tab-pane > .row :nth-last-child(-n+3) .project-img-box {
-  margin-bottom: 0;
+  margin-bottom: 0.3em;
 }
 
 .project-img-box::before {
@@ -483,9 +483,9 @@
   }
 
   #projects ::-webkit-scrollbar {
-    height: 4px;
+    height: 10px;
     background-color: transparent;
-    border-radius: 5px !important;
+    border-radius: 0 !important;
   }
 
   #projects ::-webkit-scrollbar-thumb {
@@ -498,6 +498,7 @@
 
   .tab-pane {
     height: max-content;
+    border-radius: 0;
   }
 
   .tab-pane > .row {
