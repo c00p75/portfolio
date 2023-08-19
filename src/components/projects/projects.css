@@ -109,7 +109,7 @@
 }
 
 .tab-pane > .row :nth-last-child(-n+3) .project-img-box {
-  margin-bottom: 0;
+  margin-bottom: 0.3em;
 }
 
 .project-img-box::before {
@@ -483,8 +483,8 @@
   }
 
   #projects ::-webkit-scrollbar {
-    height: 4px;
-    background-color: transparent;
+    height: 10px;
+    background-color: gray;
     border-radius: 5px !important;
   }
 
@@ -498,6 +498,7 @@
 
   .tab-pane {
     height: max-content;
+    border-radius: 0;
   }
 
   .tab-pane > .row {
@@ -627,6 +628,10 @@
 
   .light .modal-actions a {
     font-weight: bold;
+  }
+
+  #light #projects ::-webkit-scrollbar {
+    background-color: gainsboro !important;
   }
 
   #light #projects p {

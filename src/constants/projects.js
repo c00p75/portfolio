@@ -1,25 +1,25 @@
 import stack from './stack';
-import conference from '../assets/images/projects/conference.png';
-import conferenceGif from '../assets/images/projects/conference.gif';
-import leaderboard from '../assets/images/projects/leaderboard.jpg';
-import leaderboardGif from '../assets/images/projects/leaderboard.gif';
-import chowtime from '../assets/images/projects/chowtime.jpg';
-import chowtimeGif from '../assets/images/projects/chowtime.gif';
-import spaceTravellers from '../assets/images/projects/space-travellers.jpg';
-import spaceTravellersGif from '../assets/images/projects/space-travellers.gif';
+import conference from '../assets/images/projects/conference-sm.png';
+import conferenceGif from '../assets/images/projects/conference.png';
+import leaderboard from '../assets/images/projects/leaderboard-sm.jpg';
+import leaderboardGif from '../assets/images/projects/leaderboard.jpg';
+import chowtime from '../assets/images/projects/chowtime-sm.jpg';
+import chowtimeGif from '../assets/images/projects/chowtime.jpg';
+import spaceTravellers from '../assets/images/projects/space-travellers-sm.jpg';
+import spaceTravellersGif from '../assets/images/projects/space-travellers.jpg';
 import awesomeBooks from '../assets/images/projects/awesome-books.png';
-import awesomeBooksGif from '../assets/images/projects/awesome-books.gif';
+// import awesomeBooksGif from '../assets/images/projects/awesome-books.gif';
 import metrics from '../assets/images/projects/metrics.jpg';
-import metricsGif from '../assets/images/projects/metrics.gif';
-import viand from '../assets/images/projects/viand.jpg';
-import viandGif from '../assets/images/projects/viand.gif';
+// import metricsGif from '../assets/images/projects/metrics.gif';
+import viand from '../assets/images/projects/viand-sm.jpg';
+import viandGif from '../assets/images/projects/viand.jpg';
 import lib from '../assets/images/projects/oop.jpg';
 import catalogOfMyThings from '../assets/images/projects/catalog-of-my-things.jpg';
-import libGif from '../assets/images/projects/oop.gif';
-import blog from '../assets/images/projects/blog-app.jpg';
-import blogGif from '../assets/images/projects/blog-app.gif';
-import cycleCruise from '../assets/images/projects/cyclecruise.jpg';
-import cycleCruiseGif from '../assets/images/projects/cyclecruise.gif';
+// import libGif from '../assets/images/projects/oop.gif';
+import blog from '../assets/images/projects/blog-app-sm.jpg';
+import blogGif from '../assets/images/projects/blog-app.jpg';
+import cycleCruise from '../assets/images/projects/cyclecruise-sm.jpg';
+import cycleCruiseGif from '../assets/images/projects/cyclecruise.jpg';
 
 const projects = {
   frontend: [
@@ -74,7 +74,7 @@ const projects = {
         which filters the list of countries based in the search input.
       `,
       img: metrics,
-      gif: metricsGif,
+      // gif: metricsGif,
       stack: [['JavaScript', stack.javaScript], ['React', stack.react], ['Redux', stack.redux], ['Bootstrap', stack.bootstrap]],
       demo: 'https://metrics-web-app.onrender.com',
       source: 'https://github.com/c00p75/Metrics-WebApp',
@@ -93,7 +93,7 @@ const projects = {
         information from local storage as JavaScript objects and arrays.
       `,
       img: awesomeBooks,
-      gif: awesomeBooksGif,
+      // gif: awesomeBooksGif,
       stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
       demo: 'https://c00p75.github.io/Awesome-books-with-ES6',
       source: 'https://github.com/c00p75/Awesome-books-with-ES6',
@@ -212,7 +212,7 @@ const projects = {
       the library data is read from and written to a JSON file using Ruby.
       `,
       img: lib,
-      gif: libGif,
+      // gif: libGif,
       stack: [['Ruby', stack.ruby], ['Rspec', stack.rspec]],
       contributors: [['@Amen-Musingarimi', 'https://github.com/Amen-Musingarimi']],
       demo: 'https://codesandbox.io/p/github/c00p75/oop-school-library/draft/sleepy-wind',
