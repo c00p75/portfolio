@@ -239,7 +239,7 @@ const projects = {
       gif: cycleCruiseGif,
       stack: [['Ruby on Rails', stack.ror], ['PostgreSQL', stack.postgresql], ['React', stack.react], ['Redux', stack.redux], ['Rspec', stack.rspec], ['Bootstrap', stack.bootstrap]],
       contributors: [['@maov19,', 'https://github.com/maov19'], ['@adamilare,', 'https://github.com/adamilare'], ['@veronica365', 'https://github.com/veronica365']],
-      demo: 'https://thecyclecruise.onrender.com/',
+      demo: 'https://cycle-cruise.onrender.com/',
       source: 'https://github.com/c00p75/appointment-app-frontend',
     },
   ],
