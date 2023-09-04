@@ -4,7 +4,7 @@ import conferenceGif from '../assets/images/projects/conference.png';
 import leaderboard from '../assets/images/projects/leaderboard-sm.jpg';
 import leaderboardGif from '../assets/images/projects/leaderboard.jpg';
 import chowtime from '../assets/images/projects/chowtime-sm.jpg';
-import chowtimeGif from '../assets/images/projects/Chowtime.gif';
+import chowtimeGif from '../assets/images/projects/chowtime.gif';
 import spaceTravellers from '../assets/images/projects/space-travellers-sm.jpg';
 import spaceTravellersGif from '../assets/images/projects/space-travellers.jpg';
 import awesomeBooks from '../assets/images/projects/awesome-books.png';
