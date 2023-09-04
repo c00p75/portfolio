@@ -540,6 +540,16 @@
   .project-img-box::before,
   .project-text {
     transition: 0.3s ease-in-out;
+    opacity: 0;
+  }
+
+  .project-text {
+    top: 50%;
+    bottom: 0;
+  }
+
+  .project-img-box::before {
+    height: 100% !important;
   }
 
   .project-img-box:hover::before {
@@ -555,7 +565,7 @@
   }
 
   .show-summary::before {
-    height: 100% !important;
+    opacity: 1;
   }
 
   .show-summary .project-text {

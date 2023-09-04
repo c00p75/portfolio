@@ -3,12 +3,16 @@ import stack from './stack';
 const skills = {
   frontend: [
     {
-      name: 'React',
-      img: stack.react,
+      name: 'TypeScript',
+      img: stack.typeScript,
     },
     {
       name: 'JavaScript',
       img: stack.javaScript,
+    },
+    {
+      name: 'React JS',
+      img: stack.react,
     },
     {
       name: 'Redux',
@@ -79,6 +83,10 @@ const skills = {
       img: stack.vscode,
     },
     {
+      name: 'AWS',
+      img: stack.aws,
+    },
+    {
       name: 'Postman',
       img: stack.postman,
     },
@@ -97,10 +105,6 @@ const skills = {
     {
       name: 'RSpec',
       img: stack.rspec,
-    },
-    {
-      name: 'Chrome Dev Tools',
-      img: stack.chromeDev,
     },
   ],
   softskills: [

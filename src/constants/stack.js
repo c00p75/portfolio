@@ -27,6 +27,8 @@ import teamWork from '../assets/images/teck-stacks/team.png';
 import remoteCollaboration from '../assets/images/teck-stacks/remote_colab.png';
 import criticalThinking from '../assets/images/teck-stacks/critical_thinking.png';
 import chromeDev from '../assets/images/teck-stacks/chromeDev.png';
+import typeScript from '../assets/images/teck-stacks/typescript.png';
+import aws from '../assets/images/teck-stacks/aws.png';
 
 export default {
   react,
@@ -58,4 +60,6 @@ export default {
   chromeDev,
   nodejs,
   sql,
+  typeScript,
+  aws,
 };
