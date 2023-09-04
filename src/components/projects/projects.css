@@ -240,6 +240,7 @@
 
 .modal-body {
   overflow: auto;
+  flex-direction: column;
 }
 
 .modal-body img {
@@ -575,7 +576,7 @@
 
   .modal {
     padding: 0 !important;
-    overflow: auto !important;
+    overflow: hidden !important;
   }
 
   .modal h1 {
@@ -601,10 +602,9 @@
   .modal-content {
     border-radius: 0 !important;
     padding: 0;
-  }
-
-  .modal-body {
-    flex-direction: column;
+    position: absolute;
+    top: 0;
+    height: 100%;
   }
 
   .modal-footer > div {
@@ -624,6 +624,11 @@
   .project-info > div:first-child {
     text-align: center;
     margin: 1em 0;
+  }
+
+  .modal-tech-stack {
+    max-width: none;
+    margin: 0 auto;
   }
 
   .modal-actions {

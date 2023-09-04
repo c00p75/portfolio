@@ -1,11 +1,11 @@
 const projectCardObserver = (cards) => {
   const scale = new IntersectionObserver((cards) => {
     cards.forEach((card) => { card.target.classList.toggle('scale', card.isIntersecting); });
-  }, { threshold: 0.55 });
+  }, { threshold: 0.8 });
 
   const summary = new IntersectionObserver((cards) => {
     cards.forEach((card) => { card.target.classList.toggle('show-summary', card.isIntersecting); });
-  }, { threshold: 0.9 });
+  }, { threshold: 0.75 });
 
   cards.forEach((card) => {
     scale.observe(card);
