@@ -4,15 +4,15 @@ import conferenceGif from '../assets/images/projects/conference.png';
 import leaderboard from '../assets/images/projects/leaderboard-sm.jpg';
 import leaderboardGif from '../assets/images/projects/leaderboard.jpg';
 import chowtime from '../assets/images/projects/chowtime-sm.jpg';
-import chowtimeGif from '../assets/images/projects/chowtime.jpg';
+import chowtimeGif from '../assets/images/projects/Chowtime.gif';
 import spaceTravellers from '../assets/images/projects/space-travellers-sm.jpg';
 import spaceTravellersGif from '../assets/images/projects/space-travellers.jpg';
 import awesomeBooks from '../assets/images/projects/awesome-books.png';
-// import awesomeBooksGif from '../assets/images/projects/awesome-books.gif';
+import awesomeBooksGif from '../assets/images/projects/awesome-books.gif';
 import metrics from '../assets/images/projects/metrics.jpg';
-// import metricsGif from '../assets/images/projects/metrics.gif';
+import metricsGif from '../assets/images/projects/metrics.gif';
 import viand from '../assets/images/projects/viand-sm.jpg';
-import viandGif from '../assets/images/projects/viand.jpg';
+import viandGif from '../assets/images/projects/viand.gif';
 import lib from '../assets/images/projects/oop.jpg';
 import catalogOfMyThings from '../assets/images/projects/catalog-of-my-things.jpg';
 // import libGif from '../assets/images/projects/oop.gif';
@@ -74,7 +74,7 @@ const projects = {
         which filters the list of countries based in the search input.
       `,
       img: metrics,
-      // gif: metricsGif,
+      gif: metricsGif,
       stack: [['JavaScript', stack.javaScript], ['React', stack.react], ['Redux', stack.redux], ['Bootstrap', stack.bootstrap]],
       demo: 'https://metrics-web-app.onrender.com',
       source: 'https://github.com/c00p75/Metrics-WebApp',
@@ -93,7 +93,7 @@ const projects = {
         information from local storage as JavaScript objects and arrays.
       `,
       img: awesomeBooks,
-      // gif: awesomeBooksGif,
+      gif: awesomeBooksGif,
       stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
       demo: 'https://c00p75.github.io/Awesome-books-with-ES6',
       source: 'https://github.com/c00p75/Awesome-books-with-ES6',
