@@ -34,7 +34,7 @@ const Projects = () => {
               and thrive in the collaborative spirit of remote teams.
               Each personal and collaborative project allowed me to explore new technologies,
               solve a unique challenge, and experiment with unique concepts.
-              I&apos;m excited to share share my journey with you.
+              I&apos;m excited to share my journey with you.
             </p>
             <span className="current-section" id="current-section-projects" />
             <Tab.Container id="projects-tab" defaultActiveKey="frontend">

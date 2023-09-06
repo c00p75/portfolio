@@ -63,7 +63,7 @@ const Banner = () => {
               <p>
                 I can help you build or maintain your innovative web solutions.
                 Look through some of my work and experience! If you like what you see
-                don’t hestiate to contact me.
+                do not hesitate to contact me.
               </p>
               <a href="#connect">
                 Let&apos;s Connect
