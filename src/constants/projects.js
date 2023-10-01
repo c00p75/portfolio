@@ -20,6 +20,8 @@ import blog from '../assets/images/projects/blog-app-sm.jpg';
 import blogGif from '../assets/images/projects/blog-app.gif';
 import cycleCruise from '../assets/images/projects/cyclecruise-sm.jpg';
 import cycleCruiseGif from '../assets/images/projects/cyclecruise.jpg';
+import futureEd from '../assets/images/projects/future-ed.jpg';
+import futureEdGif from '../assets/images/projects/future-ed.gif';
 
 const projects = {
   frontend: [
@@ -241,6 +243,26 @@ const projects = {
       contributors: [['@maov19,', 'https://github.com/maov19'], ['@adamilare,', 'https://github.com/adamilare'], ['@veronica365', 'https://github.com/veronica365']],
       demo: 'https://cycle-cruise.onrender.com/',
       source: 'https://github.com/c00p75/appointment-app-frontend',
+    },
+    {
+      organization: 'Personal Project',
+      type: 'Fullstack',
+      date: '2023',
+      title: 'FutureEd Foundation',
+      summary: 'Payment process simulation',
+      description: `
+      This project for a non-profit organization offers donors a seamless payment process while dynamically presenting an
+      amount in their local currency. The project includes features such as an input field for users to specify the payment amount in USD
+      and integration with an external API to convert the entered USD amount into the user's local currency based on their selected
+      country from a dropdown menu. Additionally, the project incorporates payment gateway integrations for both PayPal and
+      Sparcopay to facilitate debit card and mobile money transactions securely. To ensure an optimal user experience, the project
+      prioritizes responsiveness and an appealing visual design.
+      `,
+      img: futureEd,
+      gif: futureEdGif,
+      stack: [['Node', stack.nodejs], ['TypeScript', stack.typeScript], ['React', stack.react], ['Jest', stack.jest]],
+      demo: 'https://future-ed.onrender.com/',
+      source: 'https://github.com/c00p75/takehome-payment-gateway',
     },
   ],
 };
