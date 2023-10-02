@@ -15,7 +15,6 @@ import viand from '../assets/images/projects/viand-sm.jpg';
 import viandGif from '../assets/images/projects/viand.gif';
 import lib from '../assets/images/projects/oop.jpg';
 import catalogOfMyThings from '../assets/images/projects/catalog-of-my-things.jpg';
-// import libGif from '../assets/images/projects/oop.gif';
 import blog from '../assets/images/projects/blog-app-sm.jpg';
 import blogGif from '../assets/images/projects/blog-app.gif';
 import cycleCruise from '../assets/images/projects/cyclecruise-sm.jpg';
