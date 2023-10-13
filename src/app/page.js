@@ -1,7 +1,17 @@
+import About from "@/components/about/About";
+import Banner from "@/components/banner/Banner";
+import Contact from "@/components/contact/Contact";
+import Projects from "@/components/projects/Projects";
+import Skills from "@/components/skills/Skills";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      Hello Next
+    <main>
+      <Banner />
+      <Skills />
+      <Projects />
+      <About />
+      <Contact />
     </main>
   )
 }

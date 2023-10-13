@@ -1,0 +1,197 @@
+#connect {
+  background: linear-gradient(90.21deg, #aa367c -5.91%, #4a2fbd 111.58%);
+  padding: 60px 0 100px 0;
+  margin-top: -15em;
+  z-index: 1;
+  position: relative;
+}
+
+#connect .img-container {
+  transform: scale(0);
+  transition: all 1s ease-in-out;
+}
+
+#connect .scale {
+  transform: scale(1) !important;
+}
+
+#connect img {
+  width: 92%;
+}
+
+#dark #connect img {
+  width: 85%;
+}
+
+h2 {
+  font-size: 45px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+form input,
+form textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  color: #fff;
+  margin: 0 0 8px 0;
+  padding: 18px 26px;
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 0.8px;
+  transition: 0.3s ease-in-out;
+}
+
+form input:focus,
+form textarea:focus {
+  background: rgba(255, 255, 255, 1);
+  color: #121212;
+}
+
+form input::placeholder,
+form textarea::placeholder {
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+}
+
+form input:focus::placeholder,
+form textarea:focus::placeholder {
+  color: #121212;
+  opacity: 0.8;
+}
+
+form button {
+  position: relative;
+  width: 100%;
+  font-weight: 700;
+  color: #000;
+  background-color: #fff;
+  padding: 0.8em 1em;
+  font-size: 18px;
+  margin-top: 25px;
+  border-radius: 10px;
+  transition: 0.3s ease-in-out;
+}
+
+form button span {
+  z-index: 1;
+  position: relative;
+}
+
+form button:hover {
+  filter: invert();
+}
+
+.loader {
+  position: relative;
+  top: 1em;
+  margin-left: 0.5em;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.ball {
+  margin: 0 0.1em;
+  list-style: none;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+}
+
+.ball:nth-child(1) {
+  animation: bounce-1 2.1s ease-in-out infinite;
+}
+
+@keyframes bounce-1 {
+  50% {
+    transform: translateY(-18px);
+    backdrop-filter: invert(1);
+  }
+}
+
+.ball:nth-child(2) {
+  animation: bounce-3 2.1s ease-in-out 0.3s infinite;
+}
+
+@keyframes bounce-2 {
+  50% {
+    transform: translateY(-18px);
+    backdrop-filter: invert(1);
+  }
+}
+
+.ball:nth-child(3) {
+  animation: bounce-3 2.1s ease-in-out 0.6s infinite;
+}
+
+@keyframes bounce-3 {
+  50% {
+    transform: translateY(-18px);
+    backdrop-filter: invert(1);
+  }
+}
+
+.sent-btn {
+  z-index: 0;
+}
+
+.sent-btn svg {
+  margin: 0 0.5em;
+  height: 1.3em !important;
+  fill: black;
+  transition: 0.3s ease-in-out;
+}
+
+form button:hover .sent-btn svg {
+  fill: white !important;
+}
+
+#light #connect {
+  background: linear-gradient(90.21deg, aliceblue -5.91%, lavender 111.58%);
+  color: black;
+  border-top-right-radius: 100px;
+}
+
+#light form input,
+#light form textarea {
+  border-color: gainsboro;
+  background: rgba(255, 255, 255);
+}
+
+#light form input::placeholder,
+#light form textarea::placeholder {
+  color: black;
+}
+
+#light form button {
+  color: white;
+  background-color: #6070ff;
+}
+
+#light form button:hover {
+  filter: none !important;
+  color: white;
+  background-color: #344563;
+}
+
+@media (max-width: 992px) {
+  #connect {
+    padding-bottom: 5em;
+  }
+
+  #connect h2 {
+    text-align: center;
+    margin-top: 1em;
+  }
+
+  #connect form {
+    padding: 0 0.5em;
+  }
+
+  #light #connect {
+    border-top-right-radius: 60px;
+  }
+}
