@@ -5,11 +5,11 @@ import { Col, Container, Row } from 'react-bootstrap';
 import './about.css';
 import Image from 'next/image';
 import me from 'public/images/me.jpg';
-// import { ThemeContext } from '../ThemeContext';
+import colorSharp2 from 'public/images/color-sharp2.png'
+import { ThemeContext } from '@/app/theme-provider';
 
 const About = () => {
-  // const { darkMode } = useContext(ThemeContext);
-  const darkMode = false;
+  const { darkMode } = useContext(ThemeContext);
   return (
     <section id="about">
       <span className="current-section" id="current-section-about" />
@@ -40,27 +40,11 @@ const About = () => {
             </a>
           </Col>
           <Col xs={12} md={6} className="mb-1">
-            {/* <img src={me} alt="George M'sapenda" loading="lazy" /> */}
-            <Image
-              src={me}
-              alt="George Msapenda"
-              loading="lazy"
-              quality={100}
-            />
+            <Image src={me} alt="George Msapenda" loading="lazy" quality={100} />
           </Col>
         </Row>
       </Container>
-      {darkMode && (
-        // <img src={colorSharp2} alt="background" className="bg-right" loading="lazy" />
-        <Image
-          src="/images/color-sharp2.png"
-          alt="Description of the image"
-          layout="responsive"
-          loading="lazy"
-          width={300}
-          height={200}
-          quality={100}
-        />
+      {darkMode && (<Image src={colorSharp2} alt="background glow" loading="lazy" quality={100} className="bg-right"/>
       )}
     </section>
   );

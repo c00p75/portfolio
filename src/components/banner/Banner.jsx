@@ -2,18 +2,18 @@
 
 import { useContext, useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-// import { ThemeContext } from '../ThemeContext';
 import './banner.css';
 import Image from 'next/image';
 import astro1 from '/public/images/astronaut.png';
 import astro2 from '/public/images/astro4.png';
 import bg from '/public/images/bg-light.jpg';
+import bg2 from '/public/images/banner-bg.png';
+import { ThemeContext } from '@/app/theme-provider';
 
 const description = ['Software Developer!', 'Web Designer!', 'Tech Fanatic!'];
 
 const Banner = () => {
-  // const { darkMode } = useContext(ThemeContext);
-  const darkMode = false;
+  const { darkMode } = useContext(ThemeContext);
   const [loopNum, setLoopNum] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [text, setText] = useState('');
@@ -55,8 +55,9 @@ const Banner = () => {
   return (
     <>
       <span className="current-section" id="current-section-home" />
-      <section className="banner" id="home" style={{backgroundImage: bg}}>
-        <Image alt="background" src={bg} placeholder="blur" quality={100} fill sizes="100vw" style={{objectFit: 'cover', borderBottomLeftRadius: '10%'}} />
+      <section className="banner" id="home">
+        {!darkMode && (<Image alt="background" src={bg} placeholder="blur" quality={100} fill sizes="100vw" style={{objectFit: 'cover', borderBottomLeftRadius: '10%'}} />)}
+        {darkMode && (<Image alt="background" src={bg2} placeholder="blur" quality={100} fill sizes="100vw" style={{objectFit: 'cover', borderBottomLeftRadius: '10%'}} />)}
         <Container>
           <Row className="align-items-center justify-content-center">
             <Col xs={12} md={6} xl={7} className="mb-1">
