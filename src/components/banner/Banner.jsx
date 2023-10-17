@@ -1,14 +1,19 @@
+'use client'
+
 import { useContext, useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import { ThemeContext } from '../ThemeContext';
-import headerImg from '../../assets/images/astro4.png';
-import astro from '../../assets/images/astronaut.png';
+// import { ThemeContext } from '../ThemeContext';
 import './banner.css';
+import Image from 'next/image';
+import astro1 from '/public/images/astronaut.png';
+import astro2 from '/public/images/astro4.png';
+import bg from '/public/images/bg-light.jpg';
 
 const description = ['Software Developer!', 'Web Designer!', 'Tech Fanatic!'];
 
 const Banner = () => {
-  const { darkMode } = useContext(ThemeContext);
+  // const { darkMode } = useContext(ThemeContext);
+  const darkMode = false;
   const [loopNum, setLoopNum] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [text, setText] = useState('');
@@ -50,7 +55,8 @@ const Banner = () => {
   return (
     <>
       <span className="current-section" id="current-section-home" />
-      <section className="banner" id="home">
+      <section className="banner" id="home" style={{backgroundImage: bg}}>
+        <Image alt="background" src={bg} placeholder="blur" quality={100} fill sizes="100vw" style={{objectFit: 'cover', borderBottomLeftRadius: '10%'}} />
         <Container>
           <Row className="align-items-center justify-content-center">
             <Col xs={12} md={6} xl={7} className="mb-1">
@@ -77,8 +83,8 @@ const Banner = () => {
               </a>
             </Col>
             <Col xs={12} md={6} xl={5}>
-              {darkMode && (<div className="grow"><img src={headerImg} alt="Header Img" className="header-img" loading="lazy" /></div>)}
-              {!darkMode && (<div className="grow"><img src={astro} alt="Header Img" className="header-img" loading="lazy" /></div>)}
+              {darkMode && (<div className="grow"><Image src={astro2} alt="Header Img" className="header-img" loading="lazy" quality={100} /></div>)}
+              {!darkMode && (<div className="grow"><Image src={astro1} alt="Header Img" className="header-img" loading="lazy" quality={100} /></div>)}
             </Col>
           </Row>
         </Container>

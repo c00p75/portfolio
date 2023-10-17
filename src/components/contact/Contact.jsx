@@ -1,14 +1,18 @@
+'use client'
+
 import './contact.css';
 import { useState, useEffect, useContext } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useForm, ValidationError } from '@formspree/react';
-import contactImg from '../../assets/images/astro2.png';
-import contactImg2 from '../../assets/images/astro3.png';
-import { scaleObserver } from '../../constants/observer';
-import { ThemeContext } from '../ThemeContext';
+import contactImg from '/public/images/astro2.png';
+import contactImg2 from '/public/images/astro3.png';
+import { scaleObserver } from '@/utils/observer';
+import Image from 'next/image';
+// import { ThemeContext } from '../ThemeContext';
 
 const Contact = () => {
-  const { darkMode } = useContext(ThemeContext);
+  // const { darkMode } = useContext(ThemeContext);
+  const darkMode = false;
 
   const initialFormDetails = {
     firstName: '',
@@ -49,8 +53,8 @@ const Contact = () => {
       <Container>
         <Row className="align-items-center">
           <Col md={6} className="img-container">
-            {darkMode && (<div className="grow"><img src={contactImg} alt="Contact me" loading="lazy" /></div>)}
-            {!darkMode && (<div className="grow"><img src={contactImg2} alt="Contact me" loading="lazy" /></div>)}
+            {darkMode && (<div className="grow"><Image quality={100} src={contactImg} alt="Contact me" loading="lazy" /></div>)}
+            {!darkMode && (<div className="grow"><Image quality={100} src={contactImg2} alt="Contact me" loading="lazy" /></div>)}
           </Col>
           <Col md={6}>
             <h2>Get In Touch</h2>

@@ -77,17 +77,17 @@
   border-radius: 20px;
 }
 
-.nav-link#projects-tab-tab-frontend {
+.nav-link#projects-tab-tab-fullstack {
   border: 1px solid rgb(255, 255, 255, 0.3);
   border-radius: 55px 0 0 55px !important;
 }
 
-.nav-link#projects-tab-tab-backend {
+.nav-link#projects-tab-tab-frontend {
   border-top: 1px solid rgb(255, 255, 255, 0.3);
   border-bottom: 1px solid rgb(255, 255, 255, 0.3);
 }
 
-.nav-link#projects-tab-tab-fullstack {
+.nav-link#projects-tab-tab-backend {
   border: 1px solid rgb(255, 255, 255, 0.3);
   border-radius: 0 55px 55px 0;
 }
@@ -194,7 +194,6 @@
   width: 2em;
   height: 2em;
   border-radius: 50%;
-  margin-right: -0.5em;
   filter: drop-shadow(2px 4px 6px black);
   opacity: 0.8;
   background: rgba(0, 0, 0, 0.5);
@@ -304,6 +303,7 @@
   position: relative;
   display: inline-block;
   opacity: inherit;
+  margin-right: -0.5em !important;
 }
 
 .tooltip .tooltiptext {

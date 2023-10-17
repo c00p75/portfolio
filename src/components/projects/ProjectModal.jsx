@@ -1,10 +1,13 @@
+'use client'
+
 import { Modal, Row, Col } from 'react-bootstrap';
-import { PropTypes } from 'prop-types';
-import { useContext } from 'react';
-import { ThemeContext } from '../ThemeContext';
+import Image from 'next/image';
+// import { useContext } from 'react';
+// import { ThemeContext } from '../ThemeContext';
 
 const ProjectModal = ({ show, setShow, project }) => {
-  const { darkMode } = useContext(ThemeContext);
+  // const { darkMode } = useContext(ThemeContext);
+  const darkMode = false;
   return (
     <>
       {project && (
@@ -19,13 +22,13 @@ const ProjectModal = ({ show, setShow, project }) => {
           <Row>
             <Col sm={12} md={6}>
               <a href={project.demo} target="_blank" rel="noreferrer">
-                {project.gif && (<img src={project.gif} alt="project screenshot" />)}
-                {!project.gif && (<img src={project.img} alt="project screenshot" />)}
+                {project.gif && (<Image src={project.gif} alt="project screenshot" />)}
+                {!project.gif && (<Image src={project.img} alt="project screenshot" />)}
               </a>
             </Col>
             <Col sm={12} md={6}>
               <div className="project-info px-3">
-                <div className="mb-3 fw-bold">
+                <div className="mb-3 fw-bold d-flex justify-content-center align-items-center ">
                   <span>{project.organization}</span>
                   <span className="dot"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="white" d="M12 10a2 2 0 0 0-2 2a2 2 0 0 0 2 2c1.11 0 2-.89 2-2a2 2 0 0 0-2-2Z" /></svg></span>
                   <span>{project.type}</span>
@@ -76,9 +79,3 @@ const ProjectModal = ({ show, setShow, project }) => {
 };
 
 export default ProjectModal;
-
-ProjectModal.propTypes = {
-  show: PropTypes.bool.isRequired,
-  setShow: PropTypes.func.isRequired,
-  project: PropTypes.instanceOf(Object).isRequired,
-};

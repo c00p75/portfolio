@@ -1,13 +1,15 @@
+'use client'
+
 import { useContext } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import me from '../../assets/images/me.jpg';
-import resume from '../../assets/docs/Resume.pdf';
-import colorSharp2 from '../../assets/images/color-sharp2.png';
 import './about.css';
-import { ThemeContext } from '../ThemeContext';
+import Image from 'next/image';
+import me from 'public/images/me.jpg';
+// import { ThemeContext } from '../ThemeContext';
 
 const About = () => {
-  const { darkMode } = useContext(ThemeContext);
+  // const { darkMode } = useContext(ThemeContext);
+  const darkMode = false;
   return (
     <section id="about">
       <span className="current-section" id="current-section-about" />
@@ -33,14 +35,33 @@ const About = () => {
               I&apos;m great with documentation, and proficient in a range
               of modern technologies including Javacsript, Ruby, Python, and SQL.
             </p>
-            <a href={resume} target="_blank" rel="noreferrer" className="btn btn-info">Download my resume</a>
+            <a href="/docs/Resume.pdf" target="_blank" rel="noreferrer" className="btn btn-info">
+              Download my resume
+            </a>
           </Col>
           <Col xs={12} md={6} className="mb-1">
-            <img src={me} alt="George M'sapenda" loading="lazy" />
+            {/* <img src={me} alt="George M'sapenda" loading="lazy" /> */}
+            <Image
+              src={me}
+              alt="George Msapenda"
+              loading="lazy"
+              quality={100}
+            />
           </Col>
         </Row>
       </Container>
-      {darkMode && (<img src={colorSharp2} alt="background" className="bg-right" loading="lazy" />)}
+      {darkMode && (
+        // <img src={colorSharp2} alt="background" className="bg-right" loading="lazy" />
+        <Image
+          src="/images/color-sharp2.png"
+          alt="Description of the image"
+          layout="responsive"
+          loading="lazy"
+          width={300}
+          height={200}
+          quality={100}
+        />
+      )}
     </section>
   );
 };

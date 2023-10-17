@@ -1,15 +1,19 @@
+'use client'
+
 import './skills.css';
 import { Col, Container, Row } from 'react-bootstrap';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { useContext, useEffect } from 'react';
-import colorSharp from '../../assets/images/color-sharp.png';
-import skills from '../../constants/skills';
-import { ThemeContext } from '../ThemeContext';
-import { scaleObserver } from '../../constants/observer';
+import colorSharp from '/public/images/color-sharp.png';
+// import { ThemeContext } from '../ThemeContext';
+import Image from 'next/image';
+import skills from '@/constants/skills';
+import { scaleObserver } from '@/utils/observer';
 
 const Skills = () => {
-  const { darkMode } = useContext(ThemeContext);
+  // const { darkMode } = useContext(ThemeContext);
+  const darkMode = false;
   const responsive = {
     superLargeDesktop: {
       breakpoint: { max: 4000, min: 3000 },
@@ -59,7 +63,7 @@ const Skills = () => {
                     {skills.frontend.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} loading="lazy" />
+                          <Image quality={100} src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -73,7 +77,7 @@ const Skills = () => {
                     {skills.backend.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} loading="lazy" />
+                          <Image quality={100} src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -87,7 +91,7 @@ const Skills = () => {
                     {skills.tools.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} loading="lazy" />
+                          <Image quality={100} src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -101,7 +105,7 @@ const Skills = () => {
                     {skills.softskills.map((skill, index) => (
                       <Col sm={6} md={3} className="my-3 d-flex flex-column align-items-center justify-content-center sub-item-container" key={`item-${index + 1}`}>
                         <div className="sub-item">
-                          <img src={skill.img} alt={skill.name} loading="lazy" />
+                          <Image quality={100} src={skill.img} alt={skill.name} loading="lazy" />
                         </div>
                         <span>{skill.name}</span>
                       </Col>
@@ -113,7 +117,7 @@ const Skills = () => {
           </Col>
         </Row>
       </Container>
-      {darkMode && (<img className="bg-img-left" src={colorSharp} alt="background" />)}
+      {darkMode && (<Image quality={100} className="bg-img-left" src={colorSharp} alt="background" />)}
     </section>
   );
 };

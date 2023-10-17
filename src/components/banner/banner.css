@@ -1,8 +1,4 @@
 .banner {
-  background-image: url('../../assets/images/banner-bg.png');
-  background-position: top center;
-  background-size: cover;
-  background-repeat: no-repeat;
   padding-top: 5em;
   border-bottom-left-radius: 10%;
   position: relative;
@@ -80,7 +76,6 @@ div.grow {
 }
 
 #light .banner {
-  background-image: url('../../assets/images/bg-light.jpg');
   background-color: whitesmoke;
   color: #344563 !important;
 }
