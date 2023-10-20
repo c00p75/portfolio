@@ -49,7 +49,8 @@ const sectionObserver = (element) => {
       if (e.target.id === 'current-section-skills') { setActive(1); }
       if (e.target.id === 'current-section-projects') { setActive(2); }
       if (e.target.id === 'current-section-about') { setActive(3); }
-      if (e.target.id === 'current-section-contact') { removeActive(); }
+      if (e.target.id === 'current-section-connect') { setActive(4); }
+      if (e.target.id === 'current-section-blog') { removeActive(); }
     });
   }, {
     threshold: 1,

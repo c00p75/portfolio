@@ -50,6 +50,7 @@ const Contact = () => {
 
   return (
     <section id="connect">
+      <span className="current-section" id="current-section-connect" />
       <Container>
         <Row className="align-items-center">
           <Col md={6} className="img-container">
@@ -74,7 +75,6 @@ const Contact = () => {
                 </Col>
                 <Col sm={12} className="px-1">
                   <textarea rows="6" name="message" value={formDetails.message} placeholder="Message" onChange={(e) => onFormUpdate('message', e.target.value)} required />
-                  <span className="current-section" id="current-section-contact" />
                   <button type="submit" disabled={status.submitting} className="d-flex align-items-center justify-content-center">
 
                     {status.submitting && (

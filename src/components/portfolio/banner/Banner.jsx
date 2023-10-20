@@ -72,7 +72,7 @@ const Banner = () => {
                 Look through some of my work and experience! If you like what you see
                 do not hesitate to contact me.
               </p>
-              <a href="#connect">
+              <a href="#connect" className="d-flex align-items-center">
                 Let&apos;s Connect
                 {' '}
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">

@@ -1,10 +1,10 @@
 'use client'
 
-import About from "@/components/about/About";
-import Banner from "@/components/banner/Banner";
-import Contact from "@/components/contact/Contact";
-import Projects from "@/components/projects/Projects";
-import Skills from "@/components/skills/Skills";
+import About from "@/components/portfolio/about/About";
+import Banner from "@/components/portfolio/banner/Banner";
+import Contact from "@/components/portfolio/contact/Contact";
+import Projects from "@/components/portfolio/projects/Projects";
+import Skills from "@/components/portfolio/skills/Skills";
 import { sectionObserver, visibilityObserver } from "@/utils/observer";
 import { useContext, useEffect } from "react";
 import { ThemeContext } from "./theme-provider";
