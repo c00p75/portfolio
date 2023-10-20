@@ -1,0 +1,67 @@
+section {
+  height: auto !important;
+}
+
+#first-featured-blog {
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+
+.featured-blog:hover {
+  box-shadow: 0 0 2px 1px gainsboro;
+}
+
+.featured-blog h1 {
+  transition: all 0.2s ease-in-out;
+}
+
+.featured-blog img {
+  transition: all 0.2s ease-in-out;
+}
+
+.featured-blog:hover h1 {
+  transform: scale(1.02);
+}
+
+.featured-blog:hover img {
+  transform: scale(1.09);
+}
+
+
+.feature-image {
+  width: 30%;
+  height: auto;
+}
+
+#first-featured-blog .cover-blog-link {
+  border-color: transparent !important;
+}
+
+#first-featured-blog .cover-blog-overlay {
+  height: 99.5%;
+  width: 99.5%;
+  margin-bottom: 0.1%;
+}
+
+#first-featured-blog:hover .cover-blog-link {
+  border: 1px solid gainsboro !important;
+}
+
+#first-featured-blog:hover .cover-blog-overlay {
+  height: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+#light #first-featured-blog {
+  border-color: darkslategrey !important;
+}
+
+#light #first-featured-blog:hover .cover-blog-link {
+  border: 1px solid gray !important;
+}
+
+#light .featured-blog:hover {
+  box-shadow: 0 0 2px 1px gray;
+}

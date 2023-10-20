@@ -1,6 +1,7 @@
 import Image from "next/image";
 import "./blogsHomeCover.css";
 import Link from "next/link";
+import { format } from "date-fns";
 
 const BlogsHomeCover = ({blog}) => {
   console.log(blog);
@@ -14,7 +15,8 @@ const BlogsHomeCover = ({blog}) => {
         <h1 className="text-capitalize fw-bolder">
           {blog.title}
         </h1>
-        <p>{blog.description}</p>        
+        <p>{blog.description}</p>  
+        <span className="date-text">{format(new Date(blog.publishedAt), "MMM dd, yyyy")}</span>      
       </Link>
       <Image
         src={blog.image.filePath.replace("../public", "")}

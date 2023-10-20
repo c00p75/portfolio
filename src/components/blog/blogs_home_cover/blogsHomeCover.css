@@ -70,6 +70,10 @@
    0 12px 10px -3px #acbac2;
 }
 
+.date-text {
+  color: gainsboro !important;
+}
+
 #light .cover-blog-container {
   border-color: darkslategrey !important;
 }
@@ -100,4 +104,8 @@
   box-shadow: 0 2px 0 -2px gainsboro,
    0 8px 0 -4px gray,
    0 12px 10px -3px black;
+}
+
+#light .date-text {
+  color: gray !important;
 }

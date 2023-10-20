@@ -5,8 +5,9 @@ import "./globals.css";
 import {allBlogs} from "/.contentlayer/generated";
 import BlogsHomeCover from "@/components/blog/blogs_home_cover/BlogsHomeCover";
 import { ThemeContext } from "../theme-provider";
-import FeaturedBlogs from "@/components/blog/featuredBlogs/FeaturedBlogs";
+import FeaturedBlogs from "@/components/blog/featured_blogs/FeaturedBlogs";
 import { sortBlogs } from "@/utils";
+import RecentPosts from "@/components/blog/recent_posts/RecentPosts";
 
 export default function Blog() {
   const { darkMode } = useContext(ThemeContext);
@@ -26,6 +27,7 @@ export default function Blog() {
         <span className="current-section" id="current-section-blog" />
         <BlogsHomeCover blog={sortedBlogs[1]} />
         <FeaturedBlogs blogs={sortedBlogs} />
+        <RecentPosts blogs={sortedBlogs} />
       </main>
     </section>
   )
