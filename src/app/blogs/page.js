@@ -15,19 +15,19 @@ export default function Blog() {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const sectionMark = document.querySelectorAll('.current-section');
-      visibilityObserver(sections, 0.2);
+      visibilityObserver(sections, 0.1);
       sectionObserver(sectionMark);
     }, 1000);
   });
 
   const sortedBlogs = sortBlogs(allBlogs);
   return (
-    <section className="flex-center" id={darkMode ? 'dark' : 'light'}>
+    <section className="flex-center" id={darkMode ? 'dark' : 'light'} style={{opacity: "1"}}>
       <main className="container flex-center flex-col">
         <span className="current-section" id="current-section-blog" />
         <BlogsHomeCover blog={sortedBlogs[1]} />
         <FeaturedBlogs blogs={sortedBlogs} />
-        <RecentPosts blogs={sortedBlogs} />
+        <RecentPosts blogs={sortedBlogs.slice(1,6)} />
       </main>
     </section>
   )

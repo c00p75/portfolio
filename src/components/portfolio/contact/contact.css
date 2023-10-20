@@ -168,13 +168,13 @@ form button:hover .sent-btn svg {
 
 #light form button {
   color: white;
-  background-color: #6070ff;
+  background-color: #6070ff !important;
 }
 
 #light form button:hover {
   filter: none !important;
   color: white;
-  background-color: #344563;
+  background-color: #344563 !important;
 }
 
 @media (max-width: 992px) {

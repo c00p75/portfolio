@@ -10,14 +10,14 @@ const FeaturedBlogs = ({blogs}) => {
   const thirdFeaturedBlog = blogs[6]
   return (
     <section className="flex-col align-items-start">
-      <h1 className="fw-bold">Featured Posts</h1>
-      <div className="row mt-4">
+      <h1 className="fw-bold mb-4">Featured Posts</h1>
+      <div className="row">
         <div className="col-12 col-md-6">
-          <article className="cover-blog-container position-relative d-flex flex-center overflow-hidden" id="first-featured-blog">
+          <article className="cover-blog-container position-relative d-flex flex-center overflow-hidden mb-3 mb-md-0" id="first-featured-blog">
             <div className="cover-blog-overlay" />
             <Link href="#" className="cover-blog-link border text-light z-1 d-flex flex-column justify-content-end p-5">
-              <h2 className="text-capitalize tag-btn fw-medium p-3 border fs-5">
-                <Link href={`/categories/${firstFeaturedBlog.tags[0]}`}>{firstFeaturedBlog.tags[0]}</Link>
+              <h2 className="text-capitalize tag-btn fw-medium border fs-5">
+                <Link href={`blogs/categories/${firstFeaturedBlog.tags[0]}`} className="flex-center p-3">{firstFeaturedBlog.tags[0]}</Link>
               </h2>
               <h1 className="text-capitalize fw-bolder fs-4">
                 {firstFeaturedBlog.title}
@@ -53,10 +53,10 @@ const FeaturedBlogs = ({blogs}) => {
               />
 
               <div className="d-flex flex-column p-3">
-                <h2 className="text-capitalize tag-btn fw-medium p-3 border fs-6">
-                  <Link href={`/categories/${secondFeaturedBlog.tags[0]}`}>{secondFeaturedBlog.tags[0]}</Link>
+                <h2 className="text-capitalize tag-btn fw-medium border fs-6">
+                  <Link href={`blogs/categories/${secondFeaturedBlog.tags[0]}`} className="flex-center p-3">{secondFeaturedBlog.tags[0]}</Link>
                 </h2>
-                <h1 className="text-capitalize fw-semibold fs-5">
+                <h1 className="text-capitalize fw-semibold">
                   {secondFeaturedBlog.title}
                 </h1>
                 <span className="date-text">{format(new Date(secondFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>
@@ -79,10 +79,10 @@ const FeaturedBlogs = ({blogs}) => {
               />
 
               <div className="d-flex flex-column p-3">
-                <h2 className="text-capitalize tag-btn fw-medium p-3 border fs-6">
-                  <Link href={`/categories/${thirdFeaturedBlog.tags[0]}`}>{thirdFeaturedBlog.tags[0]}</Link>
+                <h2 className="text-capitalize tag-btn fw-medium border fs-6">
+                  <Link href={`blogs/categories/${thirdFeaturedBlog.tags[0]}`} className="flex-center p-3">{thirdFeaturedBlog.tags[0]}</Link>
                 </h2>
-                <h1 className="text-capitalize fw-semibold fs-5">
+                <h1 className="text-capitalize fw-semibold">
                   {thirdFeaturedBlog.title}
                 </h1>
                 <span className="date-text">{format(new Date(thirdFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>

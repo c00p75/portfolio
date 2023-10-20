@@ -5,3 +5,12 @@
 #light * {
   color: black !important;  
 }
+
+.simple-link:hover,
+.simple-link:focus {
+  text-decoration: underline !important;
+}
+
+section {
+  min-height: auto !important;
+}

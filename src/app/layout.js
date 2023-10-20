@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Inter, Manrope } from 'next/font/google'
 import NavBar from '@/components/navbar/NavBar';
 import { ThemeProvider } from './theme-provider';
+import Footer from '@/components/footer/Footer';
 
 const inter = Inter({ subsets: ['latin'], display: "swap", variable: "--font-in" })
 const manrope = Manrope({ subsets: ['latin'], display: "swap", variable: "--font-mr" })
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <NavBar />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

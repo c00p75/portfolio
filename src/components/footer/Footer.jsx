@@ -1,7 +1,8 @@
+import Link from 'next/link';
 import './footer.css';
 
 const Footer = () => (
-  <div className="bg-dark flex-center flex-column p-3 pb-0" id="footer">
+  <div className="bg-dark flex-center flex-column p-2 pb-0" id="footer">
     <div className="socials d-flex mt-1">
       <a href="https://github.com/c00p75" target="_blank" rel="noreferrer">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15">
@@ -20,7 +21,9 @@ const Footer = () => (
       </a>
     </div>
     <p className="text-center mt-3 m-0">
-      Copyright 2023. All Rights Reserved
+      ©2023. All Rights Reserved
+      {" | "}
+      <Link href="/sitemap.xml">sitemap.xml</Link>
     </p>
   </div>
 );
