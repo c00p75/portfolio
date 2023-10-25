@@ -1,0 +1,138 @@
+#blog-details {
+  width: 100vw !important;
+  margin-bottom: 1em !important;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+#blog-details .cover-blog-link > * {
+  z-index: 2;
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(5px);
+}
+
+#blog-details .cover-blog-overlay {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+}
+
+
+#blog-details:hover h1,
+#blog-details:focus-within h1,
+#blog-details:hover img,
+#blog-details:focus-within img {
+  transform: none !important;
+}
+
+#blog-details h1 {
+  font-size: 3.5em !important;
+}
+
+.blog-category a {
+  color: white !important;
+  font-weight: bolder;
+}
+
+.blog-category a:hover{
+  text-decoration: underline !important;
+}
+
+.toc {
+  max-height: 80vh;
+  position: sticky;
+  top: 6.5em;
+  overflow: auto;
+}
+
+.toc::-webkit-scrollbar {
+  width: 7px;
+}
+
+.toc::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+.toc summary {
+  position: sticky;
+  top: 0;
+  background: #1e283a;
+}
+
+.toc details {
+  background-color: #30373f;
+}
+
+.toc a {
+  color: unset;
+}
+
+code {
+  counter-reset: line;
+}
+ 
+code > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 1rem;
+  margin-right: 2rem;
+  text-align: right;
+  color: gray;
+}
+ 
+code[data-line-numbers-max-digits='2'] > [data-line]::before {
+  width: 2rem;
+}
+ 
+code[data-line-numbers-max-digits='3'] > [data-line]::before {
+  width: 3rem;
+}
+
+#light div[data-theme='dark'],
+#light pre[data-theme='dark'],
+#light code[data-theme='dark'] {
+  display: none;
+}
+
+#dark div[data-theme='light'],
+#dark pre[data-theme='light'],
+#dark code[data-theme='light'] {
+  display: none;
+}
+
+#dark .prose *:not(pre *) {
+  color: white !important;
+}
+
+#dark .prose li::marker {
+  color: white;
+}
+
+#light #blog-details {
+  box-shadow: none;
+  border: 1px solid rgb(190, 189, 189) !important;
+}
+
+#light #blog-details .cover-blog-overlay {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), transparent);
+}
+
+#light .blog-category a {
+  color: #1e283a !important;
+}
+
+#light .toc summary {
+  background: lavender ;
+}
+
+#light .toc details {
+  background-color: white;
+}
+
+@media(max-width: 768px){
+  .toc {
+    height: fit-content;
+    position: relative;
+  }
+}

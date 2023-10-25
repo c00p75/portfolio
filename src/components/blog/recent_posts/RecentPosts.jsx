@@ -13,7 +13,7 @@ const RecentPosts = ({blogs}) => {
       <div className="blogs-container row">
         {blogs.map((blog, index) => (
           <article className="featured-blog position-relative d-flex flex-center p-3 my-3 overflow-hidden col-12 col-sm-6 col-md-4 col-xxl-3" key={`blog-${index+1}`}>
-            <Link href="#" className="blog-post text-light d-flex flex-col">
+            <Link href={`blogs/${blog._raw.flattenedPath}`} className="blog-post text-light d-flex flex-col">
               <div className="blog-img-container">
                 <Image
                   src={blog.image.filePath.replace("../public", "")}

@@ -68,8 +68,3 @@ section {
 #light #first-featured-blog:focus-within .cover-blog-link {
   border: 1px solid gray !important;
 }
-
-/* #light .featured-blog:hover,
-#light .featured-blog:focus-within {
-  box-shadow: 0 0 2px 1px gray;
-} */

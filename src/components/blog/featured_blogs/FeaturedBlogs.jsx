@@ -15,7 +15,7 @@ const FeaturedBlogs = ({blogs}) => {
         <div className="col-12 col-md-6">
           <article className="cover-blog-container position-relative d-flex flex-center overflow-hidden mb-3 mb-md-0" id="first-featured-blog">
             <div className="cover-blog-overlay" />
-            <Link href="#" className="cover-blog-link border text-light z-1 d-flex flex-column justify-content-end p-5">
+            <Link href={`blogs/${firstFeaturedBlog._raw.flattenedPath}`} className="cover-blog-link border text-light z-1 d-flex flex-column justify-content-end p-5">
               <h2 className="text-capitalize tag-btn fw-medium border fs-5">
                 <Link href={`blogs/categories/${firstFeaturedBlog.tags[0]}`} className="flex-center p-3">{firstFeaturedBlog.tags[0]}</Link>
               </h2>
@@ -39,7 +39,7 @@ const FeaturedBlogs = ({blogs}) => {
         </div>
         <div className="col-12 col-md-6 d-flex gap-1 flex-col justify-content-between">
           <article className="featured-blog row position-relative d-flex flex-center overflow-hidden">
-            <Link href="#" className="text-light d-flex">
+            <Link href={`blogs/${secondFeaturedBlog._raw.flattenedPath}`} className="text-light d-flex">
               <Image
                 src={secondFeaturedBlog.image.filePath.replace("../public", "")}
                 alt={secondFeaturedBlog.title}
@@ -65,7 +65,7 @@ const FeaturedBlogs = ({blogs}) => {
           </article>
           
           <article className="featured-blog row position-relative d-flex flex-center overflow-hidden">
-            <Link href="#" className="text-light d-flex">
+            <Link href={`blogs/${thirdFeaturedBlog._raw.flattenedPath}`} className="text-light d-flex">
               <Image
                 src={thirdFeaturedBlog.image.filePath.replace("../public", "")}
                 alt={thirdFeaturedBlog.title}
