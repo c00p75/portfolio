@@ -27,8 +27,8 @@ export default function BlogPage({ blog }) {
       <article>
         <div className="cover-blog-container position-relative d-flex flex-center overflow-hidden" id="blog-details" style={{ backgroundImage: `url(${blog.image.filePath.replace("../public", "")})` }}>
           <div className="cover-blog-overlay" />
-          <div className="cover-blog-link position-absolute text-light z-1 flex-center flex-column text-center p-5">
-            <h1 className="text-capitalize fw-bolder">
+          <div className="cover-blog-link position-absolute text-light z-1 flex-center flex-column text-center" style={{height:"fit-content"}}>
+            <h1 className="text-capitalize fw-bolder flex-center">
               {blog.title}
             </h1>
           </div>

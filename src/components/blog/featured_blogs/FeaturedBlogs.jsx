@@ -12,8 +12,8 @@ const FeaturedBlogs = ({blogs}) => {
     <section className="flex-col align-items-start">
       <h1 className="fw-bold mb-4">Featured Posts</h1>
       <div className="row">
-        <div className="col-12 col-md-6">
-          <article className="cover-blog-container position-relative d-flex flex-center overflow-hidden mb-3 mb-md-0" id="first-featured-blog">
+        <div className="col-12 col-md-6 mb-3 mb-md-0">
+          <article className="cover-blog-container position-relative d-flex flex-center overflow-hidden" id="first-featured-blog">
             <div className="cover-blog-overlay" />
             <Link href={`blogs/${firstFeaturedBlog._raw.flattenedPath}`} className="cover-blog-link border text-light z-1 d-flex flex-column justify-content-end p-5">
               <h2 className="text-capitalize tag-btn fw-medium border fs-5">

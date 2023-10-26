@@ -5,9 +5,27 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useContext } from 'react'
 import {allBlogs} from "/.contentlayer/generated";
-import { slug } from 'github-slugger';
+import GithubSlugger, { slug } from 'github-slugger';
 import "./categoriesPage.css";
 import { ThemeContext } from '@/app/theme-provider';
+
+export async function generateStaticParams() {
+  const categories = [];
+  const paths = [{slug: "all"}];
+
+  allBlogs.map((blog) => {
+    if(blog.isPublished){
+      blog.tags.map((tag) => {
+        let slugified = new GithubSlugger().slug(tag);
+        if(!categories.includes(slugified)){
+          categories.push(slugified);
+          paths.push({slug: slugified});
+        }
+      })
+    }
+  })
+  return paths;
+}
 
 const CategoriesPage = ({category}) => {
   const { darkMode } = useContext(ThemeContext);

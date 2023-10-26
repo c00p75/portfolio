@@ -1,12 +1,21 @@
 .cover-blog-container {
   margin: 6.5em 0;
   width: 90vw;
-  min-height: 81vh;
   transition: all 0.4s ease-in-out;
+}
+
+.cover-blog-text {
+  background: radial-gradient(transparent, transparent, black) !important;
+  min-height: 80vh;
 }
 
 .cover-blog-container h1 {
   transition: all 0.2s ease-in-out;
+  color: white;
+}
+
+.cover-blog-container p {
+  color: white;
 }
 
 .cover-blog-container img {
@@ -35,6 +44,11 @@
   width: 100%;
 }
 
+#cover-blog .cover-blog-link > * {
+  flex: 1;
+  width: 50% !important;
+}
+
 .cover-blog-overlay {
   position: absolute;
   height: 100%;
@@ -46,7 +60,7 @@
 .tag-btn {
   width: fit-content;
   cursor: pointer;
-  background-color: ghostwhite;
+  background-color: ghostwhite !important;
   border-radius: 5px;
   transition: all .4s;
  }
@@ -98,8 +112,9 @@
   font-size: 1.2em !important;
 }
 
-#light .cover-blog-container {
+#light #cover-blog {
   border: none !important;
+  border-top: 1px solid gainsboro !important;
   box-shadow: 0 5px 5px 1px gray;
 }
 
@@ -152,8 +167,26 @@ section {
   min-height: auto !important;
 }
 
+#light .cover-blog-text {
+  background: radial-gradient(transparent, transparent, lavender) !important;
+}
+
+@media (max-width: 992px){
+  #cover-blog .cover-blog-link {
+    flex-direction: column-reverse;
+  }
+
+  #cover-blog .cover-blog-link > * {
+    width: 100% !important;
+  }
+}
 
 @media (max-width: 576px){
+  #cover-blog{
+    width: 100vw;
+    border-radius: 0 !important;
+  }
+
   .blog-post {
     margin: 1em 0;
   }
