@@ -1,14 +1,13 @@
 'use client'
 
 import { useMDXComponent } from 'next-contentlayer/hooks'
-
-import Link from "next/link";
 import Image from "next/image";
 import { format, parseISO } from "date-fns";
+import {allBlogs} from "/.contentlayer/generated";
 import { useContext } from "react";
 import { ThemeContext } from "@/app/theme-provider";
 import "./blogPage.css";
-import "../blogs_home_cover/blogsHomeCover.css";
+import RecentPosts from '../recent_posts/RecentPosts';
 
 export default function BlogPage({ blog }) {
   const { darkMode } = useContext(ThemeContext);
@@ -16,6 +15,11 @@ export default function BlogPage({ blog }) {
   const mdxComponents = {
     Image
   }
+  const recentBlogs = allBlogs.filter((relatedBlog) => {
+    return relatedBlog.tags.some((tag) => {
+      return tag === blog.tags[0];
+    })
+  });
 
   return (
     <section style={{opacity: "1"}} className="flex-center flex-col" id={darkMode ? 'dark' : 'light'}>
@@ -63,8 +67,8 @@ export default function BlogPage({ blog }) {
             </div>
           </div>
         </div>
-        <div className='m-5 bg-danger'>
-          Related blogs
+        <div className='m-5' id='related-blogs'>
+          <RecentPosts blogs={recentBlogs.slice(0,3)} header={"Related posts"} />
         </div>
       </article>
     </section>

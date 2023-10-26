@@ -1,6 +1,5 @@
 import Link from "next/link";
 import "./featuredBlogs.css";
-import "../blogs_home_cover/blogsHomeCover.css";
 import Image from "next/image";
 import { format } from "date-fns";
 import { slug } from "github-slugger";

@@ -27,7 +27,7 @@ export default function Blog() {
         <span className="current-section" id="current-section-blog" />
         <BlogsHomeCover blog={sortedBlogs[1]} />
         <FeaturedBlogs blogs={sortedBlogs} />
-        <RecentPosts blogs={sortedBlogs.slice(1,6)} />
+        <RecentPosts blogs={sortedBlogs.slice(1,6)} header={"Recent posts"} />
       </main>
     </section>
   )

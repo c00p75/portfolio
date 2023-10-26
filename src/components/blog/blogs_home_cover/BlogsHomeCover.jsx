@@ -1,5 +1,4 @@
 import Image from "next/image";
-import "./blogsHomeCover.css";
 import Link from "next/link";
 import { format } from "date-fns";
 import { slug } from "github-slugger";

@@ -1,5 +1,5 @@
 #categories-page {
-  margin-top: 7em;
+  margin-top: 6.5em;
 }
 
 .category-links {
@@ -28,7 +28,7 @@
 }
 
 #light .category-links > a {
-  background-color: black !important;
+  background-color: #1e283a !important;
   color: white !important;
 }
 

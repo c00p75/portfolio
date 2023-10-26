@@ -5,6 +5,7 @@
   background-position: center;
   background-attachment: fixed;
   background-size: cover;
+  margin-top: 6.5em;
 }
 
 #blog-details .cover-blog-link > h1 {
@@ -75,7 +76,7 @@
 }
 
 .toc a {
-  color: unset;
+  color: white;
 }
 
 .toc [data-level='two'] p {
@@ -115,6 +116,14 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
   width: 3rem;
 }
 
+#related-blogs section {
+  opacity: 1 !important;
+}
+
+#related-blogs article * {
+  color: #1e283a !important;
+}
+
 #dark .prose li::marker {
   color: white;
 }
@@ -146,6 +155,7 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
 
 #light #blog-details .cover-blog-link > h1 {
   background: rgba(255, 255, 255, 0.8) !important;
+  color: #1e283a !important;
 }
 
 #light .toc summary {
@@ -158,6 +168,10 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
 
 #light .toc .dot path {
   fill: black;
+}
+
+#light .toc a {
+  color: #1e283a !important;
 }
 
 #light .blog-tags > * {

@@ -7,7 +7,6 @@ import React, { useContext } from 'react'
 import {allBlogs} from "/.contentlayer/generated";
 import { slug } from 'github-slugger';
 import "./categoriesPage.css";
-import "../recent_posts/recentPosts.css";
 import { ThemeContext } from '@/app/theme-provider';
 
 const CategoriesPage = ({category}) => {
@@ -23,8 +22,8 @@ const CategoriesPage = ({category}) => {
   });
   return (
     <section style={{opacity: "1", minHeight: "90vh"}} className="flex-center flex-col" id={darkMode ? 'dark' : 'light'}>
-      <div id="categories-page">
-        <div className='category-links flex-center'>
+      <div id="categories-page" className='container'>
+        <div className='category-links flex-center my-2'>
           {allCategories.map((categoryLink) => {
             return (
             <Link
