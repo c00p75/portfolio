@@ -1,5 +1,6 @@
 #blog-details {
   width: 100vw !important;
+  height: 83vh !important;
   margin-bottom: 1em !important;
   background-position: center;
   background-attachment: fixed;
@@ -8,13 +9,15 @@
 
 #blog-details .cover-blog-link > h1 {
   z-index: 2;
-  background: rgba(255, 255, 255, 0.5) !important;
+  background: rgba(0, 0, 0, 0.7) !important;
   backdrop-filter: blur(5px);
-  width: 100%
+  width: 70%;
+  border-radius: 20px;
+  padding: 1em;
 }
 
 #blog-details .cover-blog-overlay {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+  background: linear-gradient(to bottom left, rgba(255, 255, 255, 0.5), transparent);
 }
 
 
@@ -27,6 +30,13 @@
 
 #blog-details h1 {
   font-size: 3.5em !important;
+}
+
+.blog-tags > * {
+  background: whitesmoke;
+  color: black;
+  border-radius: 20px;
+  padding: 0.5em 1em;
 }
 
 .blog-category a {
@@ -127,11 +137,15 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
 }
 
 #light #blog-details .cover-blog-overlay {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), transparent);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
 }
 
 #light .blog-category a {
   color: #1e283a !important;
+}
+
+#light #blog-details .cover-blog-link > h1 {
+  background: rgba(255, 255, 255, 0.8) !important;
 }
 
 #light .toc summary {
@@ -144,6 +158,11 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
 
 #light .toc .dot path {
   fill: black;
+}
+
+#light .blog-tags > * {
+  background: #1e283a;
+  color: white;
 }
 
 @media(max-width: 992px){

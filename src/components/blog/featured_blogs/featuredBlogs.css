@@ -34,7 +34,7 @@ section {
 
 
 .feature-image {
-  width: 30%;
+  width: 40%;
   height: auto;
 }
 
@@ -58,6 +58,11 @@ section {
   height: 100% !important;
   width: 100% !important;
   margin: 0 !important;
+}
+
+.featured-blog,
+.featured-blog a {
+  height: 100%;
 }
 
 #light #first-featured-blog {

@@ -28,12 +28,9 @@ export default function BlogPage({ blog }) {
               {blog.title}
             </h1>
           </div>
-          <h2 className="blog-category text-capitalize fw-semibold fs-5 position-absolute top-1 right-1 z-2 ">
-            <Link href={`categories/${blog.tags[0]}`} className="flex-center p-3">#{blog.tags[0]}</Link>
-          </h2>
         </div>
         <div className="flex-center flex-col">
-          <div className="blog-details flex-center">
+          <div className="blog-tags flex-center">
             <time className="m-4">{format(parseISO(blog.publishedAt), "LLLL d, yyyy")}</time>
             <span className="m-4">20 views</span>
             <span className="m-4">{blog.readingTime.text}</span>
@@ -65,6 +62,9 @@ export default function BlogPage({ blog }) {
               <MDXContent components={mdxComponents} />
             </div>
           </div>
+        </div>
+        <div className='m-5 bg-danger'>
+          Related blogs
         </div>
       </article>
     </section>

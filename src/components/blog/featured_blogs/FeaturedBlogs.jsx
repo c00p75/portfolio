@@ -38,7 +38,7 @@ const FeaturedBlogs = ({blogs}) => {
             />
           </article>
         </div>
-        <div className="col-12 col-md-6 d-flex gap-1 flex-col justify-content-between">
+        <div className="col-12 col-md-6 d-flex gap-3 flex-col justify-content-between">
           <article className="featured-blog row position-relative d-flex flex-center overflow-hidden">
             <Link href={`blogs/${secondFeaturedBlog._raw.flattenedPath}`} className="text-light d-flex">
               <Image
