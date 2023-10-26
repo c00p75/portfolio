@@ -1,0 +1,39 @@
+#categories-page {
+  margin-top: 7em;
+}
+
+.category-links {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.category-links > a {
+  background-color: darkslategrey;
+  color: white;
+  border-radius: 20px;
+  margin: 1em;
+  padding: 0.5em 1em;
+  border-color: transparent !important;
+}
+
+#active-category {
+  background: white;
+  border-color: black;
+  color: black;
+  font-weight: bold;
+}
+
+#light #categories * {
+  color: #1e283a !important;
+}
+
+#light .category-links > a {
+  background-color: black !important;
+  color: white !important;
+}
+
+#light #active-category {
+  background: white !important;
+  border-color: black !important;
+  color: black !important;
+}

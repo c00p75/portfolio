@@ -9,7 +9,7 @@ const RecentPosts = ({blogs}) => {
     <section className="d-flex flex-col align-items-start mt-5 pt-5">
       <div className="flex-center justify-content-between" style={{width: "100%"}}>
         <h1 className="fw-bold">Recent Posts</h1>
-        <Link href="blogs/all" className="simple-link">View all</Link>
+        <Link href="blogs/categories/all" className="simple-link">View all</Link>
       </div>
       <div className="blogs-container row">
         {blogs.map((blog, index) => (

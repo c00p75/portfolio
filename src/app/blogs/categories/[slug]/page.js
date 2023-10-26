@@ -1,9 +1,7 @@
-import BlogPage from "@/components/blog/blog_page/BlogPage";
-import {allBlogs} from "/.contentlayer/generated";
+import CategoriesPage from "@/components/blog/categories_page/CategoriesPage";
 
-export default function CategoryPage({ params }) {
+export default function Category({ params }) {
   return (
-    // <BlogPage blog={allBlogs.find((blog) => blog._raw.flattenedPath === params.slug)} />
-    <div>Category Name: {params.slug} </div>
+    <CategoriesPage category={params.slug} />
   );
 };

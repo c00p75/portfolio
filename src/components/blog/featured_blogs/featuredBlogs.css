@@ -48,8 +48,8 @@ section {
   margin-bottom: 0.1%;
 }
 
-#first-featured-blog:hover .cover-blog-link,
-#first-featured-blog:focus-within .cover-blog-link {
+#first-featured-blog:hover,
+#first-featured-blog:focus-within {
   border: 1px solid gainsboro !important;
 }
 
@@ -69,7 +69,7 @@ section {
   border-color: darkslategrey !important;
 }
 
-#light #first-featured-blog:hover .cover-blog-link,
-#light #first-featured-blog:focus-within .cover-blog-link {
+#light #first-featured-blog:hover,
+#light #first-featured-blog:focus-within {
   border: 1px solid gray !important;
 }

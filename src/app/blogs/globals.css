@@ -6,6 +6,10 @@
   color: black !important;
 }
 
+.simple-link {
+  color: inherit;
+}
+
 .simple-link:hover,
 .simple-link:focus {
   text-decoration: underline !important;
