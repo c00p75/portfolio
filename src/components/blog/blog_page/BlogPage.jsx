@@ -39,22 +39,29 @@ export default function BlogPage({ blog }) {
             <span className="m-4">{blog.readingTime.text}</span>
           </div>
 
-          <div className="row container blog-content">
-            <div className="toc col-12 col-md-3 overflow-y">
-              <details>
-                <summary>Table of Content</summary>
-                <ul>
+          <div className="row container-fluid blog-content p-4">
+            <div className="toc col-12 col-lg-3 overflow-y">
+              <details open>
+                <summary className='p-3'>Table of Content</summary>
+                <ul className='mt-2 p-0'>
                   {
                     blog.toc.map((heading) => {
                       return(
-                        <li key={heading.slug}><a href={`#${heading.slug}`}><span>{heading.text}</span></a></li>
+                        <li key={heading.slug}>
+                          <a href={`#${heading.slug}`} data-level={heading.level}>
+                            <p className='flex'>
+                              <span className="dot"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="white" d="M12 10a2 2 0 0 0-2 2a2 2 0 0 0 2 2c1.11 0 2-.89 2-2a2 2 0 0 0-2-2Z" /></svg></span>
+                              <span className='flex-center'>{heading.text}</span>
+                            </p>
+                          </a>
+                        </li>
                       )
                     })
                   }
                 </ul>
               </details>
             </div>
-            <div className="col-12 col-md-9 prose prose-lg ps-5">
+            <div className="col-12 col-lg-9 prose prose-lg" style={{padding: "0 4em"}}>
               <MDXContent components={mdxComponents} />
             </div>
           </div>

@@ -2,6 +2,7 @@ import Image from "next/image";
 import "./blogsHomeCover.css";
 import Link from "next/link";
 import { format } from "date-fns";
+import { slug } from "github-slugger";
 
 const BlogsHomeCover = ({blog}) => {
   return (
@@ -9,7 +10,7 @@ const BlogsHomeCover = ({blog}) => {
       <div className="cover-blog-overlay" />
       <Link href={`blogs/${blog._raw.flattenedPath}`} className="cover-blog-link position-absolute text-light z-1 d-flex flex-column justify-content-end p-5">
         <h2 className="text-capitalize tag-btn fw-semibold border fs-5">
-          <Link href={`blogs/categories/${blog.tags[0]}`} className="flex-center p-3">{blog.tags[0]}</Link>
+          <Link href={`blogs/categories/${slug(blog.tags[0])}`} className="flex-center p-3">{blog.tags[0]}</Link>
         </h2>
         <h1 className="text-capitalize fw-bolder">
           {blog.title}

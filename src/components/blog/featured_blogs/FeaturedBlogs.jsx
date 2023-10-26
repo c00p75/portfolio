@@ -3,6 +3,7 @@ import "./featuredBlogs.css";
 import "../blogs_home_cover/blogsHomeCover.css";
 import Image from "next/image";
 import { format } from "date-fns";
+import { slug } from "github-slugger";
 
 const FeaturedBlogs = ({blogs}) => {
   const firstFeaturedBlog = blogs[2]
@@ -17,7 +18,7 @@ const FeaturedBlogs = ({blogs}) => {
             <div className="cover-blog-overlay" />
             <Link href={`blogs/${firstFeaturedBlog._raw.flattenedPath}`} className="cover-blog-link border text-light z-1 d-flex flex-column justify-content-end p-5">
               <h2 className="text-capitalize tag-btn fw-medium border fs-5">
-                <Link href={`blogs/categories/${firstFeaturedBlog.tags[0]}`} className="flex-center p-3">{firstFeaturedBlog.tags[0]}</Link>
+                <Link href={`blogs/categories/${slug(firstFeaturedBlog.tags[0])}`} className="flex-center p-3">{firstFeaturedBlog.tags[0]}</Link>
               </h2>
               <h1 className="text-capitalize fw-bolder fs-4">
                 {firstFeaturedBlog.title}
@@ -54,7 +55,7 @@ const FeaturedBlogs = ({blogs}) => {
 
               <div className="d-flex flex-column p-3">
                 <h2 className="text-capitalize tag-btn fw-medium border fs-6">
-                  <Link href={`blogs/categories/${secondFeaturedBlog.tags[0]}`} className="flex-center p-3">{secondFeaturedBlog.tags[0]}</Link>
+                  <Link href={`blogs/categories/${slug(secondFeaturedBlog.tags[0])}`} className="flex-center p-3">{secondFeaturedBlog.tags[0]}</Link>
                 </h2>
                 <h1 className="text-capitalize fw-semibold">
                   {secondFeaturedBlog.title}
@@ -80,7 +81,7 @@ const FeaturedBlogs = ({blogs}) => {
 
               <div className="d-flex flex-column p-3">
                 <h2 className="text-capitalize tag-btn fw-medium border fs-6">
-                  <Link href={`blogs/categories/${thirdFeaturedBlog.tags[0]}`} className="flex-center p-3">{thirdFeaturedBlog.tags[0]}</Link>
+                  <Link href={`blogs/categories/${slug(thirdFeaturedBlog.tags[0])}`} className="flex-center p-3">{thirdFeaturedBlog.tags[0]}</Link>
                 </h2>
                 <h1 className="text-capitalize fw-semibold">
                   {thirdFeaturedBlog.title}

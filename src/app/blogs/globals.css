@@ -1,9 +1,9 @@
-#dark * {
-  color: white;
-}
+#dark .prose *:not(pre *) {
+  color: white !important;
+} 
 
-#light * {
-  color: black !important;  
+#light .prose *:not(pre *) {
+  color: black !important;
 }
 
 .simple-link:hover,
