@@ -1,34 +1,16 @@
-'use client'
-import { sectionObserver, visibilityObserver } from "@/utils/observer";
-import { useContext, useEffect } from "react";
+import BlogComponents from "@/components/portfolio/BlogComponents";
 import "./globals.css";
-import {allBlogs} from "/.contentlayer/generated";
-import BlogsHomeCover from "@/components/blog/blogs_home_cover/BlogsHomeCover";
-import { ThemeContext } from "../theme-provider";
-import FeaturedBlogs from "@/components/blog/featured_blogs/FeaturedBlogs";
-import { sortBlogs } from "@/utils";
-import RecentPosts from "@/components/blog/recent_posts/RecentPosts";
+
+export const metadata = {
+  title: {
+    template: `%s | George M'sapenda`,
+    default: "George M'sapenda | Blogs",
+  },
+  description: `Learn about Web Development through my collection of blogs and tutorials.`,
+};
 
 export default function Blog() {
-  const { darkMode } = useContext(ThemeContext);
-  useEffect(() => {
-    setTimeout(() => {
-      const sections = document.querySelectorAll('section');
-      const sectionMark = document.querySelectorAll('.current-section');
-      visibilityObserver(sections, 0.1);
-      sectionObserver(sectionMark);
-    }, 1000);
-  });
-
-  const sortedBlogs = sortBlogs(allBlogs);
   return (
-    <section className="flex-center" id={darkMode ? 'dark' : 'light'} style={{opacity: "1"}}>
-      <main className="container flex-center flex-col">
-        <span className="current-section" id="current-section-blog" />
-        <BlogsHomeCover blog={sortedBlogs[1]} />
-        <FeaturedBlogs blogs={sortedBlogs} />
-        <RecentPosts blogs={sortedBlogs.slice(1,6)} header={"Recent posts"} />
-      </main>
-    </section>
+    <BlogComponents />
   )
 }

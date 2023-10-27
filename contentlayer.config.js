@@ -34,10 +34,6 @@ const Blog = defineDocumentType(() => ({
       type: 'boolean',
       default: true,
     },
-    author: {
-      type: 'string',
-      required: true,
-    },
     tags: {
       type: 'list',
       of: { type: 'string' },

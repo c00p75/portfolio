@@ -36,8 +36,8 @@ export default function BlogPage({ blog }) {
         <div className="flex-center flex-col">
           <div className="blog-tags flex-center">
             <time className="m-4">{format(parseISO(blog.publishedAt), "LLLL d, yyyy")}</time>
-            <span className="m-4">20 views</span>
             <span className="m-4">{blog.readingTime.text}</span>
+            <span className="m-4">{blog.tags[0]}</span>
           </div>
 
           <div className="row container-fluid blog-content p-4">
