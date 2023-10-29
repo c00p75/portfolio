@@ -509,11 +509,11 @@
     padding-top: 0.3em;
   }
 
-  .nav-link#projects-tab-tab-frontend::before {
+  .nav-link#projects-tab-tab-fullstack::before {
     border-radius: 22px 0 0 22px !important;
   }
 
-  .nav-link#projects-tab-tab-fullstack::before {
+  .nav-link#projects-tab-tab-backend::before {
     border-radius: 0 22px 22px 0;
   }
 

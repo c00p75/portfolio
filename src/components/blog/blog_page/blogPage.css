@@ -34,6 +34,10 @@
   font-size: 3.5em !important;
 }
 
+.blog-tags {
+  flex-wrap: wrap;
+}
+
 .blog-tags > * {
   background: whitesmoke;
   color: black;
@@ -117,6 +121,10 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
   width: 3rem;
 }
 
+.prose {
+  padding: "0 4em" !important;
+}
+
 #related-blogs section {
   opacity: 1 !important;
 }
@@ -186,5 +194,9 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
     position: relative;
     top: auto;
     margin-bottom: 2em;
+  }
+
+  #light .toc * {
+    color: #1e283a !important;
   }
 }

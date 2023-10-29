@@ -40,7 +40,7 @@ export default function BlogPage({ blog }) {
             <span className="m-4">{blog.tags[0]}</span>
           </div>
 
-          <div className="row container-fluid blog-content p-4">
+          <div className="row container-fluid blog-content pt-4 p-md-4">
             <div className="toc col-12 col-lg-3 overflow-y">
               <details open>
                 <summary className='p-3'>Table of Content</summary>
@@ -62,7 +62,7 @@ export default function BlogPage({ blog }) {
                 </ul>
               </details>
             </div>
-            <div className="col-12 col-lg-9 prose prose-lg" style={{padding: "0 4em"}}>
+            <div className="col-12 col-lg-9 prose prose-lg">
               <MDXContent components={mdxComponents} />
             </div>
           </div>

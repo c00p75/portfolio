@@ -24,7 +24,7 @@ export default function BlogComponents() {
     <section className="flex-center" id={darkMode ? 'dark' : 'light'} style={{opacity: "1"}}>
       <main className="container flex-center flex-col">
         <span className="current-section" id="current-section-blog" />
-        <BlogsHomeCover blog={sortedBlogs[1]} />
+        <BlogsHomeCover blog={sortedBlogs[0]} />
         <FeaturedBlogs blogs={sortedBlogs} />
         <RecentPosts blogs={sortedBlogs.slice(1,6)} header={"Recent posts"} />
       </main>
