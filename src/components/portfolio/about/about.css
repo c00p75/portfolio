@@ -1,7 +1,7 @@
 #about {
   border-top-left-radius: 100px;
-  margin-top: -15em !important;
-  padding-bottom: 25em;
+  margin-top: calc(-100vh + 10em);
+  padding-bottom: 100vh;
   padding-top: 5em;
   z-index: 1;
   position: relative;

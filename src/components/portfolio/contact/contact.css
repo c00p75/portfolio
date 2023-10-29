@@ -1,7 +1,7 @@
 #connect {
   background: linear-gradient(90.21deg, #aa367c -5.91%, #4a2fbd 111.58%);
   padding: 60px 0 100px 0;
-  margin-top: -15em;
+  margin-top: calc(-100vh + 10em);
   z-index: 1;
   position: relative;
 }
