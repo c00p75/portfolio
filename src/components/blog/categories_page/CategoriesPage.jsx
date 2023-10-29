@@ -74,7 +74,7 @@ const CategoriesPage = ({category}) => {
                 </div>  
                 <div className="d-flex flex-column">
                   <h2 className="text-capitalize tag-btn fw-medium border my-3 fs-6">
-                    <Link href={`/blogs/categories/${blog.tags[0]}`} className="flex-center p-3">{blog.tags[0]}</Link>
+                    <Link href={`/blogs/categories/${slug(blog.tags[0])}`} className="flex-center p-3">{blog.tags[0]}</Link>
                   </h2>
                   <h1 className="text-capitalize fw-semibold">
                     {blog.title}

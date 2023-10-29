@@ -96,24 +96,24 @@ nav .nav-link:hover,
   fill: darkslategray;
 }
 
-.connect-btn {
+.blog-btn {
   font-weight: 700;
   color: darkslategray;
   border: 1px solid gainsboro !important;
   padding: 0.8em 1.5em;
   position: relative;
   background-color: white !important;
-  transition: 0.3s ease-in-out;
+  transition: 0.15s ease-in-out;
   margin: 0.2em 1em;
   text-decoration: none;
 }
 
-.connect-btn span {
+.blog-btn span {
   z-index: 1;
   transition: 0.5s;
 }
 
-.connect-btn span::after {
+.blog-btn span::after {
   content: '»';
   position: absolute;
   opacity: 0;
@@ -124,12 +124,12 @@ nav .nav-link:hover,
   font-weight: lighter;
 }
 
-.connect-btn:hover span::after {
+.blog-btn:hover span::after {
   opacity: 1;
   right: 0.25em;
 }
 
-.connect-btn:hover span {
+.blog-btn:hover span {
   margin-right: 0.6em;
   margin-left: -0.6em;
 }
@@ -210,13 +210,13 @@ nav .close-btn {
   background-color: #344563;
 }
 
-#light-nav .connect-btn {
+#light-nav .blog-btn {
   border-color: #344563 !important;
   color: white;
   background-color: #344563 !important;
 }
 
-#light-nav .connect-btn:hover {
+#light-nav .blog-btn:hover {
   color: white;
 }
 

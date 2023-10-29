@@ -20,12 +20,12 @@ export default function Home() {
     }, 1000);
   });
   return (
-    <main id={darkMode ? 'dark' : 'light'}>
+    <div id={darkMode ? 'dark' : 'light'}>
       <Banner />
       <Skills />
       <Projects />
       <About />
       <Contact />
-    </main>
+    </div>
   )
 }

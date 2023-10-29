@@ -1,14 +1,10 @@
-import { cx } from '@/utils'
 import './globals.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Inter, Manrope } from 'next/font/google'
 import NavBar from '@/components/navbar/NavBar';
 import { ThemeProvider } from './theme-provider';
 import Footer from '@/components/footer/Footer';
 import siteMetadata from "@/utils/siteMetaData";
-
-const inter = Inter({ subsets: ['latin'], display: "swap", variable: "--font-in" })
-const manrope = Manrope({ subsets: ['latin'], display: "swap", variable: "--font-mr" })
+import Loader from '@/components/loaders/responsiveDesignLoader/Loader';
 
 export const metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -45,11 +41,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={cx(inter.variable,
-        manrope.variable,
-        "font-mr bg-light dark:bg-dark"
-      )}
-      >
+      <body className="no-overflow">
+        <Loader />
         <ThemeProvider>
           <NavBar />
           {children}
@@ -58,4 +51,4 @@ export default function RootLayout({ children }) {
       </body>
     </html>
   )
-}
+} 

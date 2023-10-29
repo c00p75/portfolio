@@ -67,6 +67,10 @@ img { user-select: none; }
 
 a { text-decoration: none !important; }
 
+.no-overflow {
+  overflow: hidden;
+}
+
 #dark {
   background-color: #121212 !important;
   color: white !important;
@@ -90,6 +94,38 @@ a { text-decoration: none !important; }
 .current-section {
   height: 0;
   width: 0;
+}
+
+.code-loader-container {
+  position: absolute;
+  min-height: 100vh;
+  min-width: 100vw;
+  z-index: 998;
+  background: #131313;
+}
+
+.code-loader {
+  color: #fff;
+  font-family: Consolas, Menlo, Monaco, monospace;
+  font-weight: bold;
+  font-size: 100px;
+  opacity: 0.8;
+}
+
+.code-loader span {
+  display: inline-block;
+  animation: pulse_414 0.4s alternate infinite ease-in-out;
+}
+
+.code-loader span:nth-child(odd) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse_414 {
+  to {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
 }
 
 @media (max-width: 992px) {
