@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
-.App > nav {
+#scrolled-navbar,
+#navbar {
   z-index: 99;
 }
 
@@ -21,6 +22,7 @@ svg {
   padding: 1.5em 0;
   transition: 0.32s ease-in-out;
   background: none !important;
+  width: 100%;
 }
 
 #scrolled-navbar {
@@ -36,7 +38,7 @@ svg {
 nav .nav-link {
   font-weight: lighter;
   color: white !important;
-  margin: 0 20px !important;
+  margin: 0 1% !important;
   opacity: 0.75;
   padding: 0 25px;
   transition: font-weight 0.4s ease-in-out;
@@ -94,54 +96,55 @@ nav .nav-link:hover,
   fill: darkslategray;
 }
 
-.connect-btn {
+.blog-btn {
   font-weight: 700;
-  color: white;
-  border: 1px solid white !important;
-  padding: 1em 1.5em;
+  color: darkslategray;
+  border: 1px solid gainsboro !important;
+  padding: 0.8em 1.5em;
   position: relative;
-  background-color: transparent;
-  transition: 0.3s ease-in-out;
-  margin: 0 1em;
+  background-color: white !important;
+  transition: 0.15s ease-in-out;
+  margin: 0.2em 1em;
   text-decoration: none;
 }
 
-.connect-btn span {
+.blog-btn span {
   z-index: 1;
+  transition: 0.5s;
 }
 
-.connect-btn::before {
-  content: "";
-  width: 0%;
-  height: 100%;
-  position: absolute !important;
-  background-color: white !important;
-  left: 0;
+.blog-btn span::after {
+  content: '»';
+  position: absolute;
+  opacity: 0;
   top: 0;
-  z-index: -1;
-  transition: 0.3s ease-in-out;
+  right: 0.5em;
+  transition: 0.5s;
+  font-size: 2em;
+  font-weight: lighter;
 }
 
-.connect-btn:hover {
-  color: black;
+.blog-btn:hover span::after {
+  opacity: 1;
+  right: 0.25em;
 }
 
-.connect-btn:hover::before {
-  content: "";
-  width: 100% !important;
+.blog-btn:hover span {
+  margin-right: 0.6em;
+  margin-left: -0.6em;
 }
 
-.mode {
+#mode {
   position: relative;
-  margin: 0 1em 0 2em;
+  margin: 0 1% 0 2%;
   background: rgba(255, 255, 255, 0.5);
   border-radius: 20px;
-  width: 4em;
+  padding: 0 0.5em;
   height: 2em;
   outline: none !important;
 }
 
-.mode::before {
+#mode::before {
   content: "";
   width: 25px;
   height: 25px;
@@ -152,7 +155,7 @@ nav .nav-link:hover,
   top: 4px;
 }
 
-.mode:hover::before {
+#mode:hover::before {
   box-shadow: 0 0 10px -3px black;
 }
 
@@ -174,53 +177,50 @@ nav .close-btn {
   transform: translateX(105%);
 }
 
-#light .logo {
+#light-nav .logo {
   color: #6070ff;
 }
 
-#light #scrolled-navbar {
+#light-nav #scrolled-navbar {
   background-color: white !important;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
 }
 
-#light nav .nav-link {
+#light-nav nav .nav-link {
   color: #344563 !important;
 }
 
-#light .navbar-toggler path {
+#light-nav .navbar-toggler path {
   fill: #121212;
 }
 
-#light .socials a {
+#light-nav .socials a {
   border-color: #344563;
 }
 
-#light .socials a path {
+#light-nav .socials a path {
   fill: #344563;
 }
 
-#light .socials a:hover path {
+#light-nav .socials a:hover path {
   fill: white;
 }
 
-#light .socials a::before {
+#light-nav .socials a::before {
   background-color: #344563;
 }
 
-#light .connect-btn {
+#light-nav .blog-btn {
   border-color: #344563 !important;
-  color: #344563;
-}
-
-#light .connect-btn::before {
+  color: white;
   background-color: #344563 !important;
 }
 
-#light .connect-btn:hover {
+#light-nav .blog-btn:hover {
   color: white;
 }
 
-#light .mode::before {
+#light-nav #mode {
   background-color: gainsboro;
 }
 
@@ -273,7 +273,7 @@ nav .close-btn {
     padding: 0;
   }
 
-  .mode {
+  #mode {
     position: absolute;
     top: 1em;
     left: -1em;
@@ -285,12 +285,12 @@ nav .close-btn {
     overflow: hidden;
   }
 
-  #light .navbar-collapse.show .navbar-nav {
+  #light-nav .navbar-collapse.show .navbar-nav {
     background-color: white;
     color: #344563;
   }
 
-  #light nav .close-btn path:last-child {
+  #light-nav nav .close-btn path:last-child {
     fill: #121212;
   }
 }

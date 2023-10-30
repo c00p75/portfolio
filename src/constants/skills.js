@@ -11,6 +11,10 @@ const skills = {
       img: stack.javaScript,
     },
     {
+      name: 'HTML',
+      img: stack.html,
+    },
+    {
       name: 'React JS',
       img: stack.react,
     },
@@ -19,8 +23,8 @@ const skills = {
       img: stack.redux,
     },
     {
-      name: 'HTML',
-      img: stack.html,
+      name: 'NextJS',
+      img: stack.next,
     },
     {
       name: 'CSS',
@@ -66,10 +70,6 @@ const skills = {
     },
   ],
   tools: [
-    {
-      name: 'Webpack',
-      img: stack.webpack,
-    },
     {
       name: 'Git',
       img: stack.git,

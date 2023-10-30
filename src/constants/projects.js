@@ -1,26 +1,26 @@
 import stack from './stack';
-import conference from '../assets/images/projects/conference-sm.png';
-import conferenceGif from '../assets/images/projects/conference.png';
-import leaderboard from '../assets/images/projects/leaderboard-sm.jpg';
-import leaderboardGif from '../assets/images/projects/leaderboard.jpg';
-import chowtime from '../assets/images/projects/chowtime-sm.jpg';
-import chowtimeGif from '../assets/images/projects/chowtime.gif';
-import spaceTravellers from '../assets/images/projects/space-travellers-sm.jpg';
-import spaceTravellersGif from '../assets/images/projects/space-travellers.jpg';
-import awesomeBooks from '../assets/images/projects/awesome-books.png';
-import awesomeBooksGif from '../assets/images/projects/awesome-books.gif';
-import metrics from '../assets/images/projects/metrics.jpg';
-import metricsGif from '../assets/images/projects/metrics.gif';
-import viand from '../assets/images/projects/viand-sm.jpg';
-import viandGif from '../assets/images/projects/viand.gif';
-import lib from '../assets/images/projects/oop.jpg';
-import catalogOfMyThings from '../assets/images/projects/catalog-of-my-things.jpg';
-import blog from '../assets/images/projects/blog-app-sm.jpg';
-import blogGif from '../assets/images/projects/blog-app.gif';
-import cycleCruise from '../assets/images/projects/cyclecruise-sm.jpg';
-import cycleCruiseGif from '../assets/images/projects/cyclecruise.jpg';
-import futureEd from '../assets/images/projects/future-ed.jpg';
-import futureEdGif from '../assets/images/projects/future-ed.gif';
+import conference from '/public/images/projects/conference-sm.png';
+import conferenceGif from '/public/images/projects/conference.png';
+import leaderboard from '/public/images/projects/leaderboard-sm.jpg';
+import leaderboardGif from '/public/images/projects/leaderboard.jpg';
+import chowtime from '/public/images/projects/chowtime-sm.jpg';
+import chowtimeGif from '/public/images/projects/chowtime.gif';
+import spaceTravellers from '/public/images/projects/space-travellers-sm.jpg';
+import spaceTravellersGif from '/public/images/projects/space-travellers.jpg';
+import awesomeBooks from '/public/images/projects/awesome-books.png';
+import awesomeBooksGif from '/public/images/projects/awesome-books.gif';
+import metrics from '/public/images/projects/metrics.jpg';
+import metricsGif from '/public/images/projects/metrics.gif';
+import viand from '/public/images/projects/viand-sm.jpg';
+import viandGif from '/public/images/projects/viand.gif';
+import lib from '/public/images/projects/oop.jpg';
+import catalogOfMyThings from '/public/images/projects/catalog-of-my-things.jpg';
+import blog from '/public/images/projects/blog-app-sm.jpg';
+import blogGif from '/public/images/projects/blog-app.gif';
+import cycleCruise from '/public/images/projects/cyclecruise-sm.jpg';
+import cycleCruiseGif from '/public/images/projects/cyclecruise.jpg';
+import futureEd from '/public/images/projects/future-ed.jpg';
+import futureEdGif from '/public/images/projects/future-ed.gif';
 
 const projects = {
   frontend: [
@@ -115,7 +115,7 @@ const projects = {
       `,
       img: chowtime,
       gif: chowtimeGif,
-      stack: [['Webpack', stack.webpack], ['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
+      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
       demo: 'https://c00p75.github.io/ChowTime/dist/',
       source: 'https://github.com/c00p75/ChowTime',
     },
@@ -135,7 +135,7 @@ const projects = {
       `,
       img: leaderboard,
       gif: leaderboardGif,
-      stack: [['Webpack', stack.webpack], ['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
+      stack: [['JavaScript', stack.javaScript], ['HTML', stack.html], ['CSS', stack.css]],
       demo: 'https://c00p75.github.io/Leaderboard/dist',
       source: 'https://github.com/c00p75/Leaderboard',
     },

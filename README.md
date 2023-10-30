@@ -1,1 +1,1 @@
-React portfolio.
+# Portfolio showcasing my skills and projects
