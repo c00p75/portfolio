@@ -1,1 +1,1 @@
-# prtfolo showcasing my skills and projects
+# Portfolio showcasing my skills and projects
