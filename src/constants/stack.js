@@ -28,6 +28,7 @@ import criticalThinking from '/public/images/teck-stacks/critical_thinking.png';
 import chromeDev from '/public/images/teck-stacks/chromeDev.png';
 import typeScript from '/public/images/teck-stacks/typescript.png';
 import aws from '/public/images/teck-stacks/aws.png';
+import next from '/public/images/teck-stacks/nextjs.png';
 
 export default {
   react,
@@ -60,4 +61,5 @@ export default {
   sql,
   typeScript,
   aws,
+  next,
 };

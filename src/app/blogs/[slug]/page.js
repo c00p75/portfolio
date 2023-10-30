@@ -23,7 +23,7 @@ export async function generateMetadata({ params }) {
   })
   if(!blog){ return };
   return {
-    title: blog.title,
+    title: `${blog.title} | George M'sapenda`,
     description: blog.description,
     openGraph: {
       title: blog.title,
