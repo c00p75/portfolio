@@ -1,4 +1,4 @@
-import stack from './stack';
+import { stack } from "./stack";
 
 const skills = {
   frontend: [

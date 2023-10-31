@@ -48,7 +48,7 @@ export default function BlogPage({ blog }) {
                   {
                     blog.toc.map((heading) => {
                       return(
-                        <li key={heading.slug}>
+                        <li key={heading.slug} className='my-2'>
                           <a href={`#${heading.slug}`} data-level={heading.level}>
                             <p className='flex'>
                               <span className="dot"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="white" d="M12 10a2 2 0 0 0-2 2a2 2 0 0 0 2 2c1.11 0 2-.89 2-2a2 2 0 0 0-2-2Z" /></svg></span>
@@ -62,7 +62,7 @@ export default function BlogPage({ blog }) {
                 </ul>
               </details>
             </div>
-            <div className="col-12 col-lg-9 prose prose-lg">
+            <div className="col-12 col-lg-9 prose prose-lg px-lg-5">
               <MDXContent components={mdxComponents} />
             </div>
           </div>
