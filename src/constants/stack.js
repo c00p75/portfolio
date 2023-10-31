@@ -30,7 +30,7 @@ import typeScript from '/public/images/teck-stacks/typescript.png';
 import aws from '/public/images/teck-stacks/aws.png';
 import next from '/public/images/teck-stacks/nextjs.png';
 
-export default {
+export const stack = {
   react,
   javaScript,
   redux,

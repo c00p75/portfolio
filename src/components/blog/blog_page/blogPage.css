@@ -125,6 +125,14 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
   padding: "0 4em" !important;
 }
 
+.prose a {
+  text-decoration: underline !important;
+}
+
+.prose a:hover {
+  font-weight: bold !important;
+}
+
 #related-blogs section {
   opacity: 1 !important;
 }
