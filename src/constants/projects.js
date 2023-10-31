@@ -1,4 +1,4 @@
-import stack from './stack';
+import { stack } from './stack';
 import conference from '/public/images/projects/conference-sm.png';
 import conferenceGif from '/public/images/projects/conference.png';
 import leaderboard from '/public/images/projects/leaderboard-sm.jpg';
