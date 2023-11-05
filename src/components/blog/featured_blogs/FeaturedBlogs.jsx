@@ -9,8 +9,8 @@ const FeaturedBlogs = ({blogs}) => {
   const secondFeaturedBlog = blogs.find((blog) => blog.title === 'why TypeScript?');
   // const thirdFeaturedBlog = blogs.find((blog) => blog.title === 'Best Practices for Writing Clean and Maintainable Code');
   return (
-    <section className="flex-col align-items-start">
-      <h1 className="fw-bold mb-4">Featured Posts</h1>
+    <section className="flex-col align-items-start" style={{width: "100%"}}>
+      <h1 className="fw-bold fs-1 mb-4">Featured Posts</h1>
       <div className="row">
         <div className="col-12 col-md-6 mb-3 mb-md-0">
           <article className="cover-blog-container position-relative d-flex flex-center overflow-hidden" id="first-featured-blog">

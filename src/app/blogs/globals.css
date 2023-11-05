@@ -1,3 +1,9 @@
+#cover-blog .cover-blog-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .cover-blog-container {
   margin: 6.5em 0;
   width: 90vw;
@@ -178,6 +184,11 @@ section {
 
   #cover-blog .cover-blog-link > * {
     width: 100% !important;
+  }
+
+  #cover-blog .cover-blog-text {
+    justify-content: start !important;
+    min-height: auto;
   }
 }
 
