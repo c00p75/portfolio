@@ -7,7 +7,7 @@ const RecentPosts = ({blogs, header}) => {
   return (
     <section className="d-flex flex-col align-items-start mt-5 pt-5">
       <div className="flex-center justify-content-between" style={{width: "100%"}}>
-        <h1 className="fw-bold">{header}</h1>
+        <h1 className="fw-bold fs-1">{header}</h1>
         <Link href="/blogs/categories/all" className="simple-link">View all</Link>
       </div>
       <div className="blogs-container row">

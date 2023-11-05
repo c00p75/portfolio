@@ -89,7 +89,7 @@ const Contact = () => {
                     )}
                     {(!status.succeeded && !status.submitting) && (<span>{buttonText}</span>)}
                     {status.succeeded && (
-                      <div className="sent-btn">
+                      <div className="sent-btn flex-center">
                         <span>Sent</span>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fillRule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16Zm3.78-9.72a.75.75 0 0 0-1.06-1.06L6.75 9.19L5.53 7.97a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l4.5-4.5Z" clipRule="evenodd" /></svg>
                       </div>

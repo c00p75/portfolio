@@ -203,4 +203,10 @@ section {
   .blog-post :nth-child(2) h2 {
     margin: 0.5em 0 !important;
   }
+
+  .featured-blog,
+  .featured-blog a,
+  .featured-blog a img {
+    width: 100%;
+  }
 }

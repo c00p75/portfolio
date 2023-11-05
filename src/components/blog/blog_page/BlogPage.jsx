@@ -67,7 +67,7 @@ export default function BlogPage({ blog }) {
             </div>
           </div>
         </div>
-        <div className='m-5' id='related-blogs'>
+        <div className='m-2 m-lg-5' id='related-blogs'>
           <RecentPosts blogs={recentBlogs.slice(0,3)} header={"Related posts"} />
         </div>
       </article>
