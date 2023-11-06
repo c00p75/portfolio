@@ -217,7 +217,7 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
 
   pre,
   blockquote {
-    max-width: 83vw !important;
+    max-width: 90vw !important;
     overflow: auto;
   }
 
