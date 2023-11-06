@@ -34,8 +34,7 @@
   font-size: 3.5em !important;
 }
 
-#full-blog .blogs-container,
-#full-blog .blog-post  {
+#full-blog .blogs-container {
   width: 100% !important;
 }
 
