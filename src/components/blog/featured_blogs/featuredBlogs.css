@@ -32,20 +32,14 @@ section {
   transform: scale(1.09);
 }
 
-
 .feature-image {
   width: 40%;
   height: auto;
 }
 
-#first-featured-blog .cover-blog-link {
-  border-color: transparent !important;
-}
-
 #first-featured-blog .cover-blog-overlay {
-  height: 99.5%;
-  width: 99.5%;
-  margin-bottom: 0.1%;
+  height: 100%;
+  width: 100%;
 }
 
 #first-featured-blog:hover,

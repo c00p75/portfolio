@@ -15,16 +15,19 @@ export default function BlogPage({ blog }) {
   const mdxComponents = {
     Image
   }
-  const recentBlogs = allBlogs.filter((relatedBlog) => {
+
+  const recentRelatedBlogs = allBlogs.filter((relatedBlog) => {
     return relatedBlog.tags.some((tag) => {
-      return tag === blog.tags[0];
+      return blog.tags.includes(tag)
     })
   });
+
+  const relatedBlogs = recentRelatedBlogs.filter((relatedBlog) => relatedBlog.title != blog.title)
 
   return (
     <section style={{opacity: "1"}} className="flex-center flex-col" id={darkMode ? 'dark' : 'light'}>
       <span className="current-section" id="current-section-blog" />
-      <article>
+      <article id="full-blog">
         <div className="cover-blog-container position-relative d-flex flex-center overflow-hidden" id="blog-details" style={{ backgroundImage: `url(${blog.image.filePath.replace("../public", "")})` }}>
           <div className="cover-blog-overlay" />
           <div className="cover-blog-link position-absolute text-light z-1 flex-center flex-column text-center" style={{height:"fit-content"}}>
@@ -67,9 +70,11 @@ export default function BlogPage({ blog }) {
             </div>
           </div>
         </div>
-        <div className='m-2 m-lg-5' id='related-blogs'>
-          <RecentPosts blogs={recentBlogs.slice(0,3)} header={"Related posts"} />
-        </div>
+        {relatedBlogs && (
+          <div className='m-2 m-lg-5' id='related-blogs'>
+            <RecentPosts blogs={relatedBlogs.slice(0,3)} header={"Related posts"} />
+          </div>
+        )}
       </article>
     </section>
   );

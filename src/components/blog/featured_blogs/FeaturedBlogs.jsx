@@ -7,10 +7,10 @@ import { slug } from "github-slugger";
 const FeaturedBlogs = ({blogs}) => {
   const firstFeaturedBlog = blogs.find((blog) => blog.title === "3 pieces of advice I would give someone who’s just beginning their journey with software development");
   const secondFeaturedBlog = blogs.find((blog) => blog.title === 'why TypeScript?');
-  // const thirdFeaturedBlog = blogs.find((blog) => blog.title === 'Best Practices for Writing Clean and Maintainable Code');
+  const thirdFeaturedBlog = blogs.find((blog) => blog.title === 'Best Practices for SEO in Web Development');
   return (
-    <section className="flex-col align-items-start">
-      <h1 className="fw-bold mb-4">Featured Posts</h1>
+    <section className="flex-col align-items-start" style={{width: "100%"}}>
+      <h1 className="fw-bold fs-1 mb-4">Featured Posts</h1>
       <div className="row">
         <div className="col-12 col-md-6 mb-3 mb-md-0">
           <article className="cover-blog-container position-relative d-flex flex-center overflow-hidden" id="first-featured-blog">
@@ -64,7 +64,7 @@ const FeaturedBlogs = ({blogs}) => {
             </Link>
           </article>
           
-          {/* <article className="featured-blog row position-relative d-flex flex-center overflow-hidden">
+          <article className="featured-blog row position-relative d-flex flex-center overflow-hidden">
             <Link href={`blogs/${thirdFeaturedBlog._raw.flattenedPath}`} className="text-light d-flex">
               <Image
                 src={thirdFeaturedBlog.image.filePath.replace("../public", "")}
@@ -88,7 +88,7 @@ const FeaturedBlogs = ({blogs}) => {
                 <span className="date-text">{format(new Date(thirdFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>
               </div>
             </Link>
-          </article> */}
+          </article>
         </div>
       </div>
     </section>

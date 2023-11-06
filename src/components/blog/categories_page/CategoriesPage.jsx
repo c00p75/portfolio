@@ -14,15 +14,13 @@ export async function generateStaticParams() {
   const paths = [{slug: "all"}];
 
   allBlogs.map((blog) => {
-    if(blog.isPublished){
-      blog.tags.map((tag) => {
-        let slugified = new GithubSlugger().slug(tag);
-        if(!categories.includes(slugified)){
-          categories.push(slugified);
-          paths.push({slug: slugified});
-        }
-      })
-    }
+    blog.tags.map((tag) => {
+      let slugified = new GithubSlugger().slug(tag);
+      if(!categories.includes(slugified)){
+        categories.push(slugified);
+        paths.push({slug: slugified});
+      }
+    })
   })
   return paths;
 }
@@ -31,13 +29,16 @@ const CategoriesPage = ({category}) => {
   const { darkMode } = useContext(ThemeContext);
   const allCategories = ["all"];
   const blogs = allBlogs.filter((blog) => {
+    blog.tags.forEach((tag) => {
+      if(!allCategories.includes(slug(tag))){ allCategories.push(slug(tag)) }
+    })
     return blog.tags.some((tag) => {
       const slugged = slug(tag);
-      if(!allCategories.includes(slugged)){ allCategories.push(slugged) }
       if(category === "all") { return true }
       return slugged === category;
     })
   });
+
   return (
     <section style={{opacity: "1", minHeight: "90vh"}} className="flex-center flex-col" id={darkMode ? 'dark' : 'light'}>
       <div id="categories-page" className='container'>

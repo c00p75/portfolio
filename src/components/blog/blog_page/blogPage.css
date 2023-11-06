@@ -34,6 +34,11 @@
   font-size: 3.5em !important;
 }
 
+#full-blog .blogs-container,
+#full-blog .blog-post  {
+  width: 100% !important;
+}
+
 .blog-tags {
   flex-wrap: wrap;
 }
@@ -97,6 +102,10 @@
 
 .toc a:hover p {
   text-decoration: underline;
+}
+
+pre {
+  max-width: 60vw;
 }
 
 code {
@@ -202,6 +211,10 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
     position: relative;
     top: auto;
     margin-bottom: 2em;
+  }
+
+  pre {
+    max-width: 90vw !important;
   }
 
   #light .toc * {
