@@ -22,7 +22,6 @@
   background: linear-gradient(to bottom left, rgba(255, 255, 255, 0.5), transparent);
 }
 
-
 #blog-details:hover h1,
 #blog-details:focus-within h1,
 #blog-details:hover img,
@@ -212,7 +211,8 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
     margin-bottom: 2em;
   }
 
-  pre {
+  pre,
+  blockquote {
     max-width: 90vw !important;
   }
 
