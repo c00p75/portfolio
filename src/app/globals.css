@@ -126,6 +126,10 @@ a { text-decoration: none !important; }
   animation-delay: 0.4s;
 }
 
+.blog-post {
+  width: 100% !important;
+}
+
 @keyframes pulse_414 {
   to {
     transform: scale(0.8);
