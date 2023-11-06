@@ -39,7 +39,6 @@ const CategoriesPage = ({category}) => {
     })
   });
 
-  console.log(allCategories);
   return (
     <section style={{opacity: "1", minHeight: "90vh"}} className="flex-center flex-col" id={darkMode ? 'dark' : 'light'}>
       <div id="categories-page" className='container'>

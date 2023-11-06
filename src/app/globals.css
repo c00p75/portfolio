@@ -8,6 +8,11 @@
   padding: 0;
 }
 
+body {
+  background: whitesmoke !important;
+  min-height: 92vh;
+}
+
 @font-face {
   font-family: 'Centra', sans-serif;
   src: url('/public/font/centra-font-family-1687149871-0/CentraNo2-Bold-BF646c26904e7ce.ttf');
@@ -73,7 +78,7 @@ a { text-decoration: none !important; }
 
 #dark {
   background-color: #121212 !important;
-  color: white !important;
+  color: white;
 }
 
 #light {
