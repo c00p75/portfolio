@@ -56,7 +56,7 @@ const Blog = defineDocumentType(() => ({
           const flag = groups?.flag;
           const content = groups?.content;
           return {
-            level: flag?.length == 1 ? "one" : flag?.length == 2 ? "two" : "three",
+            level: flag?.length == 1 ? "one" : flag?.length == 2 ? "two" : flag?.length == 3 ? "three" : "four",
             text: content,
             slug: content ? new GithubSlugger().slug(content) : undefined,
           }
