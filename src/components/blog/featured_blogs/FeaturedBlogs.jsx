@@ -19,11 +19,11 @@ const FeaturedBlogs = ({blogs}) => {
               <h2 className="text-capitalize tag-btn fw-medium border fs-5">
                 <Link href={`blogs/categories/${slug(firstFeaturedBlog.tags[0])}`} className="flex-center p-3">{firstFeaturedBlog.tags[0]}</Link>
               </h2>
-              <h1 className="text-capitalize fw-bolder fs-4">
+              <h1 className="text-capitalize fw-bolder fs-4 my-3">
                 {firstFeaturedBlog.title}
               </h1>
               <p>{firstFeaturedBlog.description}</p>
-              <span className="date-text">{format(new Date(firstFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>
+              <span className="date-text mt-2">{format(new Date(firstFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>
             </Link>
             <Image
               src={firstFeaturedBlog.image.filePath.replace("../public", "")}
@@ -56,10 +56,10 @@ const FeaturedBlogs = ({blogs}) => {
                 <h2 className="text-capitalize tag-btn fw-medium border fs-6">
                   <Link href={`blogs/categories/${slug(secondFeaturedBlog.tags[0])}`} className="flex-center p-3">{secondFeaturedBlog.tags[0]}</Link>
                 </h2>
-                <h1 className="text-capitalize fw-semibold">
+                <h1 className="text-capitalize fw-semibold my-3">
                   {secondFeaturedBlog.title}
                 </h1>
-                <span className="date-text">{format(new Date(secondFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>
+                <span className="date-text mt-2">{format(new Date(secondFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>
               </div>
             </Link>
           </article>
@@ -82,10 +82,10 @@ const FeaturedBlogs = ({blogs}) => {
                 <h2 className="text-capitalize tag-btn fw-medium border fs-6">
                   <Link href={`blogs/categories/${slug(thirdFeaturedBlog.tags[0])}`} className="flex-center p-3">{thirdFeaturedBlog.tags[0]}</Link>
                 </h2>
-                <h1 className="text-capitalize fw-semibold">
+                <h1 className="text-capitalize fw-semibold my-3">
                   {thirdFeaturedBlog.title}
                 </h1>
-                <span className="date-text">{format(new Date(thirdFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>
+                <span className="date-text mt-2">{format(new Date(thirdFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>
               </div>
             </Link>
           </article>
