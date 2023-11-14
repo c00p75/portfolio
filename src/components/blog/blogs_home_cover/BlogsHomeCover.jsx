@@ -11,11 +11,11 @@ const BlogsHomeCover = ({blog}) => {
           <h2 className="text-capitalize tag-btn fw-semibold border fs-5">
             <Link href={`blogs/categories/${slug(blog.tags[0])}`} className="flex-center p-3">{blog.tags[0]}</Link>
           </h2>
-          <h1 className="text-capitalize fw-bolder">
+          <h1 className="text-capitalize fw-bolder my-3 fs-2">
             {blog.title}
           </h1>
           <p>{blog.description}</p>  
-          <span className="date-text">{format(new Date(blog.publishedAt), "MMM dd, yyyy")}</span>
+          <span className="date-text mt-3">{format(new Date(blog.publishedAt), "MMM dd, yyyy")}</span>
         </div>  
         <div className="cover-img-container overflow-hidden">
           <Image
