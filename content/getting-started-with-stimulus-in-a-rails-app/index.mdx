@@ -1,0 +1,280 @@
+---
+title: "Getting Started with Stimulus in a Rails App: A Beginner's Guide"
+description: "A beginner-friendly guide that explains how to harness the power of Stimulus,
+              a JavaScript framework that seamlessly integrates with Ruby on Rails, and
+              effortlessly adds interactivity to your web applications. It covers installation,
+              controllers, and practical examples of the use of Stimulus.js in Rails."
+image: "../../public/blogs/rails_stimulus.png"
+publishedAt: "2023-11-13"
+updatedAt: "2023-11-13"
+isPublished: true
+tags:
+- web development
+- Rails
+- Ruby
+---
+
+**[Ruby on Rails](https://rubyonrails.org/)** is a popular web development framework known for its simplicity and developer-friendly
+approach. Among its prominent advantages is the capability to provide many tools and libraries to make
+web development easier and one of the exciting additions in recent years is
+**[Stimulus](https://stimulus.hotwired.dev/)**. Stimulus is a JavaScript framework that complements
+Rails beautifully, allowing you to add interactivity to your web applications with minimal effort.
+It allows you to create a great user experience without needing a Javascript frontend framework or library
+like React or Vue and is well-suited for implementing features such as form validation, modal windows/dialogs,
+live updates, infinite scrolling, toggle visibility, drag and drop and so much more!
+
+In this article, I'll introduce the basics of using Stimulus in a Rails application, making it
+easy for beginners to get started. **It's important to note that Rails 7 is the latest release at the time of
+this blog post.**
+
+## What is Stimulus?
+
+Stimulus is a JavaScript framework created by **[Basecamp](https://basecamp.com/)** (formerly 37signals)
+to help developers build rich, interactive user interfaces with ease. It follows a simple and unobtrusive
+approach to augment your HTML elements with interactivity using JavaScript. The core philosophy of Stimulus
+is to keep your JavaScript code focused, organized, and easy to maintain.
+
+## Getting Started with Stimulus
+
+### Installation
+Stimulus comes built into a Rails 7 app, and has the following configurations already set up:
+<ul>
+  <li>
+  All Stimulus controllers are exported from ```app/javascript/application.js``` and imported by
+  ```importmap.rb```
+  </li>
+  <li>
+  Import maps are added to ```views/layouts/application.html.erb``` :
+  
+  ```html
+  <%= javascript_importmap_tags %>
+  ```
+  </li>
+</ul>
+
+If you are using a version lower than Rails 7 or Stimulus happens to be missing from your Rails application,
+you can consult the **[gem documentation here](https://github.com/hotwired/stimulus-rails)**.
+
+### Controllers
+A Stimulus.js controller is a JavaScript class that extends the base Controller class from Stimulus.
+These controllers act as encapsulated units of behavior and are responsible for defining and
+managing the interactions associated with a specific HTML element. Each controller is associated with a DOM
+element on which it can perform actions and updates, and can be generated with the command:
+```ruby
+rails generate stimulus controllerName
+```
+<br />
+
+Let's take a quick look at the anatomy of the ```hello_controller.js``` that comes built into a Rails 7 app.
+
+```javascript
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  // Controller logic
+}
+```
+In the code above, the controller inherits from the base ```Controller``` class and exports it to
+make it accessible for use in other parts of your JavaScript code.
+
+#### Adding Behavior to Your Controller
+
+Inside the exported functions of Stimulus controllers is the controller logic, as can be seen in 
+the already setup ```hello_controller.js```.
+
+```javascript
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  // Controller logic
+  connect() {
+    this.element.textContent = "Hello World!"
+  }
+}
+```
+
+In the code above, the ```connect``` method will be evoked when our controller connects to an html element
+and we can nest our desired logic within it. In our case, we want to set the string ```"Hello World!"``` as the text
+content of our target element.
+
+I'd like to add that controllers can define various methods and each method corresponds to a specific
+lifecycle event or action. Here are some common methods:
+<ul>
+<li>
+```initialize()```: This is called once when the controller is first connected to an HTML element.
+It's a good place to perform one-time setup.
+</li>
+
+<li>
+```connect()```: This is invoked every time the controller is connected to an HTML element.
+It's commonly used to set up event listeners or initialize variables.
+</li>
+
+<li>
+```disconnect()```: This is called when the controller is disconnected from the HTML element and
+is useful for cleanup tasks.
+</li>
+
+<li>
+Custom Methods: Additionally, you can define custom methods based on the specific functionality
+you want the controller to provide.
+</li>
+</ul>
+
+#### Applying the Controller in Your HTML
+Now, let's apply the controller to an HTML element. To access the controller from your HTML view file,
+add the data-controller attribute with the controller name:
+
+```html
+<!-- app/views/hello/index.html.erb -->
+<div data-controller="hello_controller">
+  <!-- Your content here -->
+</div>
+```
+
+In the code above, we've attached our ```hello_controller``` to a ```div```, making it the target element of
+our controller. When the app is run with command ```rails server```, the ```div``` connects to the ```hello_controller```
+and the ```connect()``` method is invoked, injecting the string ```"Hello World!"``` into the ```div```.
+It's that simple!
+
+## Practical Examples of Using Stimulus.js in Rails
+Now that you have a good idea of how Stimulus.js is used in your Rails project, let's explore some practical
+examples of how it can be used to enhance the user experience.
+
+### Dropdown Menu
+We can create a dropdown that reveals a list of options when clicked.
+
+Generate a Stimulus controller for the dropdown:
+
+```bash
+rails generate stimulus Dropdown
+```
+
+Open ```app/javascript/controllers/dropdown_controller.js``` and define the dropdown behavior:
+
+```javascript
+// app/javascript/controllers/dropdown_controller.js
+import { Controller } from "stimulus";
+
+export default class extends Controller {
+  static targets = ["options"];
+
+  toggle() {
+    this.optionsTarget.classList.toggle("hidden");
+  }
+}
+```
+
+In this example, the ```toggle``` method toggles the visibility of the dropdown options by adding
+or removing the ```hidden``` class.
+
+Notice that this time we have included ```static targets = ["options"];```. 
+In Stimulus.js, the ```static targets``` property is used to define named targets that your
+controller can reference.  The ```static``` keyword indicates that the ```targets``` property is a static
+property of the class, meaning it is *shared among all instances of the class.*
+
+Add the HTML markup for the dropdown:
+```html
+<!-- app/views/dropdown/index.html.erb -->
+<div data-controller="dropdown">
+  <button data-action="click->dropdown#toggle">Toggle Dropdown</button>
+  <ul data-dropdown-target="options" class="hidden">
+    <li>Option 1</li>
+    <li>Option 2</li>
+    <li>Option 3</li>
+  </ul>
+</div>
+```
+
+In this example, the data-controller attribute associates the dropdown controller with the containing div.
+```click->dropdown#toggle``` specifies the event (click) and the action to be taken. When the element is clicked,
+the ```toggle``` method in the ```dropdown_controller``` will be invoked.
+
+Let's some basic CSS to style the dropdown.
+```css
+/* app/assets/stylesheets/application.css */
+.hidden {
+  display: none;
+}
+```
+
+### Form Validation
+Stimulus.js can be used to enhance the validation of a form.
+
+```ruby
+rails generate controller formValidationController
+```
+
+```javascript
+// app/javascript/controllers/form_validation_controller.js
+import { Controller } from "stimulus"
+
+export default class extends Controller {
+  static targets = ["input"]
+
+  validate() {
+    if (this.inputTarget.value.length < 3) {
+      alert("Please enter at least 3 characters.")
+    }
+  }
+}
+```
+Apply this controller to your form:
+
+```html
+<!-- app/views/forms/new.html.erb -->
+<form data-controller="form-validation">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" data-target="form-validation.input">
+  <button type="button" data-action="form-validation#validate">Submit</button>
+</form>
+```
+
+### Dynamic Content Loading
+Imagine you have a list of items, and you want to load more items when the user scrolls to the bottom of the page.
+Create a new controller, infinite_scroll_controller.js:
+
+```ruby
+rails generate controller infiniteScrollController
+```
+
+```javascript
+// app/javascript/controllers/infinite_scroll_controller.js
+import { Controller } from "stimulus"
+
+export default class extends Controller {
+  static targets = ["items"]
+
+  connect() {
+    window.addEventListener("scroll", this.loadMore.bind(this))
+  }
+
+  loadMore() {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      // Fetch and append more items to the list
+      console.log("Loading more items...")
+    }
+  }
+}
+```
+
+Apply this controller to your HTML:
+
+```html
+<!-- app/views/items/index.html.erb -->
+<div data-controller="infinite-scroll">
+  <div data-target="infinite-scroll.items">
+    <!-- Your list of items here -->
+  </div>
+</div>
+```
+
+The examples above showcase how Stimulus.js can seamlessly be integrated into a Rails project to add
+interactive features without sacrificing the benefits of server-rendered HTML.
+
+## Conclusion
+Stimulus.js is a valuable addition to the Rails ecosystem, providing a pragmatic and lightweight approach
+to adding client-side interactivity. By following the steps outlined in this guide, you can start incorporating
+Stimulus.js controllers into your Rails application and enhance the user experience with minimal overhead.
+As your application grows, you can continue to leverage Stimulus.js to create dynamic and responsive interfaces
+while maintaining the simplicity and elegance of the Rails framework.

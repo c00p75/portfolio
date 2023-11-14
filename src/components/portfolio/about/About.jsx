@@ -23,10 +23,10 @@ const About = () => {
               Zambia but I call many places home.
               I love to code, excercise, and read Stephen King novels.
             </p>
-            <p>
+            <p className="my-3">
               I double majored in Library & Information Science and Demography before
               deciding to follow my passion for coding.
-              I&apos;m currenlty a certified full-stack
+              I&apos;m currenlty a certified fullf-stack
               developer with a mission to create and contribute to meaningful technology solutions
               that make a positive impact.
             </p>
@@ -35,7 +35,7 @@ const About = () => {
               I&apos;m great with documentation, and proficient in a range
               of modern technologies including Javacsript, Ruby, Python, and SQL.
             </p>
-            <a href="/docs/Resume.pdf" target="_blank" rel="noreferrer" className="btn btn-info">
+            <a href="/docs/Resume.pdf" target="_blank" rel="noreferrer" className="mt-4 btn btn-info">
               Download my resume
             </a>
           </Col>
