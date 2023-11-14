@@ -118,6 +118,41 @@
   font-size: 1.2em !important;
 }
 
+
+.featured-blog:hover h1,
+.featured-blog:focus-within h1 {
+  text-decoration: underline;
+}
+
+.featured-blog h1 {
+  transition: all 0.2s ease-in-out;
+  font-size: 1.2em !important;
+}
+
+.featured-blog img {
+  transition: all 0.2s ease-in-out;
+}
+
+.featured-blog:hover h1,
+.featured-blog:focus-within h1 {
+  transform: scale(1.02);
+}
+
+.featured-blog:hover img,
+.featured-blog:focus-within img {
+  transform: scale(1.09);
+}
+
+.feature-image {
+  width: 40%;
+  height: auto;
+}
+
+.featured-blog,
+.featured-blog a {
+  height: 100%;
+}
+
 #light #cover-blog {
   border: none !important;
   border-top: 1px solid gainsboro !important;
@@ -156,7 +191,8 @@
 }
 
 #light .prose h2,
-#light .prose h3 {
+#light .prose h3,
+#light .prose h4 {
   color: #1e283a !important;
 }
 

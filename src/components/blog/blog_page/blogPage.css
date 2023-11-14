@@ -88,13 +88,16 @@
 }
 
 .toc [data-level='two'] p {
-  margin-left: 1em;
   border-top: 2px solid gainsboro;
   padding-top: 1em;
 }
 
 
 .toc [data-level='three'] p {
+  margin-left: 1em;
+}
+
+.toc [data-level='four'] p {
   margin-left: 2em;
 }
 
@@ -109,7 +112,14 @@ pre {
 code {
   counter-reset: line;
 }
- 
+
+.prose > p > code::before,
+.prose > p > code::after,
+.prose > ul > li p > code::before,
+.prose > ul > li p > code::after {
+  display: none !important;
+}
+
 code > [data-line]::before {
   counter-increment: line;
   content: counter(line);
@@ -130,7 +140,7 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
 
 .prose {
   padding: "0 4em" !important;
-  max-width: 70%;
+  max-width: 65%;
 }
 
 .prose a {
