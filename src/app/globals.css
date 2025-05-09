@@ -41,7 +41,7 @@ body {
   border-radius: 5px;
 }
 
-::-webkit-scrollbar-thumb {
+::-webkit-bar-thumb {
   background-color: rgb(91 91 91);
   border-radius: 5px;
 }

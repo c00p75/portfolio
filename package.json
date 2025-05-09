@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build:content": "npx contentlayer build || true",
+    "build": "npm run build:content && next build",
     "start": "next start",
     "lint": "next lint"
   },
