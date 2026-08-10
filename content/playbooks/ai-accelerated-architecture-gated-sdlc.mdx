@@ -1,0 +1,91 @@
+---
+title: 'AI-accelerated, architecture-gated: an SDLC that survives fast code'
+date: '2026-08-10'
+category: AI SDLC Governance
+accent: lime
+principle: >-
+  Generation speed is only a gain if review capacity scales with it. Move the
+  human bottleneck from writing code to specifying and verifying it.
+summary: >-
+  Teams adopting AI coding tools rarely fail because the generated code is bad.
+  They fail because throughput outruns the review, testing, and architectural
+  judgement that used to be applied at a slower rate. This is the set of gates I
+  put in front of that.
+tags:
+  - SDLC
+  - Code review
+  - Testing
+  - Governance
+---
+
+## The failure mode this prevents
+
+The naive adoption story is "the team writes code 3× faster." What actually
+happens is that the team produces 3× more diff, and every downstream
+capacity — review attention, test coverage, architectural coherence, on-call
+understanding of the system — stays exactly where it was. The bottleneck does not
+disappear; it moves, and it moves somewhere with far less instrumentation.
+
+The symptom is a repository that passes CI and that nobody can confidently
+change six months later.
+
+## Gate 1 — Spec before generation
+
+The artefact a human writes first is not the implementation. It is the boundary:
+
+- Type signatures and data shapes
+- The failing test that defines "done"
+- The interface the rest of the system sees
+
+The model fills in the middle. This inverts the usual review problem, because
+reviewing a diff against a spec you wrote is a bounded question — *does this
+satisfy the contract?* — where reviewing an unspecified diff is unbounded.
+
+## Gate 2 — Repository rules are checked in, not remembered
+
+Conventions communicated in a code review are applied once. Conventions committed
+as a workspace ruleset are applied on every generation, by everyone.
+
+The rules worth writing down are almost never style — formatters already own
+that. They are the things a model has no way to infer: which module owns which
+concern, which dependencies are deliberately absent, which patterns were tried
+and rejected, where the transaction boundaries are.
+
+> A rules file that repeats what the linter already enforces is dead weight. One
+> that records a rejected approach and why saves the same argument every sprint.
+
+## Gate 3 — Tests are the review surface that scales
+
+Human review does not scale linearly with diff volume; test suites do. The
+practical consequence is that faster generation raises the *required* level of
+automated verification rather than lowering it.
+
+The distribution that has worked for me:
+
+- **Unit tests** on pure logic, written before generation as the spec.
+- **Integration tests** across the seams the model is most likely to get subtly
+  wrong — anything touching transactions, auth, or external APIs.
+- **End-to-end** on the two or three flows whose breakage would be a real
+  incident, and no more; broad E2E suites rot faster than they catch things.
+
+## Gate 4 — Architectural review stays human, and stays early
+
+Everything above is about verifying implementations. None of it catches the
+expensive class of mistake, which is a correct implementation of the wrong
+structure — a boundary drawn in the wrong place, a synchronous call that should
+have been an event, a shared database between two services that now cannot deploy
+independently.
+
+That review has to happen at the design stage, because it is precisely the
+category that tests cannot express and that is most expensive to reverse. This is
+also the honest limit of the whole playbook: the gates make fast code safe, they
+do not make design decisions for you.
+
+## What I do not do
+
+- **Ban the tools.** The failure is a process gap, not a tool problem.
+- **Require a human to read every generated line.** That does not scale and
+  produces rubber-stamp approvals that are worse than an honest gate.
+- **Trust coverage percentage as the signal.** Generated tests inflate coverage
+  while asserting almost nothing. What matters is whether a deliberately
+  introduced bug fails the suite.

@@ -1,147 +1,398 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* ---------------------------------------------------------------------------
+   Theme switching
+   Tokens below resolve through CSS custom properties so a single `data-theme`
+   attribute (or the OS preference) re-tones the whole system. Every colour has
+   a definition on bare `:root`; the dark blocks only *re-define* them.
+--------------------------------------------------------------------------- */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+  /* The grey surround the content card floats on. Darker than the reference
+     artwork on purpose: at #8e8e8e the edge captions came out at 2.4:1, which
+     fails WCAG AA. This is the lightest grey that keeps both text tones above
+     4.5:1 while preserving the mid-grey character. */
+  --tone-page: #626264;
+  /* The black card. */
+  --tone-ink: #0b0b0b;
+  --tone-ink-soft: #1a1a1a;
+  --tone-ink-line: #2b2b2b;
+  /* The warm off-white panel. */
+  --tone-cream: #efeae2;
+  --tone-cream-dim: #e2dbd0;
+  --tone-cream-line: #cfc7b9;
+  /* Text tones */
+  --tone-on-ink: #efeae2;
+  --tone-on-ink-muted: #9c968c;
+  --tone-on-cream: #0b0b0b;
+  --tone-on-cream-muted: #5f5a51;
+  --tone-on-page: #f6f4f1;
+  --tone-on-page-muted: #e4e0da;
 }
 
-body {
-  background: whitesmoke !important;
-  min-height: 92vh;
-}
-
-@font-face {
-  font-family: 'Centra', sans-serif;
-  src: url('/public/font/centra-font-family-1687149871-0/CentraNo2-Bold-BF646c26904e7ce.ttf');
-  font-weight: 700;
-}
-
-@font-face {
-  font-family: 'Centra', sans-serif;
-  src: url('/public/font/centra-font-family-1687149871-0/CentraNo2-Medium-BF646c26901ce01.ttf');
-  font-weight: 500;
-}
-
-@font-face {
-  font-family: 'Centra', sans-serif;
-  src: url('/public/font/centra-font-family-1687149871-0/CentraNo2-Book-BF646c2690591ba.ttf');
-  font-weight: 400;
-}
-
-.app {
-  overflow: scroll !important;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-  background: #e5e1e1;
-  border-radius: 5px;
-}
-
-::-webkit-bar-thumb {
-  background-color: rgb(91 91 91);
-  border-radius: 5px;
-}
-
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 75px;
-}
-
-body {
-  /* font-family: 'Centra', sans-serif !important; */
-  font-family: 'Poppins', sans-serif !important;
-  font-weight: 400;
-  overflow-x: hidden;
-  position: relative;
-  letter-spacing: 0.8px;
-}
-
-section {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  opacity: 0;
-  transition: opacity 0.9s ease-in-out;
-}
-
-img { user-select: none; }
-
-a { text-decoration: none !important; }
-
-.no-overflow {
-  overflow: hidden;
-}
-
-#dark {
-  background-color: #121212 !important;
-  color: white;
-}
-
-#light {
-  background-color: whitesmoke !important;
-  color: black !important;
-}
-
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.visible {
-  opacity: 1 !important;
-}
-
-.current-section {
-  height: 0;
-  width: 0;
-}
-
-.code-loader-container {
-  position: absolute;
-  min-height: 100vh;
-  min-width: 100vw;
-  z-index: 998;
-  background: #131313;
-}
-
-.code-loader {
-  color: #fff;
-  font-family: Consolas, Menlo, Monaco, monospace;
-  font-weight: bold;
-  font-size: 100px;
-  opacity: 0.8;
-}
-
-.code-loader span {
-  display: inline-block;
-  animation: pulse_414 0.4s alternate infinite ease-in-out;
-}
-
-.code-loader span:nth-child(odd) {
-  animation-delay: 0.4s;
-}
-
-.blog-post {
-  width: 100% !important;
-}
-
-@keyframes pulse_414 {
-  to {
-    transform: scale(0.8);
-    opacity: 0.5;
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --tone-page: #121212;
+    --tone-cream: #16150f;
+    --tone-cream-dim: #1e1d16;
+    --tone-cream-line: #333127;
+    --tone-on-cream: #efeae2;
+    --tone-on-cream-muted: #918b80;
+    --tone-on-page: #efeae2;
+    --tone-on-page-muted: #8d8d8d;
   }
 }
 
-@media (max-width: 992px) {
-  p {
-    text-align: justify;
-    letter-spacing: 0.7px;
-    line-height: 1.65em;
-    color: white;
+:root[data-theme='dark'] {
+  --tone-page: #121212;
+  --tone-cream: #16150f;
+  --tone-cream-dim: #1e1d16;
+  --tone-cream-line: #333127;
+  --tone-on-cream: #efeae2;
+  --tone-on-cream-muted: #918b80;
+  --tone-on-page: #efeae2;
+  --tone-on-page-muted: #8d8d8d;
+}
+
+@theme {
+  /* --- Semantic surfaces ------------------------------------------------ */
+  --color-page: var(--tone-page);
+  --color-ink: var(--tone-ink);
+  --color-ink-soft: var(--tone-ink-soft);
+  --color-ink-line: var(--tone-ink-line);
+  --color-cream: var(--tone-cream);
+  --color-cream-dim: var(--tone-cream-dim);
+  --color-cream-line: var(--tone-cream-line);
+
+  /* --- Semantic text ---------------------------------------------------- */
+  --color-on-ink: var(--tone-on-ink);
+  --color-on-ink-muted: var(--tone-on-ink-muted);
+  --color-on-cream: var(--tone-on-cream);
+  --color-on-cream-muted: var(--tone-on-cream-muted);
+  --color-on-page: var(--tone-on-page);
+  --color-on-page-muted: var(--tone-on-page-muted);
+
+  /* --- Sticker accents -------------------------------------------------- */
+  /* Fixed hues: these are the "printed vinyl" layer and stay constant across
+     themes so the sticker wall reads the same in both. Always paired with
+     near-black text, which keeps every combination above 4.5:1. */
+  --color-cyan: #63d6c6;
+  --color-pink: #ff2e6b;
+  --color-yellow: #f7d91c;
+  --color-orange: #f5821f;
+  --color-lime: #93cc46;
+
+  /* --- Typography ------------------------------------------------------- */
+  --font-display: var(--font-anton), 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-jb), ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Display scale — clamped so the huge headline never causes overflow. */
+  --text-mega: clamp(3.2rem, 13.5vw, 15rem);
+  --text-mega--line-height: 0.82;
+  --text-mega--letter-spacing: -0.02em;
+
+  --text-jumbo: clamp(2.6rem, 8.5vw, 7.5rem);
+  --text-jumbo--line-height: 0.86;
+  --text-jumbo--letter-spacing: -0.015em;
+
+  --text-display: clamp(2rem, 5.5vw, 4.25rem);
+  --text-display--line-height: 0.9;
+  --text-display--letter-spacing: -0.01em;
+
+  --text-title: clamp(1.5rem, 3vw, 2.25rem);
+  --text-title--line-height: 1;
+
+  /* Micro label used for the edge captions and eyebrow text. */
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.25;
+  --text-micro--letter-spacing: 0.08em;
+
+  --radius-card: 1.25rem;
+  --radius-panel: 0.75rem;
+
+  --spacing-gutter: clamp(1rem, 4vw, 3rem);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+
+@layer base {
+  * {
+    min-width: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-page);
+    color: var(--color-on-page);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    /* The page must never scroll sideways — wide children scroll themselves. */
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: var(--color-pink);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-cyan);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Anton has no real weight axis; stop browsers faking one. */
+  .font-display,
+  [class*='text-mega'],
+  [class*='text-jumbo'] {
+    font-synthesis: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Components
+--------------------------------------------------------------------------- */
+
+@layer components {
+  /* The engineering-paper grid behind the cream panels. */
+  .grid-paper {
+    background-image:
+      linear-gradient(to right, var(--color-cream-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-cream-line) 1px, transparent 1px);
+    background-size: var(--grid-cell, 68px) var(--grid-cell, 68px);
+    background-position: center center;
+  }
+
+  /* Fades the grid out at the panel edges so it reads as texture, not a table. */
+  .grid-paper-fade {
+    -webkit-mask-image: radial-gradient(ellipse 120% 100% at 50% 45%, #000 55%, transparent 100%);
+    mask-image: radial-gradient(ellipse 120% 100% at 50% 45%, #000 55%, transparent 100%);
+  }
+
+  /* Wide content (tables, diagrams, code) scrolls inside its own box. */
+  .scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+
+  /* -------------------------------------------------------------------------
+     Long-form article typography.
+     Inherits its colour from the surrounding panel, so the same styles work on
+     both the cream article body and the ink cards.
+  ------------------------------------------------------------------------- */
+  .prose-architect {
+    --prose-measure: 68ch;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  .prose-architect > * {
+    max-width: var(--prose-measure);
+  }
+
+  .prose-architect > :first-child {
+    margin-top: 0;
+  }
+
+  .prose-architect p,
+  .prose-architect ul,
+  .prose-architect ol {
+    margin-block: 1.15em;
+    text-wrap: pretty;
+  }
+
+  .prose-architect h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin-block: 2.2em 0.75em;
+    text-wrap: balance;
+  }
+
+  .prose-architect h3 {
+    font-size: 1.1875rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-block: 2em 0.6em;
+  }
+
+  .prose-architect h4 {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-block: 1.8em 0.5em;
+  }
+
+  /* rehype-autolink-headings wraps the heading text in an anchor. */
+  .prose-architect :is(h2, h3, h4) a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .prose-architect :is(h2, h3, h4) a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-cyan);
+    text-underline-offset: 6px;
+  }
+
+  .prose-architect a:not(:is(h2, h3, h4) a) {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+    transition: text-decoration-color 150ms;
+  }
+  .prose-architect a:not(:is(h2, h3, h4) a):hover {
+    text-decoration-color: var(--color-pink);
+  }
+
+  .prose-architect strong {
+    font-weight: 700;
+  }
+
+  .prose-architect ul,
+  .prose-architect ol {
+    padding-inline-start: 1.3em;
+  }
+  .prose-architect ul {
+    list-style: none;
+    padding-inline-start: 0;
+  }
+  .prose-architect ul > li {
+    position: relative;
+    padding-inline-start: 1.4em;
+  }
+  .prose-architect ul > li::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0.72em;
+    inset-inline-start: 0.15em;
+    width: 0.45em;
+    height: 2px;
+    background-color: var(--color-pink);
+  }
+  .prose-architect ol {
+    list-style: decimal;
+  }
+  .prose-architect li {
+    margin-block: 0.45em;
+  }
+  .prose-architect li::marker {
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    opacity: 0.6;
+  }
+
+  .prose-architect blockquote {
+    margin-block: 1.8em;
+    padding-inline-start: 1.25em;
+    border-inline-start: 3px solid var(--color-cyan);
+    font-size: 1.125rem;
+    line-height: 1.55;
+  }
+  .prose-architect blockquote p {
+    margin-block: 0.4em;
+  }
+
+  /* Inline code — excludes code inside highlighted blocks. */
+  .prose-architect :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    background-color: color-mix(in srgb, currentColor 10%, transparent);
+    word-break: break-word;
+  }
+
+  .prose-architect pre {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    margin-block: 1.6em;
+    padding: 1.15rem 1.25rem;
+    border-radius: var(--radius-panel);
+    background-color: var(--color-ink);
+    color: var(--color-on-ink);
+    max-width: none;
+  }
+  .prose-architect pre code {
+    display: grid; /* lets rehype-pretty-code highlight whole lines */
+  }
+  .prose-architect pre code [data-line] {
+    padding-inline: 0.1rem;
+  }
+
+  .prose-architect table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    text-align: start;
+  }
+  .prose-architect :is(th, td) {
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+    text-align: start;
+    vertical-align: top;
+  }
+  .prose-architect th {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .prose-architect hr {
+    margin-block: 2.5em;
+    border: 0;
+    border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  }
+
+  .prose-architect img,
+  .prose-architect svg {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-panel);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
   }
 }

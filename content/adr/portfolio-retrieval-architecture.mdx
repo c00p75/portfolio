@@ -1,0 +1,251 @@
+---
+title: 'Retrieval architecture for a low-traffic, high-scrutiny RAG assistant'
+number: 1
+status: accepted
+date: '2026-08-10'
+domain: AI Infrastructure
+featured: true
+accent: cyan
+diagram: retrieval-pipeline
+summary: >-
+  A managed vector database is the reflex answer for RAG. At this corpus size and
+  traffic shape it is the wrong one: it adds a network hop, a monthly floor cost,
+  and a vendor boundary to solve a problem that fits in a fraction of a megabyte
+  of process memory.
+context: >-
+  The assistant on this site answers questions about my own architecture writing.
+  The corpus is currently ~8.5k tokens of MDX that changes only when I publish, and
+  traffic is bursty and low — a handful of recruiters and engineers, clustered
+  around whenever a link gets shared. The hard constraint is that it must never
+  be down or embarrassing when someone opens it during a hiring conversation, and
+  it must not carry a standing monthly cost for a personal site.
+constraints:
+  - 'Corpus is small (~8.5k tokens, 56 chunks) and changes only at deploy time, never at runtime.'
+  - 'Traffic is bursty and low; a per-hour idle cost is pure waste.'
+  - 'Cold-start latency is user-visible — this is a demo people open once and judge.'
+  - 'A stranger can drive the LLM, so per-IP abuse and token spend must be bounded.'
+  - 'No standing infrastructure I have to patch, monitor, or renew.'
+options:
+  - name: Managed vector DB (Pinecone / Weaviate)
+    summary: 'Push embeddings to a hosted index; query it over the network per request.'
+    verdict: rejected
+    because: >-
+      It solves scale I do not have while adding a network hop to the hot path, a
+      monthly floor cost, and an availability dependency I do not control — on a
+      corpus that fits in memory several times over.
+    pros:
+      - 'Scales to millions of vectors without any rethinking.'
+      - 'Metadata filtering and hybrid search available out of the box.'
+      - 'Index updates are decoupled from deploys.'
+    cons:
+      - 'Adds a network round-trip to every query, against an index this size that needs none.'
+      - 'Carries a monthly floor cost regardless of traffic.'
+      - 'A third-party outage takes the demo down during the exact conversation it exists for.'
+      - 'Free tiers on these services are periodically culled; the demo would silently rot.'
+  - name: Postgres + pgvector
+    summary: 'Store embeddings in a Postgres column and query with the vector distance operators.'
+    verdict: rejected
+    because: >-
+      The right answer the moment there is already a Postgres in the stack, or the
+      moment retrieval needs to join against relational data. Neither is true here,
+      and provisioning a database purely to hold 56 vectors inverts the cost.
+    pros:
+      - 'One datastore for relational and vector data; no second consistency model.'
+      - 'Well-understood operationally; ordinary backups and migrations apply.'
+      - 'Portable across every cloud and local development.'
+    cons:
+      - 'Requires provisioning and paying for a database this site otherwise does not need.'
+      - 'Serverless Postgres cold starts land on the user-visible path.'
+      - 'Connection pooling from serverless functions is its own class of problem.'
+  - name: Build-time embeddings, in-process hybrid index
+    summary: >-
+      Embed the corpus during the build, ship the vectors as a static artifact, and
+      run cosine similarity plus BM25 in the route handler's own memory.
+    verdict: chosen
+    because: >-
+      At this size the entire index is smaller than a single hero image. Keeping it
+      in process removes the network hop, the idle cost, and the vendor dependency
+      at once, and the corpus is immutable between deploys — the exact condition
+      that makes a build-time index correct rather than lazy.
+    pros:
+      - 'No network hop and no cold-start database on the retrieval path.'
+      - 'Zero standing cost; retrieval spend is bounded by the embedding API at build time only.'
+      - 'The index is a build artifact, so it is versioned and rolls back with the deploy.'
+      - 'No runtime dependency that can be down when it matters.'
+    cons:
+      - 'Does not survive corpus growth — brute-force scoring is linear in chunk count.'
+      - 'Re-embedding requires a deploy, so content and index cannot drift apart, but also cannot update independently.'
+      - 'Index ships in the serverless bundle, so bundle size grows with the corpus.'
+tradeoffs:
+  - criterion: Query latency (retrieval only)
+    scores:
+      'Managed vector DB': adequate
+      'Postgres + pgvector': weak
+      'Build-time embeddings, in-process hybrid index': strong
+    note: 'In-process scoring has no network hop; serverless Postgres pays a cold start.'
+  - criterion: Cost at ~100 queries/month
+    scores:
+      'Managed vector DB': weak
+      'Postgres + pgvector': weak
+      'Build-time embeddings, in-process hybrid index': strong
+    note: 'Both hosted options carry a monthly floor; the static index carries none.'
+  - criterion: Scales past a few thousand chunks
+    scores:
+      'Managed vector DB': strong
+      'Postgres + pgvector': strong
+      'Build-time embeddings, in-process hybrid index': weak
+    note: 'This is the axis the chosen option deliberately gives up.'
+  - criterion: Operational surface
+    scores:
+      'Managed vector DB': adequate
+      'Postgres + pgvector': weak
+      'Build-time embeddings, in-process hybrid index': strong
+  - criterion: Availability independence
+    scores:
+      'Managed vector DB': weak
+      'Postgres + pgvector': adequate
+      'Build-time embeddings, in-process hybrid index': strong
+decision: >-
+  Embed the corpus at build time with Voyage, ship the vectors as a static JSON
+  artifact, and run hybrid retrieval — BM25 lexical scoring fused with dense cosine
+  similarity via reciprocal rank fusion — inside the route handler. Generation
+  streams from Claude over SSE. Retrieval and generation are separated behind an
+  interface so the index can move without the generation path changing.
+reversibility: >-
+  The lock-in is bounded on three axes deliberately. Retrieval sits behind a
+  `Retriever` interface whose only contract is `search(query) -> Chunk[]`, so
+  swapping the in-process index for pgvector is one new implementation and a
+  changed import — the route handler does not know which is behind it. The
+  embedding provider sits behind an `embed(texts) -> number[][]` function, so
+  moving off Voyage is one file, with a re-index as the only migration. The
+  generation call is the plain Anthropic SDK with no framework wrapper, so the
+  prompt and tool surface stay portable. The decision that is genuinely expensive
+  to reverse is the corpus-size assumption — and that is the one I have written
+  down as the trigger to revisit.
+metrics:
+  - label: Chunks indexed
+    value: '56'
+    basis: 'Output of `npm run ingest` over 1 ADR, 1 playbook and 4 posts; ~8,537 tokens, mean 152 per chunk.'
+    direction: neutral
+  - label: Retrieval latency (p50)
+    value: '0.06 ms'
+    basis: >-
+      Measured by `npm run eval` over 12 golden queries, in-process, lexical path
+      only (p95 0.60 ms). Excludes the query-embedding network call, which
+      dominates once the dense path is enabled.
+    direction: down-is-good
+  - label: Recall@6
+    value: '12 / 12'
+    basis: >-
+      `npm run eval` golden set, lexical-only. Honest caveat: the corpus is six
+      documents, so this measures that the pipeline works, not that retrieval is
+      hard. The number only becomes meaningful as the corpus grows.
+    direction: up-is-good
+  - label: Standing monthly cost
+    value: '$0.00'
+    basis: 'No provisioned datastore. Embedding spend occurs at build time only; generation is per-query.'
+    direction: down-is-good
+failureModes:
+  - trigger: Anthropic API is unavailable or rate-limits the request
+    blastRadius: 'Generation only. Retrieval still succeeds and returns cited sources.'
+    detection: 'Non-2xx from the SDK, surfaced as a typed error on the SSE stream.'
+    mitigation: >-
+      The UI degrades to showing retrieved passages with citations and an explicit
+      notice, rather than an empty chat box. The user still gets the source material.
+    severity: major
+  - trigger: A visitor scripts the endpoint to burn tokens
+    blastRadius: 'Token spend, capped. No data exposure — the corpus is public content.'
+    detection: 'Per-IP request counter in the route handler; spend visible in the console.'
+    mitigation: >-
+      Fixed-window per-IP rate limit, a hard cap on `max_tokens`, and a rejected
+      request budget that returns 429 rather than degrading silently.
+    severity: major
+  - trigger: Query embedding call fails
+    blastRadius: 'Dense retrieval only; lexical retrieval is unaffected.'
+    detection: 'Caught at the embedding boundary and reported on the telemetry stream.'
+    mitigation: >-
+      Retrieval falls back to BM25-only scoring. Answer quality degrades on
+      paraphrased queries but the system stays up, and the telemetry panel says so.
+    severity: minor
+  - trigger: Corpus grows past the point where brute-force scoring is viable
+    blastRadius: 'Retrieval latency degrades linearly; bundle size grows.'
+    detection: 'Build-time assertion on chunk count and artifact size.'
+    mitigation: >-
+      The documented trigger to swap the `Retriever` implementation for pgvector.
+      The build fails rather than silently shipping a slow index.
+    severity: minor
+stack:
+  - Next.js Route Handlers
+  - Server-Sent Events
+  - Voyage embeddings
+  - Claude
+  - BM25
+  - Reciprocal rank fusion
+---
+
+## Why this ADR exists
+
+The interesting thing about a RAG system at this size is not that it works — it is
+that the obvious architecture is wrong, and the reason it is wrong is a cost and
+availability argument rather than a technical one.
+
+Almost every RAG tutorial reaches for a managed vector database in the first
+paragraph. That reflex is correct at scale and expensive below it. The question
+worth asking is not "which vector store" but **"does this workload have the shape
+that a vector store is for?"** — a large corpus, mutating independently of deploys,
+queried often enough that an index amortises its own cost.
+
+This corpus has none of those properties. It is small, immutable between deploys,
+and queried rarely. Every property that would justify the infrastructure is absent.
+
+## The sizing argument
+
+The whole decision turns on one calculation, done before any code was written:
+
+```text
+~8,500 tokens of MDX
+  ÷ ~152 tokens per chunk (semantic split, ~40 token overlap)
+  = 56 chunks
+  × 1024 dimensions × 4 bytes
+  ≈ 229 KB of raw float32
+```
+
+A fraction of a megabyte. That fits in the memory of the smallest serverless
+runtime many times over, and brute-force scoring across 56 vectors is arithmetic
+measured in microseconds — far below the latency of the network call the managed
+option would have added in order to reach a *faster* index.
+
+The build enforces the ceiling rather than trusting me to notice it: `npm run
+ingest` fails above 4,000 chunks, which is roughly 70× the current corpus. That
+is the documented trigger to swap the retriever for pgvector, and it is a limit
+I will not reach by writing prose.
+
+## Why hybrid rather than pure vector search
+
+Dense retrieval alone reliably fails on the queries this assistant actually gets.
+Someone asking *"what did he use for rate limiting?"* is searching for a specific
+term, and embeddings are lossy about exactly the rare tokens that make a query
+precise — proper nouns, library names, error codes.
+
+So retrieval fuses two rankings:
+
+- **BM25** over tokenised chunks, which is unbeatable on exact terms and needs no
+  model call.
+- **Dense cosine similarity** over Voyage embeddings, which handles paraphrase and
+  conceptual queries that share no vocabulary with the source.
+
+They are combined with **reciprocal rank fusion** rather than a weighted score sum.
+This matters more than it looks: score-sum fusion requires the two scoring systems
+to be calibrated against each other, and BM25 scores and cosine similarities have
+no common scale. RRF only consumes *rank position*, which sidesteps the calibration
+problem entirely and is the reason it survives corpus changes without retuning.
+
+## What I would do differently at 100× the corpus
+
+Move the index to pgvector, keep the hybrid strategy, and switch fusion inputs from
+brute-force scores to an ANN recall set. The retrieval interface is already shaped
+for that swap — which is the whole point of having drawn the boundary there.
+
+The honest caveat: I have not load-tested this beyond a single user, because a
+single user is the actual workload. Designing for the traffic you have is the
+decision; pretending to have measured traffic you do not is not.

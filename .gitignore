@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -11,6 +9,11 @@
 # next.js
 /.next/
 /out/
+next-env.d.ts
+
+# content pipeline
+/.velite
+/public/static
 
 # production
 /build
@@ -23,8 +26,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
 # local env files
+.env
 .env*.local
 
 # vercel
@@ -32,10 +37,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
-.contentlayer
-
-/public/robots.txt
-/public/sitemap.xml
-/public/sitemap-0.xml
+# The retrieval index is committed on purpose: it is a build artifact that must
+# version and roll back with the content it describes, and committing it means a
+# deploy never needs an embedding API key. Regenerate with `npm run ingest`.
