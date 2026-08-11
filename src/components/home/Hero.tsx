@@ -9,11 +9,10 @@ import { InkCard } from '@/components/ui/Frame';
 /**
  * The capability stickers. `spot` places each one on the large layout, where
  * they're rendered as an overlay outside the cream panel's own clipping box —
- * several deliberately use a negative offset to cross the panel's edge, the
- * way a real sticker overlaps whatever it's stuck on rather than staying
- * neatly inside it. Below `lg` they render inline instead (see the two
- * separate <ul>s below): overlapping offsets on a narrow screen would just
- * clip against the viewport or the portrait.
+ * these are the original placements, now free to spill past the panel's edge
+ * near the top/left/right/bottom rather than being clipped by it. Below `lg`
+ * they render inline instead (see the two separate <ul>s below): the same
+ * percentage offsets have nowhere safe to overflow into on a narrow screen.
  */
 const capabilities = [
   {
@@ -21,35 +20,35 @@ const capabilities = [
     caption: 'Constraints → trade-offs → decisions',
     accent: 'cyan',
     rotate: -4,
-    spot: 'left-[3%] -top-8',
+    spot: 'left-[3%] top-[4%]',
   },
   {
     label: 'AI Orchestra—tion',
     caption: 'Routing · guardrails · evals',
     accent: 'pink',
     rotate: 5,
-    spot: 'right-[9%] -top-6',
+    spot: 'right-[10%] top-[14%]',
   },
   {
     label: 'RAG & Retrieval',
     caption: 'Hybrid search · reranking',
     accent: 'yellow',
     rotate: -7,
-    spot: '-left-5 top-[42%]',
+    spot: 'left-[1%] top-[44%]',
   },
   {
     label: 'Observability & Resilience',
     caption: 'Tracing · circuit breakers',
     accent: 'orange',
     rotate: 6,
-    spot: '-left-4 -bottom-5',
+    spot: 'left-[7%] bottom-[8%]',
   },
   {
     label: 'FinOps & Unit Economics',
     caption: 'Cost per transaction ©26',
     accent: 'cyan',
     rotate: -6,
-    spot: '-right-5 top-[38%]',
+    spot: 'right-[2%] top-[40%]',
   },
 ] as const;
 
