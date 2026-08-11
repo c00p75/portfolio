@@ -205,7 +205,7 @@ export default function HomePage() {
                   {p.category}
                 </p>
                 <h3 className="font-display mt-3 text-title uppercase">
-                  <Link href={p.url} className="before:absolute before:inset-0 hover:text-cyan">
+                  <Link href={p.url} className="before:absolute before:inset-0 hover:text-cyan-ink">
                     {p.title}
                   </Link>
                 </h3>
@@ -222,7 +222,7 @@ export default function HomePage() {
                 <li key={post.slug}>
                   <Link
                     href={post.url}
-                    className="group flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4 hover:text-cyan"
+                    className="group flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4 hover:text-cyan-ink"
                   >
                     <span className="text-[0.9375rem] font-medium">{post.title}</span>
                     <span className="font-mono text-on-ink-muted text-micro uppercase">

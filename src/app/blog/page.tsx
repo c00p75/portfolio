@@ -41,7 +41,7 @@ export default function BlogIndex() {
                     </span>
                     <div className="flex-1">
                       <h2 className="font-display text-title text-balance uppercase">
-                        <Link href={post.url} className="before:absolute before:inset-0 hover:text-cyan">
+                        <Link href={post.url} className="before:absolute before:inset-0 hover:text-cyan-ink">
                           {post.title}
                         </Link>
                       </h2>

@@ -43,7 +43,7 @@ export default function ContactPage() {
                         href={c.href}
                         target={c.href.startsWith('mailto') ? undefined : '_blank'}
                         rel="noreferrer"
-                        className="text-sm hover:text-cyan"
+                        className="text-sm hover:text-cyan-ink"
                       >
                         {c.value}
                       </a>

@@ -86,7 +86,7 @@ export default async function AdrPage({ params }: Params) {
             </span>
             <StatusPill status={adr.status} />
             <Tag>{adr.domain}</Tag>
-            {adr.draft ? <Tag className="text-yellow border-yellow">Scaffold — not yet real</Tag> : null}
+            {adr.draft ? <Tag className="text-yellow-ink border-yellow">Scaffold — not yet real</Tag> : null}
           </div>
 
           <h1 className="font-display mt-7 max-w-5xl text-jumbo text-balance uppercase">
@@ -217,7 +217,7 @@ export default async function AdrPage({ params }: Params) {
             <p className="font-mono text-on-ink-muted text-micro uppercase">Next record</p>
             <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
               <h2 className="font-display max-w-3xl text-display text-balance uppercase">
-                <Link href={next.url} className="hover:text-cyan">
+                <Link href={next.url} className="hover:text-cyan-ink">
                   {next.title}
                 </Link>
               </h2>

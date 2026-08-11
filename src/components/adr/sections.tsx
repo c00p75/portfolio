@@ -5,9 +5,9 @@ import { accentText, Tag } from '@/components/ui/Sticker';
 type Score = 'strong' | 'adequate' | 'weak';
 
 const scoreMeta: Record<Score, { label: string; dots: number; tone: string }> = {
-  strong: { label: 'Strong', dots: 3, tone: 'text-lime' },
-  adequate: { label: 'Adequate', dots: 2, tone: 'text-yellow' },
-  weak: { label: 'Weak', dots: 1, tone: 'text-pink' },
+  strong: { label: 'Strong', dots: 3, tone: 'text-lime-ink' },
+  adequate: { label: 'Adequate', dots: 2, tone: 'text-yellow-ink' },
+  weak: { label: 'Weak', dots: 1, tone: 'text-pink-ink' },
 };
 
 /**
@@ -110,9 +110,9 @@ export function TradeoffMatrix({ adr }: { adr: Adr }) {
 }
 
 const verdictTone: Record<Adr['options'][number]['verdict'], string> = {
-  chosen: 'bg-lime text-ink',
+  chosen: 'bg-lime text-ink-fixed',
   rejected: 'bg-ink-soft text-on-ink-muted border border-ink-line',
-  deferred: 'bg-yellow text-ink',
+  deferred: 'bg-yellow text-ink-fixed',
 };
 
 /** The options considered, with the sentence that justifies each verdict. */
@@ -150,13 +150,13 @@ export function OptionsConsidered({ adr }: { adr: Adr }) {
 
             {option.pros.length > 0 ? (
               <div>
-                <h4 className="font-mono text-lime mb-2 text-[0.625rem] tracking-wider uppercase">
+                <h4 className="font-mono text-lime-ink mb-2 text-[0.625rem] tracking-wider uppercase">
                   For
                 </h4>
                 <ul className="flex flex-col gap-1.5">
                   {option.pros.map((p) => (
                     <li key={p} className="text-on-ink-muted flex gap-2 text-xs leading-relaxed">
-                      <span aria-hidden="true" className="text-lime">
+                      <span aria-hidden="true" className="text-lime-ink">
                         +
                       </span>
                       {p}
@@ -168,13 +168,13 @@ export function OptionsConsidered({ adr }: { adr: Adr }) {
 
             {option.cons.length > 0 ? (
               <div>
-                <h4 className="font-mono text-pink mb-2 text-[0.625rem] tracking-wider uppercase">
+                <h4 className="font-mono text-pink-ink mb-2 text-[0.625rem] tracking-wider uppercase">
                   Against
                 </h4>
                 <ul className="flex flex-col gap-1.5">
                   {option.cons.map((c) => (
                     <li key={c} className="text-on-ink-muted flex gap-2 text-xs leading-relaxed">
-                      <span aria-hidden="true" className="text-pink">
+                      <span aria-hidden="true" className="text-pink-ink">
                         −
                       </span>
                       {c}
@@ -198,9 +198,9 @@ export function OptionsConsidered({ adr }: { adr: Adr }) {
 }
 
 const severityTone: Record<Adr['failureModes'][number]['severity'], string> = {
-  critical: 'bg-pink text-ink',
-  major: 'bg-orange text-ink',
-  minor: 'bg-yellow text-ink',
+  critical: 'bg-pink text-ink-fixed',
+  major: 'bg-orange text-ink-fixed',
+  minor: 'bg-yellow text-ink-fixed',
 };
 
 /** What breaks, how it's noticed, and what the system does about it. */

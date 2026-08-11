@@ -53,7 +53,7 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
 }
 
 function kindTone(kind: Passage['kind']) {
-  return kind === 'adr' ? 'text-cyan' : kind === 'playbook' ? 'text-lime' : 'text-yellow';
+  return kind === 'adr' ? 'text-cyan-ink' : kind === 'playbook' ? 'text-lime-ink' : 'text-yellow-ink';
 }
 
 export function Sandbox({ indexChunks, indexModel }: { indexChunks: number; indexModel: string }) {
@@ -192,7 +192,7 @@ export function Sandbox({ indexChunks, indexModel }: { indexChunks: number; inde
             <button
               type="submit"
               disabled={busy || question.trim().length < 3}
-              className="bg-cyan text-ink font-mono shrink-0 rounded-full px-5 py-3 text-micro font-bold uppercase transition-colors hover:bg-lime disabled:cursor-not-allowed disabled:opacity-40"
+              className="bg-cyan text-ink-fixed font-mono shrink-0 rounded-full px-5 py-3 text-micro font-bold uppercase transition-colors hover:bg-lime disabled:cursor-not-allowed disabled:opacity-40"
             >
               {busy ? 'Working' : 'Ask'}
             </button>
@@ -240,7 +240,7 @@ export function Sandbox({ indexChunks, indexModel }: { indexChunks: number; inde
             <p className="whitespace-pre-wrap text-pretty">
               {rendered.map((part, i) =>
                 /^\[\d+\]$/.test(part) ? (
-                  <sup key={i} className="text-cyan font-mono mx-0.5 text-[0.6875rem] font-bold">
+                  <sup key={i} className="text-cyan-ink font-mono mx-0.5 text-[0.6875rem] font-bold">
                     {part}
                   </sup>
                 ) : (
@@ -272,9 +272,9 @@ export function Sandbox({ indexChunks, indexModel }: { indexChunks: number; inde
             className={cn(
               'font-mono rounded-full px-2.5 py-1 text-[0.5625rem] font-bold tracking-wider uppercase',
               mode === 'hybrid'
-                ? 'bg-lime text-ink'
+                ? 'bg-lime text-ink-fixed'
                 : mode === 'lexical-only'
-                  ? 'bg-orange text-ink'
+                  ? 'bg-orange text-ink-fixed'
                   : 'border-ink-line text-on-ink-muted border',
             )}
           >
@@ -316,9 +316,9 @@ export function Sandbox({ indexChunks, indexModel }: { indexChunks: number; inde
                   <div className="flex items-start justify-between gap-3">
                     <a
                       href={p.url}
-                      className="text-xs font-semibold hover:text-cyan"
+                      className="text-xs font-semibold hover:text-cyan-ink"
                     >
-                      <sup className="text-cyan font-mono mr-1">[{p.n}]</sup>
+                      <sup className="text-cyan-ink font-mono mr-1">[{p.n}]</sup>
                       {p.section}
                     </a>
                     <span className={cn('font-mono shrink-0 text-[0.5625rem] uppercase', kindTone(p.kind))}>
@@ -330,10 +330,10 @@ export function Sandbox({ indexChunks, indexModel }: { indexChunks: number; inde
                   </p>
                   <div className="font-mono text-on-ink-muted mt-2.5 flex flex-wrap gap-x-3 gap-y-1 text-[0.5625rem] uppercase">
                     <span>RRF {p.score.toFixed(4)}</span>
-                    <span className={p.denseRank ? 'text-cyan' : undefined}>
+                    <span className={p.denseRank ? 'text-cyan-ink' : undefined}>
                       dense {p.denseRank ? `#${p.denseRank}` : '—'}
                     </span>
-                    <span className={p.lexicalRank ? 'text-yellow' : undefined}>
+                    <span className={p.lexicalRank ? 'text-yellow-ink' : undefined}>
                       bm25 {p.lexicalRank ? `#${p.lexicalRank}` : '—'}
                     </span>
                     <span>{p.tokens} tok</span>

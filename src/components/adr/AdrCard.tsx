@@ -6,10 +6,10 @@ import { accentSurface, accentText, Tag } from '@/components/ui/Sticker';
 
 export function StatusPill({ status, className }: { status: Adr['status']; className?: string }) {
   const tone: Record<Adr['status'], string> = {
-    accepted: 'bg-lime text-ink',
-    proposed: 'bg-yellow text-ink',
-    superseded: 'bg-orange text-ink',
-    deprecated: 'bg-pink text-ink',
+    accepted: 'bg-lime text-ink-fixed',
+    proposed: 'bg-yellow text-ink-fixed',
+    superseded: 'bg-orange text-ink-fixed',
+    deprecated: 'bg-pink text-ink-fixed',
   };
   return (
     <span
@@ -47,14 +47,14 @@ export function AdrCard({ adr, className }: { adr: Adr; className?: string }) {
             {adr.ref}
           </span>
           <StatusPill status={adr.status} />
-          {adr.draft ? <Tag className="text-yellow border-yellow">Scaffold</Tag> : null}
+          {adr.draft ? <Tag className="text-yellow-ink border-yellow">Scaffold</Tag> : null}
           <span className="font-mono text-on-ink-muted ml-auto text-micro uppercase">
             {adr.domain}
           </span>
         </div>
 
         <h3 className="font-display text-title text-balance uppercase">
-          <Link href={adr.url} className="before:absolute before:inset-0 hover:text-cyan">
+          <Link href={adr.url} className="before:absolute before:inset-0 hover:text-cyan-ink">
             {adr.title}
           </Link>
         </h3>

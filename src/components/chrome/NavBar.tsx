@@ -81,7 +81,7 @@ export function NavBar() {
                       className={cn(
                         'font-mono rounded-full px-3.5 py-2 text-micro font-semibold uppercase transition-colors',
                         isActive(item.href)
-                          ? 'bg-cyan text-ink'
+                          ? 'bg-cyan text-ink-fixed'
                           : 'text-on-ink-muted hover:text-on-ink',
                       )}
                     >
@@ -95,7 +95,7 @@ export function NavBar() {
 
               <Link
                 href="/contact"
-                className="bg-cream text-ink font-mono ml-1 hidden rounded-full px-4 py-2.5 text-micro font-bold uppercase transition-colors hover:bg-cyan sm:inline-block"
+                className="bg-cream text-on-cream font-mono ml-1 hidden rounded-full px-4 py-2.5 text-micro font-bold uppercase transition-colors hover:bg-cyan hover:text-ink-fixed sm:inline-block"
               >
                 Get in touch
               </Link>
@@ -138,7 +138,7 @@ export function NavBar() {
                   href={item.href}
                   className={cn(
                     'font-display flex items-baseline gap-4 py-2 text-jumbo uppercase transition-colors',
-                    isActive(item.href) ? 'text-cyan' : 'hover:text-cyan',
+                    isActive(item.href) ? 'text-cyan-ink' : 'hover:text-cyan-ink',
                   )}
                 >
                   <span className="font-mono text-on-ink-muted text-micro">
