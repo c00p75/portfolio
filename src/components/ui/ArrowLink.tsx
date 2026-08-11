@@ -29,7 +29,7 @@ export function ArrowLink({ children, className, variant = 'underline', ...props
         'group font-mono inline-flex w-fit items-center gap-2.5 text-micro font-semibold tracking-[0.1em] uppercase',
         variant === 'underline' && 'underline decoration-2 underline-offset-[6px] hover:decoration-cyan',
         variant === 'solid' &&
-          'bg-cyan text-ink-fixed rounded-full px-5 py-3 no-underline transition-colors hover:bg-lime',
+          'bg-cyan text-ink rounded-full px-5 py-3 no-underline transition-colors hover:bg-lime',
         variant === 'outline' &&
           'rounded-full border border-current/35 px-5 py-3 transition-colors hover:border-current',
         className,

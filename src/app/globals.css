@@ -15,53 +15,26 @@
      fails WCAG AA. This is the lightest grey that keeps both text tones above
      4.5:1 while preserving the mid-grey character. */
   --tone-page: #626264;
-
-  /* The primary content card. Light mode: a clean white surface — no black
-     panels against the grey surround. Dark mode (below) flips this to near-
-     black, which is the only place the "black card" look now lives. */
-  --tone-ink: #ffffff;
-  --tone-ink-soft: #f4f1ea;
-  --tone-ink-line: #e2ddd2;
-  --tone-on-ink: #0b0b0b;
-  --tone-on-ink-muted: #6b665c;
-
-  /* Fixed, theme-invariant near-black — for text on the bright accent/sticker
-     backgrounds (cyan, pink, yellow, orange, lime), which stay the same
-     saturated hue in both themes. Using the theme-aware on-ink token here
-     would put light text on a bright yellow sticker in dark mode: unreadable. */
-  --tone-ink-fixed: #0b0b0b;
-
-  /* The warm off-white panel (grid-paper backdrop, stickers sit on this). */
+  /* The black card. */
+  --tone-ink: #0b0b0b;
+  --tone-ink-soft: #1a1a1a;
+  --tone-ink-line: #2b2b2b;
+  /* The warm off-white panel. */
   --tone-cream: #efeae2;
   --tone-cream-dim: #e2dbd0;
   --tone-cream-line: #cfc7b9;
-  --tone-on-cream: #0b0b0b;
+  /* Text tones */
+  --tone-on-ink: #efeae2;
+  --tone-on-ink-muted: #6d6969; /* #837c7c */
+  --tone-on-cream: #3f3f3f;
   --tone-on-cream-muted: #5f5a51;
-
   --tone-on-page: #f6f4f1;
   --tone-on-page-muted: #e4e0da;
-
-  /* Accent hues used as small text labels (ADR refs, category tags, metric
-     values) rather than as a solid sticker background. The raw bright hues
-     read fine on black but fail contrast on white — these are deepened
-     versions of the same five hues, each independently verified >=4.5:1 on
-     white. Dark mode restores the original bright hues, which is where they
-     were tuned to sit. */
-  --tone-cyan-ink: #0d6b63;
-  --tone-pink-ink: #a8112f;
-  --tone-yellow-ink: #8a5306;
-  --tone-orange-ink: #ad3a0a;
-  --tone-lime-ink: #456e0d;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --tone-page: #121212;
-    --tone-ink: #0b0b0b;
-    --tone-ink-soft: #1a1a1a;
-    --tone-ink-line: #2b2b2b;
-    --tone-on-ink: #efeae2;
-    --tone-on-ink-muted: #9c968c;
     --tone-cream: #16150f;
     --tone-cream-dim: #1e1d16;
     --tone-cream-line: #333127;
@@ -69,21 +42,11 @@
     --tone-on-cream-muted: #918b80;
     --tone-on-page: #efeae2;
     --tone-on-page-muted: #8d8d8d;
-    --tone-cyan-ink: #63d6c6;
-    --tone-pink-ink: #ff2e6b;
-    --tone-yellow-ink: #f7d91c;
-    --tone-orange-ink: #f5821f;
-    --tone-lime-ink: #93cc46;
   }
 }
 
 :root[data-theme='dark'] {
   --tone-page: #121212;
-  --tone-ink: #0b0b0b;
-  --tone-ink-soft: #1a1a1a;
-  --tone-ink-line: #2b2b2b;
-  --tone-on-ink: #efeae2;
-  --tone-on-ink-muted: #9c968c;
   --tone-cream: #16150f;
   --tone-cream-dim: #1e1d16;
   --tone-cream-line: #333127;
@@ -91,11 +54,6 @@
   --tone-on-cream-muted: #918b80;
   --tone-on-page: #efeae2;
   --tone-on-page-muted: #8d8d8d;
-  --tone-cyan-ink: #63d6c6;
-  --tone-pink-ink: #ff2e6b;
-  --tone-yellow-ink: #f7d91c;
-  --tone-orange-ink: #f5821f;
-  --tone-lime-ink: #93cc46;
 }
 
 @theme {
@@ -119,25 +77,12 @@
   /* --- Sticker accents -------------------------------------------------- */
   /* Fixed hues: these are the "printed vinyl" layer and stay constant across
      themes so the sticker wall reads the same in both. Always paired with
-     text-ink-fixed (never text-on-ink), which keeps every combination above
-     4.5:1 regardless of theme. */
+     near-black text, which keeps every combination above 4.5:1. */
   --color-cyan: #63d6c6;
   --color-pink: #ff2e6b;
   --color-yellow: #f7d91c;
   --color-orange: #f5821f;
   --color-lime: #93cc46;
-  --color-ink-fixed: var(--tone-ink-fixed);
-
-  /* --- Accent-as-text -----------------------------------------------------
-     Same five hues, retoned per theme so a colour used as a text label (not a
-     sticker fill) stays >=4.5:1 against the card it sits on: deepened on the
-     white light-mode card, the original bright hue on the black dark-mode
-     card. Use these (cyan-ink, not cyan) for any text-coloured accent. */
-  --color-cyan-ink: var(--tone-cyan-ink);
-  --color-pink-ink: var(--tone-pink-ink);
-  --color-yellow-ink: var(--tone-yellow-ink);
-  --color-orange-ink: var(--tone-orange-ink);
-  --color-lime-ink: var(--tone-lime-ink);
 
   /* --- Typography ------------------------------------------------------- */
   --font-display: var(--font-anton), 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;

@@ -35,8 +35,7 @@ function Node({
         width={w}
         height={h}
         rx={BOX.rx}
-        fill={accent ?? 'transparent'}
-        fillOpacity={accent ? 0.12 : undefined}
+        fill={accent ? `${accent}1f` : 'transparent'}
         stroke={accent ?? 'currentColor'}
         strokeWidth={1.5}
         strokeDasharray={dashed ? '5 4' : undefined}
@@ -143,7 +142,7 @@ export function RetrievalPipeline() {
           </text>
           <Node x={30} y={48} w={90} h={44} title="MDX" sub="corpus" />
           <Node x={140} y={48} w={84} h={44} title="Chunk" sub="~215 tok" />
-          <Node x={30} y={100} w={194} h={30} title="Static vector index" accent="var(--tone-cyan-ink)" />
+          <Node x={30} y={100} w={194} h={30} title="Static vector index" accent="#63d6c6" />
           <Arrow d="M 120 70 L 136 70" />
           <Arrow d="M 182 92 L 158 98" />
 
@@ -167,12 +166,12 @@ export function RetrievalPipeline() {
           <Node x={30} y={212} w={104} h={52} title="Query" sub="visitor" />
 
           {/* Dense path */}
-          <Node x={180} y={186} w={126} title="Embed" sub="Voyage · 1024d" accent="var(--tone-cyan-ink)" />
-          <Node x={330} y={186} w={126} title="Cosine top-k" sub="dense" accent="var(--tone-cyan-ink)" />
+          <Node x={180} y={186} w={126} title="Embed" sub="Voyage · 1024d" accent="#63d6c6" />
+          <Node x={330} y={186} w={126} title="Cosine top-k" sub="dense" accent="#63d6c6" />
 
           {/* Lexical path */}
-          <Node x={180} y={252} w={126} title="Tokenise" sub="stem · stop" accent="var(--tone-yellow-ink)" />
-          <Node x={330} y={252} w={126} title="BM25 top-k" sub="lexical" accent="var(--tone-yellow-ink)" />
+          <Node x={180} y={252} w={126} title="Tokenise" sub="stem · stop" accent="#f7d91c" />
+          <Node x={330} y={252} w={126} title="BM25 top-k" sub="lexical" accent="#f7d91c" />
 
           <Arrow d="M 134 232 L 176 212" />
           <Arrow d="M 134 244 L 176 272" />
@@ -180,14 +179,14 @@ export function RetrievalPipeline() {
           <Arrow d="M 306 279 L 326 279" />
 
           {/* Fusion */}
-          <Node x={480} y={219} w={112} title="RRF fusion" sub="rank-based" accent="var(--tone-pink-ink)" />
+          <Node x={480} y={219} w={112} title="RRF fusion" sub="rank-based" accent="#ff2e6b" />
           <Arrow d="M 456 213 L 476 236" />
           <Arrow d="M 456 279 L 476 258" />
 
           <Node x={616} y={219} w={104} title="Top passages" sub="with citations" />
           <Arrow d="M 592 245 L 612 245" />
 
-          <Node x={744} y={219} w={112} title="Claude" sub="streamed" accent="var(--tone-lime-ink)" />
+          <Node x={744} y={219} w={112} title="Claude" sub="streamed" accent="#93cc46" />
           <Arrow d="M 720 245 L 740 245" />
 
           {/* Fallback edge — the degraded path when embedding fails */}
@@ -197,7 +196,7 @@ export function RetrievalPipeline() {
           </text>
 
           {/* Output */}
-          <Node x={744} y={160} w={112} h={40} title="SSE stream" sub="answer + telemetry" accent="var(--tone-orange-ink)" />
+          <Node x={744} y={160} w={112} h={40} title="SSE stream" sub="answer + telemetry" accent="#f5821f" />
           <Arrow d="M 800 219 L 800 204" />
         </svg>
       </div>

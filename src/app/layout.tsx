@@ -71,7 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${anton.variable} ${archivo.variable} ${jetbrains.variable} antialiased`}>
         <a
           href="#main"
-          className="bg-cyan text-ink-fixed font-mono sr-only rounded-full px-4 py-2 text-micro font-bold uppercase focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50"
+          className="bg-cyan text-ink font-mono sr-only rounded-full px-4 py-2 text-micro font-bold uppercase focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50"
         >
           Skip to content
         </a>

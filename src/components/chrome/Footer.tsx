@@ -36,7 +36,7 @@ export function Footer() {
             <nav aria-label="Footer" className="flex flex-col gap-3">
               <h3 className="font-mono text-on-ink-muted text-micro font-semibold uppercase">Site</h3>
               {site.nav.map((item) => (
-                <Link key={item.href} href={item.href} className="text-sm hover:text-cyan-ink">
+                <Link key={item.href} href={item.href} className="text-sm hover:text-cyan">
                   {item.label}
                 </Link>
               ))}
@@ -50,7 +50,7 @@ export function Footer() {
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sm hover:text-cyan-ink"
+                  className="text-sm hover:text-cyan"
                 >
                   {s.label}
                 </a>

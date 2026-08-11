@@ -39,14 +39,14 @@ export default function PlaybooksIndex() {
                       <span className={cn('font-mono text-micro font-bold uppercase', accentText[p.accent])}>
                         {p.category}
                       </span>
-                      {p.draft ? <Tag className="text-yellow-ink border-yellow">Scaffold</Tag> : null}
+                      {p.draft ? <Tag className="text-yellow border-yellow">Scaffold</Tag> : null}
                       <span className="font-mono text-on-ink-muted ml-auto text-micro uppercase">
                         {formatDate(p.date)}
                       </span>
                     </div>
 
                     <h2 className="font-display text-title text-balance uppercase">
-                      <Link href={p.url} className="before:absolute before:inset-0 hover:text-cyan-ink">
+                      <Link href={p.url} className="before:absolute before:inset-0 hover:text-cyan">
                         {p.title}
                       </Link>
                     </h2>

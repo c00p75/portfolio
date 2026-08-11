@@ -49,7 +49,7 @@ function Form({ formId }: { formId: string }) {
             autoComplete="email"
             className={field}
           />
-          <ValidationError prefix="Email" field="email" errors={state.errors} className="text-pink-ink text-xs" />
+          <ValidationError prefix="Email" field="email" errors={state.errors} className="text-pink text-xs" />
         </div>
       </div>
 
@@ -58,13 +58,13 @@ function Form({ formId }: { formId: string }) {
           What are you working on?
         </label>
         <textarea id="message" name="message" required rows={6} className={field} />
-        <ValidationError prefix="Message" field="message" errors={state.errors} className="text-pink-ink text-xs" />
+        <ValidationError prefix="Message" field="message" errors={state.errors} className="text-pink text-xs" />
       </div>
 
       <button
         type="submit"
         disabled={state.submitting}
-        className="bg-cyan text-ink-fixed font-mono w-fit rounded-full px-6 py-3 text-micro font-bold uppercase transition-colors hover:bg-lime disabled:opacity-40"
+        className="bg-cyan text-ink font-mono w-fit rounded-full px-6 py-3 text-micro font-bold uppercase transition-colors hover:bg-lime disabled:opacity-40"
       >
         {state.submitting ? 'Sending…' : 'Send message'}
       </button>
@@ -84,7 +84,7 @@ export function ContactForm() {
         </p>
         <a
           href={`mailto:${site.email}`}
-          className="text-cyan-ink mt-4 inline-block text-sm underline underline-offset-4"
+          className="text-cyan mt-4 inline-block text-sm underline underline-offset-4"
         >
           {site.email}
         </a>

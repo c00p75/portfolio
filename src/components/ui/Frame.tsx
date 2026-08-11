@@ -38,7 +38,7 @@ export function InkCard({ children, className }: { children: ReactNode; classNam
   return (
     <div
       className={cn(
-        'bg-ink text-on-ink relative mx-auto max-w-[110rem] overflow-hidden rounded-card',
+        'text-on-ink relative mx-auto max-w-[110rem] overflow-hidden rounded-card',
         className,
       )}
     >

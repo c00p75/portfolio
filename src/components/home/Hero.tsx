@@ -7,45 +7,49 @@ import { RotatingSeal } from '@/components/ui/RotatingSeal';
 import { InkCard } from '@/components/ui/Frame';
 
 /**
- * The capability stickers. `spot` places each one on the large layout; on small
- * screens the absolute positioning is dropped and they flow as a wrapped list,
- * which keeps them legible instead of overlapping the portrait.
+ * The capability stickers. `spot` places each one on the large layout, where
+ * they're rendered as an overlay outside the cream panel's own clipping box —
+ * several deliberately use a negative offset to cross the panel's edge, the
+ * way a real sticker overlaps whatever it's stuck on rather than staying
+ * neatly inside it. Below `lg` they render inline instead (see the two
+ * separate <ul>s below): overlapping offsets on a narrow screen would just
+ * clip against the viewport or the portrait.
  */
 const capabilities = [
   {
-    label: 'System Design',
+    label: 'System Design',
     caption: 'Constraints → trade-offs → decisions',
     accent: 'cyan',
     rotate: -4,
-    spot: 'lg:left-[3%] lg:top-[4%]',
+    spot: 'left-[3%] -top-8',
   },
   {
-    label: 'AI Orchestra—tion',
+    label: 'AI Orchestra—tion',
     caption: 'Routing · guardrails · evals',
     accent: 'pink',
     rotate: 5,
-    spot: 'lg:right-[10%] lg:top-[14%]',
+    spot: 'right-[9%] -top-6',
   },
   {
-    label: 'RAG & Retrieval',
+    label: 'RAG & Retrieval',
     caption: 'Hybrid search · reranking',
     accent: 'yellow',
     rotate: -7,
-    spot: 'lg:left-[1%] lg:top-[44%]',
+    spot: '-left-5 top-[42%]',
   },
   {
-    label: 'Observability & Resilience',
+    label: 'Observability & Resilience',
     caption: 'Tracing · circuit breakers',
     accent: 'orange',
     rotate: 6,
-    spot: 'lg:left-[7%] lg:bottom-[8%]',
+    spot: '-left-4 -bottom-5',
   },
   {
-    label: 'FinOps & Unit Economics',
+    label: 'FinOps & Unit Economics',
     caption: 'Cost per transaction ©26',
     accent: 'cyan',
     rotate: -6,
-    spot: 'lg:right-[2%] lg:top-[40%]',
+    spot: '-right-5 top-[38%]',
   },
 ] as const;
 
@@ -85,7 +89,12 @@ export function Hero() {
       {/* ---------------------------------------------------------------- */}
       {/* Lower cream region: grid paper, portrait, sticker wall            */}
       {/* ---------------------------------------------------------------- */}
-      <div className="px-gutter pb-gutter">
+      {/* `relative` (not `overflow-hidden`) on purpose: the sticker overlay
+          below is positioned against this box so it can spill past the cream
+          panel's own clipped edges — including up into the black header —
+          without being cut off. The cream panel keeps its own overflow-hidden
+          for the grid-paper mask and the portrait. */}
+      <div className="relative px-gutter pb-gutter">
         <div className="bg-cream text-on-cream relative isolate overflow-hidden rounded-panel lg:rounded-r-[14rem]">
           <div
             aria-hidden="true"
@@ -114,10 +123,13 @@ export function Hero() {
               </div>
             </div>
 
-            {/* Sticker wall. Absolute only from `lg` up. */}
-            <ul className="relative flex flex-wrap items-start justify-center gap-3 p-5 sm:gap-4 sm:p-8 lg:block lg:h-full lg:p-0">
+            {/* Sticker wall, mobile/tablet: inline and contained, since
+                overlapping offsets have nowhere safe to go on a narrow
+                viewport. Hidden from `lg` up, where the overlay below takes
+                over. */}
+            <ul className="relative flex flex-wrap items-start justify-center gap-3 p-5 sm:gap-4 sm:p-8 lg:hidden">
               {capabilities.map((c) => (
-                <li key={c.label} className={`lg:absolute lg:max-w-[15rem] ${c.spot}`}>
+                <li key={c.label}>
                   <Sticker accent={c.accent} rotate={c.rotate} caption={c.caption} interactive>
                     {c.label}
                   </Sticker>
@@ -141,6 +153,22 @@ export function Hero() {
             </RotatingSeal>
           </div>
         </div>
+
+        {/* Sticker wall, desktop: an overlay sitting outside the cream
+            panel's clip, positioned against the `relative` wrapper above so
+            each sticker can cross the panel's edge — several intentionally
+            do, per the reference. `pointer-events-none` on the list keeps the
+            empty overlay area from blocking clicks through to the panel;
+            each sticker opts back in. */}
+        <ul className="pointer-events-none absolute inset-0 z-10 hidden lg:block">
+          {capabilities.map((c) => (
+            <li key={c.label} className={`pointer-events-auto absolute max-w-[15rem] ${c.spot}`}>
+              <Sticker accent={c.accent} rotate={c.rotate} caption={c.caption} interactive>
+                {c.label}
+              </Sticker>
+            </li>
+          ))}
+        </ul>
       </div>
     </InkCard>
   );

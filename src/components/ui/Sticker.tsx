@@ -9,25 +9,19 @@ export type Accent = 'cyan' | 'pink' | 'yellow' | 'orange' | 'lime';
  * pairing well above 4.5:1.
  */
 export const accentSurface: Record<Accent, string> = {
-  cyan: 'bg-cyan text-ink-fixed',
-  pink: 'bg-pink text-ink-fixed',
-  yellow: 'bg-yellow text-ink-fixed',
-  orange: 'bg-orange text-ink-fixed',
-  lime: 'bg-lime text-ink-fixed',
+  cyan: 'bg-cyan text-ink',
+  pink: 'bg-pink text-ink',
+  yellow: 'bg-yellow text-ink',
+  orange: 'bg-orange text-ink',
+  lime: 'bg-lime text-ink',
 };
 
-/**
- * For accent colour used as TEXT on a card (not a sticker fill). Deepened per
- * theme so it clears 4.5:1 on both the white light-mode card and the black
- * dark-mode one — the raw `text-cyan`/`text-yellow` utilities read fine on
- * black but fail contrast on white, so never use those for text.
- */
 export const accentText: Record<Accent, string> = {
-  cyan: 'text-cyan-ink',
-  pink: 'text-pink-ink',
-  yellow: 'text-yellow-ink',
-  orange: 'text-orange-ink',
-  lime: 'text-lime-ink',
+  cyan: 'text-cyan',
+  pink: 'text-pink',
+  yellow: 'text-yellow',
+  orange: 'text-orange',
+  lime: 'text-lime',
 };
 
 export const accentBorder: Record<Accent, string> = {

@@ -29,24 +29,16 @@ export default function HomePage() {
   const adrs = featuredAdrs(3);
   const playbooks = allPlaybooks().slice(0, 2);
   const posts = allPosts().slice(0, 3);
-  const today = formatDate(new Date().toISOString(), { day: '2-digit', month: 'short' });
 
   return (
     <>
       <EdgeRail
         className="pt-2 pb-3"
-        left={
-          <>
-            Systems architecture
-            <br />
-            portfolio
-          </>
-        }
-        center={site.name}
+        left="Availability: open"
+        center="Cloud & AI infrastructure"
         right={
           <>
-            {today}
-            <br />— {new Date().getFullYear()}
+            Lusaka / Global remote
           </>
         }
       />
@@ -205,7 +197,7 @@ export default function HomePage() {
                   {p.category}
                 </p>
                 <h3 className="font-display mt-3 text-title uppercase">
-                  <Link href={p.url} className="before:absolute before:inset-0 hover:text-cyan-ink">
+                  <Link href={p.url} className="before:absolute before:inset-0 hover:text-cyan">
                     {p.title}
                   </Link>
                 </h3>
@@ -222,7 +214,7 @@ export default function HomePage() {
                 <li key={post.slug}>
                   <Link
                     href={post.url}
-                    className="group flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4 hover:text-cyan-ink"
+                    className="group flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4 hover:text-cyan"
                   >
                     <span className="text-[0.9375rem] font-medium">{post.title}</span>
                     <span className="font-mono text-on-ink-muted text-micro uppercase">

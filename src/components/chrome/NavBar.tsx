@@ -12,12 +12,11 @@ function Wordmark({ onClick }: { onClick?: () => void }) {
     <Link
       href="/"
       onClick={onClick}
-      className="flex shrink-0 items-center gap-3"
+      className=" text-on-ink-muted flex shrink-0 items-center gap-3"
       aria-label={`${site.name} — home`}
     >
       {/* The cream pill from the reference layout, standing in for a logotype. */}
-      <span aria-hidden="true" className="bg-cream block h-6 w-12 rounded-full sm:h-7 sm:w-14" />
-      <span className="text-[0.8125rem] leading-[1.05] font-bold tracking-tight">
+      <span className="text-[0.9rem] pl-2 leading-[1.05] font-extrabold tracking-tight">
         George
         <br />
         M&apos;sapenda
@@ -68,7 +67,7 @@ export function NavBar() {
           aria-label="Primary"
           className="mx-auto flex max-w-[110rem] items-center justify-between gap-4 px-gutter"
         >
-          <div className="bg-ink/95 text-on-ink flex w-full items-center justify-between gap-6 rounded-full py-3 pr-3 pl-5 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.7)] backdrop-blur-md sm:pl-6">
+          <div className="bg-cream text-on-ink flex w-full items-center justify-between gap-6 rounded-full py-3 pr-3 pl-5 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.7)] backdrop-blur-md sm:pl-6">
             <Wordmark />
 
             <div className="flex items-center gap-1">
@@ -81,8 +80,8 @@ export function NavBar() {
                       className={cn(
                         'font-mono rounded-full px-3.5 py-2 text-micro font-semibold uppercase transition-colors',
                         isActive(item.href)
-                          ? 'bg-cyan text-ink-fixed'
-                          : 'text-on-ink-muted hover:text-on-ink',
+                          ? 'bg-cyan text-ink'
+                          : 'text-on-ink-muted hover:text-on-cream',
                       )}
                     >
                       {item.label}
@@ -91,11 +90,11 @@ export function NavBar() {
                 ))}
               </ul>
 
-              <ThemeToggle className="text-on-ink-muted hover:text-on-ink ml-1" />
+              <ThemeToggle className="text-on-ink-muted hover:text-on-cream ml-1" />
 
               <Link
                 href="/contact"
-                className="bg-cream text-on-cream font-mono ml-1 hidden rounded-full px-4 py-2.5 text-micro font-bold uppercase transition-colors hover:bg-cyan hover:text-ink-fixed sm:inline-block"
+                className="bg-cream text-on-ink-muted font-mono ml-1 hidden rounded-full px-4 py-2.5 text-micro font-bold uppercase transition-colors hover:bg-cyan sm:inline-block border border-current/25" 
               >
                 Get in touch
               </Link>
@@ -138,7 +137,7 @@ export function NavBar() {
                   href={item.href}
                   className={cn(
                     'font-display flex items-baseline gap-4 py-2 text-jumbo uppercase transition-colors',
-                    isActive(item.href) ? 'text-cyan-ink' : 'hover:text-cyan-ink',
+                    isActive(item.href) ? 'text-cyan' : 'hover:text-cyan',
                   )}
                 >
                   <span className="font-mono text-on-ink-muted text-micro">
