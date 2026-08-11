@@ -2,10 +2,10 @@ export const site = {
   name: "George M'sapenda",
   shortName: 'George',
   /** The two words that set the ceiling on how a visitor reads the whole page. */
-  role: 'Systems Architect',
-  title: "George M'sapenda — Systems Architect",
+  role: 'Software Engineer',
+  title: "George M'sapenda — Software Engineer",
   description:
-    'Full-stack engineer and systems architect. Architecture decision records, system blueprints, AI orchestration patterns, and the unit economics behind them.',
+    'Software engineer with a bias toward systems architecture and senior-level engineering practice. Architecture decision records, system blueprints, AI orchestration patterns, and the unit economics behind them.',
   url: 'https://georgemsapenda.me',
   locale: 'en_US',
   location: 'Lusaka, Zambia',

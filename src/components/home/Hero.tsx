@@ -59,13 +59,16 @@ export function Hero() {
       {/* Upper black region: the headline and positioning copy            */}
       {/* ---------------------------------------------------------------- */}
       <div className="px-gutter pt-12 pb-10 sm:pt-16 lg:pt-20">
+        <p className="font-mono text-on-ink-muted mb-4 text-micro font-semibold uppercase">
+          Senior full-stack — systems-architecture bias
+        </p>
         <h1 className="font-display text-mega text-balance uppercase">
           <span className="sr-only">
             {site.name} — {site.role}
           </span>
           <span aria-hidden="true" className="block">
-            Systems
-            <br className="sm:hidden" /> Architect
+            Software
+            <br className="sm:hidden" /> Engineer
           </span>
         </h1>
 
