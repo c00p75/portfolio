@@ -59,7 +59,7 @@ export function AdrCard({ adr, className }: { adr: Adr; className?: string }) {
           </Link>
         </h3>
 
-        <p className="text-on-ink-muted text-sm leading-relaxed text-pretty">{adr.summary}</p>
+        <p className="text-on-ink text-sm leading-relaxed text-pretty">{adr.summary}</p>
 
         {headline ? (
           <div className="border-ink-line mt-auto border-t pt-4">

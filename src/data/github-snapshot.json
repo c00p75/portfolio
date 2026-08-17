@@ -1,0 +1,101 @@
+{
+  "fetchedAt": "2026-08-15T07:20:30.028Z",
+  "profile": {
+    "login": "c00p75",
+    "name": "George M'sapenda",
+    "bio": "Full-Stack Software Developer | Stack: TypeScript, React, Ruby on Rails, Python",
+    "location": "Lusaka, Zambia",
+    "blog": "https://c00p75.github.io/Portfolio",
+    "htmlUrl": "https://github.com/c00p75",
+    "publicRepos": 63,
+    "followers": 53,
+    "following": 65,
+    "createdAt": "2021-01-31T05:37:49Z"
+  },
+  "repos": [
+    {
+      "name": "Space-Travelers-Hub",
+      "description": "The app works with real live data from the SpaceX API to display rockets, dragons and missions. It lets the user to reserve rockets, book dragons and join mission and allows a user to view all reserved rockets, dragons, and space missions.",
+      "language": "JavaScript",
+      "stars": 6,
+      "htmlUrl": "https://github.com/c00p75/Space-Travelers-Hub"
+    },
+    {
+      "name": "blog-rails",
+      "description": "Fully functional blog website that shows the list of posts and empowers readers to interact with them by adding comments and liking posts.",
+      "language": "Ruby",
+      "stars": 5,
+      "htmlUrl": "https://github.com/c00p75/blog-rails"
+    },
+    {
+      "name": "oop-school-library",
+      "description": "School Library is a Ruby practice project aimed at mastering Object Oriented Programming.",
+      "language": "Ruby",
+      "stars": 5,
+      "htmlUrl": "https://github.com/c00p75/oop-school-library"
+    },
+    {
+      "name": "Awesome-books-with-ES6",
+      "description": "Simple one page website that displays a list of books and allows you to add and remove books from that list. The core core goal of this project is to implement good data management with ES6 JavaScript syntax while building an application. View live demo below.",
+      "language": "JavaScript",
+      "stars": 5,
+      "htmlUrl": "https://github.com/c00p75/Awesome-books-with-ES6"
+    },
+    {
+      "name": "Shopping-Cart",
+      "description": "",
+      "language": "",
+      "stars": 5,
+      "htmlUrl": "https://github.com/c00p75/Shopping-Cart"
+    },
+    {
+      "name": "Math-Magicians",
+      "description": "Math Magicians React app",
+      "language": "JavaScript",
+      "stars": 5,
+      "htmlUrl": "https://github.com/c00p75/Math-Magicians"
+    },
+    {
+      "name": "ChatBox",
+      "description": "A React.js social media application focused on using using React functional components and React Hooks.",
+      "language": "JavaScript",
+      "stars": 4,
+      "htmlUrl": "https://github.com/c00p75/ChatBox"
+    },
+    {
+      "name": "Metrics-WebApp",
+      "description": "This project is a React capstone project for Microverse. It is a mobile web application to check a list of metrics (numeric values) retrieved from a selected API.",
+      "language": "JavaScript",
+      "stars": 4,
+      "htmlUrl": "https://github.com/c00p75/Metrics-WebApp"
+    },
+    {
+      "name": "Viand-Resturant",
+      "description": "Viand is a simple frontend project for a restaurant landing page built with React.js. The project also includes table reservation logic and a summary card that displays table booking information.",
+      "language": "JavaScript",
+      "stars": 4,
+      "htmlUrl": "https://github.com/c00p75/Viand-Resturant"
+    },
+    {
+      "name": "diagram-based-database",
+      "description": "Database group project based on a data model diagram.",
+      "language": "",
+      "stars": 4,
+      "htmlUrl": "https://github.com/c00p75/diagram-based-database"
+    },
+    {
+      "name": "Vet-Clinic",
+      "description": "Project uses a relational database to create the initial data structure for a vet clinic in order to insert, store, and query animals' information.",
+      "language": "PLpgSQL",
+      "stars": 4,
+      "htmlUrl": "https://github.com/c00p75/Vet-Clinic"
+    },
+    {
+      "name": "Bookstore",
+      "description": "",
+      "language": "JavaScript",
+      "stars": 4,
+      "htmlUrl": "https://github.com/c00p75/Bookstore"
+    }
+  ]
+}

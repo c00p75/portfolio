@@ -1,0 +1,98 @@
+---
+title: Brindle
+tagline: Automated trading bots, and the risk limits that actually stop them
+summary: >-
+  A platform that runs automated trading strategies against broker adapters on a
+  one-second tick. The engineering problem is not the strategies — it is enforcing
+  risk limits that protect a real account, when the cheap limits and the
+  expensive ones cannot be checked by the same mechanism.
+client: Ballo Innovations
+role: >-
+  Architecture and implementation of the execution gateway, the risk engine and
+  the runtime supervision loop.
+period: '2026'
+status: in-build
+order: 7
+featured: false
+draft: false
+accent: pink
+disciplines:
+  - architecture
+  - data
+stack:
+  - Python
+  - FastAPI
+  - Pydantic v2
+  - SQLAlchemy 2
+  - Alembic
+  - asyncio
+  - Prometheus
+highlights:
+  - >-
+    Position size can be checked in microseconds from a snapshot already in
+    memory. Drawdown needs the broker's real balance, which means a network call.
+    Putting both in front of every order would mean either broker latency on
+    every tick or a limit that is configured and never actually checked.
+  - >-
+    So they run in two places with two different consequences: the pre-order gate
+    rejects the order, and the runtime breaker pauses the bot. A position breach
+    means "not this order"; a drawdown breach means "no more orders until a human
+    looks at it".
+  - >-
+    Strategies never call a broker adapter directly. An earlier version let each
+    one size its own orders, and one promptly computed its own stake without
+    reading the risk context — so the configured per-trade cap simply did not
+    apply to it. A limit each caller has to remember to apply is not a limit.
+metrics:
+  - label: I/O calls on the pre-order path
+    value: '0'
+    basis: >-
+      The risk engine takes an injected portfolio snapshot and mark price and
+      makes no network or database calls. Verifiable rather than measured: its
+      unit tests run with no fixtures and no database.
+    direction: down-is-good
+  - label: Runtime conditions that pause a bot
+    value: '4'
+    basis: >-
+      Consecutive risk rejections, daily loss or drawdown breach, consecutive
+      losing trades, and allocation depletion. Each writes its reason into the
+      pause record.
+    direction: neutral
+links:
+  - label: Source
+    href: https://github.com/c00p75/brindle
+    kind: repo
+---
+
+## The problem
+
+The failure I was designing against is a bot that keeps trading while losing,
+because the limit that would have caught it was too expensive to check on the
+order path and therefore was not checked at all.
+
+That is not hypothetical. An earlier version of this system accepted a
+`max_drawdown_pct` in its configuration, validated it, displayed it, and enforced
+it only in the pre-order gate — where the number it needed was not available. The
+runtime ignored it entirely. The schema was making a promise to the operator that
+the running system did not keep.
+
+## What I built
+
+One execution gateway that every order passes through, a pure risk function in
+front of it that does no I/O, and a separate supervision loop for the limits that
+need a broker round-trip and only make sense over a series of trades. Rejections
+are persisted and audited — a rejection is an event, not a silent no-op. When
+state is uncertain, because an adapter is unhealthy or market data is stale, the
+system does nothing and alerts rather than guessing.
+
+## What is still wrong
+
+The open-orders limit is an instance of exactly the bug described above, still
+present. It is schema-validated, bounded, and unit-tested against a synthetic
+snapshot — and the runtime builds that snapshot with the count hardcoded to zero,
+so in the running system the gate never fires.
+
+The right fix is not to patch the field. It is a test that walks the risk
+configuration schema and asserts every limit in it is reachable from the snapshot
+the runtime actually constructs. That would have caught both this and the
+drawdown gap.

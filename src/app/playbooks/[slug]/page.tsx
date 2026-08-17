@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { allPlaybooks, formatDate, playbookBySlug } from '@/lib/content';
 import { MDXContent } from '@/components/mdx/MDXContent';
+import { ArticleToc } from '@/components/blog/ArticleToc';
 import { EdgeRail, InkCard } from '@/components/ui/Frame';
 import { ArrowLink } from '@/components/ui/ArrowLink';
 import { accentText, Tag } from '@/components/ui/Sticker';
@@ -38,8 +39,8 @@ export default async function PlaybookPage({ params }: Params) {
         right={formatDate(playbook.date)}
       />
 
-      <div className="px-gutter">
-        <InkCard className="px-gutter py-14 sm:py-20">
+      <div className="px-edge">
+        <InkCard className="px-card py-14 sm:py-20">
           <div className="flex flex-wrap items-center gap-2.5">
             <span className={cn('font-mono text-micro font-bold uppercase', accentText[playbook.accent])}>
               {playbook.category}
@@ -62,14 +63,23 @@ export default async function PlaybookPage({ params }: Params) {
         </InkCard>
       </div>
 
-      <section className="px-gutter pt-6 sm:pt-10">
-        <InkCard className="px-gutter py-14 sm:py-20">
-          <MDXContent code={playbook.body} />
+      <section className="px-edge pt-6 sm:pt-10">
+        {/*
+         * `overflow-visible` overrides InkCard's default clip: an
+         * `overflow: hidden` ancestor is a scrollport, so the sticky rail
+         * would scroll with the card instead of pinning. `items-start` stops
+         * the aside stretching to the article height, which would do the same.
+         */}
+        <InkCard className="px-card overflow-visible py-14 sm:py-20">
+          <div className="grid items-start gap-10 xl:grid-cols-[minmax(0,1fr)_15rem] xl:gap-16">
+            <MDXContent code={playbook.body} />
+            <ArticleToc toc={playbook.toc} className="sticky top-24 hidden xl:block" />
+          </div>
         </InkCard>
       </section>
 
-      <section className="px-gutter pt-6 sm:pt-10">
-        <InkCard className="px-gutter py-12">
+      <section className="px-edge pt-6 sm:pt-10">
+        <InkCard className="px-card py-12">
           <ArrowLink href="/playbooks" className="text-on-ink-muted hover:text-on-ink">
             All playbooks
           </ArrowLink>

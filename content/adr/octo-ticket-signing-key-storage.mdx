@@ -1,0 +1,212 @@
+---
+title: 'Signing tickets with a key I chose to store in Postgres instead of KMS'
+number: 5
+status: accepted
+date: '2026-07-26'
+domain: Ticket Integrity
+project: octo
+shortTitle: 'Where the ticket signing key lives'
+featured: false
+draft: false
+accent: lime
+summary: >-
+  A ticket is a plain payload plus an HMAC signature, and the obvious place to keep
+  the signing key is a secrets manager. I put it in a database row instead, because
+  the same key eventually has to be provisioned onto a scanner device, and a wrapped
+  KMS key cannot be handed to a phone. That trade is real, I flagged it in the code
+  the day I made it, and it is still open.
+context: >-
+  Octo mints QR-coded tickets and needs a scanner to be able to verify one with no
+  network available, which rules out a server-side verification call at the gate.
+  The payload therefore has to carry its own proof, and a per-event HMAC secret is
+  the mechanism. The question this record is about is not the signing scheme — that
+  part is uncontroversial — it is where the fifty or so bytes of secret key actually
+  live, given that a scanning device will eventually need the raw value, not a
+  reference to it.
+constraints:
+  - 'A scanner must be able to verify a ticket''s signature without a network call.'
+  - 'The same secret that signs a ticket must be provisionable to an authorized scanner device.'
+  - 'The secret must never appear in logs, error messages, or a stack trace.'
+  - 'A ticket''s QR content must be exactly regenerable later from stored data, not approximated.'
+options:
+  - name: A managed secrets service (KMS)
+    summary: 'Generate and store each event''s signing key in a cloud KMS, and sign/verify through it.'
+    verdict: rejected
+    because: >-
+      KMS is designed to keep the raw key material inside the service and hand back
+      only wrapped operations. That is exactly the property that makes it wrong here:
+      a scanner has to hold the raw secret on the device to verify offline, and a
+      service built never to release its key cannot provision one to a phone.
+    pros:
+      - 'Key material never exists outside a hardened service.'
+      - 'Rotation, audit logging and access policy come largely for free.'
+      - 'The default a security review will expect to see.'
+    cons:
+      - 'No path to getting the raw key onto a scanner for offline verification.'
+      - 'Adds a network dependency to key provisioning that the rest of the design exists to avoid.'
+  - name: One global signing key for the whole platform
+    summary: 'A single HMAC secret shared across every event, provisioned once.'
+    verdict: rejected
+    because: >-
+      A key compromised anywhere compromises every event that has ever used it, and
+      a scanner provisioned for one event could forge tickets for every other event
+      on the platform. Scoping the blast radius to a single event was worth the extra
+      row per event.
+    pros:
+      - 'One key to manage, generate, and provision.'
+      - 'Simpler mental model with nothing per-event to look up.'
+    cons:
+      - 'A single leak compromises the entire platform, not one event.'
+      - 'A scanner authorized for one event can forge tickets for all of them.'
+  - name: A per-event key stored as a Postgres row
+    summary: >-
+      Mint a random 32-byte secret per event on first use, store it in a dedicated
+      table, and hand the raw value to authorized scanners during provisioning.
+    verdict: chosen
+    because: >-
+      This was the only option that could actually satisfy the offline constraint.
+      A scanner needs the raw secret, so somewhere in the system the raw secret has
+      to be readable by something that can hand it to a device — and once that is
+      true, a KMS wrapper adds ceremony without adding protection against the risk
+      that actually matters, which is the key being extracted from an authorized
+      caller.
+    pros:
+      - 'Compromise is scoped to one event rather than the whole platform.'
+      - 'The raw secret can be provisioned to a device, which the offline requirement demands.'
+      - 'A concurrent first-mint race is handled: a losing writer reloads the winner''s key rather than creating two.'
+    cons:
+      - 'The key sits in the same database as everything else, protected by ordinary access control rather than a hardened secrets boundary.'
+      - 'There is no rotation path — signing a key change would invalidate every ticket already issued for that event.'
+      - 'Provisioning hands an authorized device the raw secret rather than a wrapped one, which is a wider blast radius than a KMS-backed design would allow.'
+tradeoffs:
+  - criterion: Compromise blast radius
+    scores:
+      'A managed secrets service (KMS)': strong
+      'One global signing key for the whole platform': weak
+      'A per-event key stored as a Postgres row': adequate
+  - criterion: Supports offline, on-device verification
+    scores:
+      'A managed secrets service (KMS)': weak
+      'One global signing key for the whole platform': strong
+      'A per-event key stored as a Postgres row': strong
+    note: 'This is the requirement that eliminated KMS outright, regardless of its other strengths.'
+  - criterion: Operational simplicity
+    scores:
+      'A managed secrets service (KMS)': weak
+      'One global signing key for the whole platform': strong
+      'A per-event key stored as a Postgres row': adequate
+  - criterion: Key rotation without invalidating issued tickets
+    scores:
+      'A managed secrets service (KMS)': strong
+      'One global signing key for the whole platform': weak
+      'A per-event key stored as a Postgres row': weak
+    note: >-
+      This is the axis the chosen option gives up. There is no rotation path today;
+      rotating a key would invalidate every ticket already signed under it.
+decision: >-
+  Each event gets a 32-byte random secret, base64-encoded and stored in a dedicated
+  table keyed by event id, minted lazily on first use with a reload-on-conflict path
+  for the case where two requests race to mint the same event's key. A ticket's QR
+  content is the payload — ticket id, tier id, event id, and the exact issued-at
+  timestamp — followed by the HMAC-SHA256 signature of that payload under the
+  event's secret. Verification uses a constant-time comparison. The issued-at
+  timestamp is stored as its own column specifically so the payload can be
+  regenerated later; the row's own creation timestamp is a different clock and is
+  never substituted for it. The choice of Postgres over a managed secrets service is
+  recorded in the code itself as a decision flagged for review, not a default I
+  reached for without thinking about it.
+reversibility: >-
+  Moving the key into a wrapped-export KMS scheme later is possible without
+  reissuing tickets, because verification only needs the raw secret at the moment a
+  scanner checks a signature — the storage location can change underneath that
+  contract. What cannot be recovered after the fact is any ticket signed under a key
+  that is later rotated or revoked; there is no versioning in the payload to let two
+  keys be valid at once, so a rotation invalidates every unscanned ticket for that
+  event. That is the actual cost of not building rotation now, and it is why I would
+  treat this as revisitable but not free to revisit.
+metrics:
+  - label: Secret length
+    value: '32 bytes'
+    basis: 'Generated with a cryptographically secure random source at first mint.'
+    direction: neutral
+  - label: Signature comparison
+    value: 'constant-time'
+    basis: >-
+      Verification uses a timing-safe comparison rather than a standard equality
+      check, so a failed verification does not leak information about how much of
+      the signature matched.
+    direction: neutral
+failureModes:
+  - trigger: A tampered or bit-flipped QR payload is scanned
+    blastRadius: 'None. The signature check fails and the scan is rejected.'
+    detection: 'Constant-time HMAC comparison against the recomputed signature.'
+    mitigation: 'Rejected before any ticket lookup or database write occurs.'
+    severity: minor
+  - trigger: Two requests attempt to mint the same event''s key at the same time
+    blastRadius: 'Would otherwise create two different keys for one event.'
+    detection: 'The insert conflicts on the event''s unique key constraint.'
+    mitigation: 'The losing writer reloads and uses the key the winner actually persisted.'
+    severity: minor
+  - trigger: The manifest endpoint that provisions scanners is called by an unauthorized party
+    blastRadius: >-
+      The raw signing secret for that event is disclosed, which is enough to forge
+      valid tickets for it.
+    detection: >-
+      Authorization on the provisioning path is tighter than the platform''s usual
+      any-membership check, specifically because it releases raw key material
+      rather than aggregate data.
+    mitigation: >-
+      Narrower authorization than the surrounding endpoints, reviewed as part of
+      this decision rather than inherited from the platform default. A wrapped or
+      expiring provisioned value would narrow it further; that is the residual
+      risk the chosen design accepts.
+    severity: major
+  - trigger: A signing key needs to be rotated after suspected compromise
+    blastRadius: 'Every ticket already issued and not yet scanned for that event becomes unverifiable.'
+    detection: 'None automated; this would be a manual incident response.'
+    mitigation: >-
+      None exists today. This is the most significant gap in the design and the
+      direct cost of not building key versioning into the payload up front.
+    severity: major
+stack:
+  - TypeScript
+  - Prisma
+  - PostgreSQL
+  - HMAC-SHA256
+  - Firebase Cloud Functions
+---
+
+## Why this record exists
+
+Most write-ups of a signing scheme stop at the cryptography, because the
+cryptography is the easy and uncontroversial part. The decision that actually
+required judgement here was where the key lives, and it is a decision I made
+knowingly against the default a security review would expect.
+
+I want to be direct about that rather than let the record imply I simply didn't
+think of KMS. I did, and I wrote down in the code, on the day, exactly why I was
+not using it: the offline requirement means a scanner has to hold the raw secret,
+and a service whose entire design goal is to never release raw key material cannot
+provision one to a phone. Once that constraint is on the table, KMS stops being the
+safer default and becomes the option that cannot satisfy the requirement at all.
+
+## What the trade actually costs
+
+Putting the key in Postgres does not make the risk disappear, it relocates it. The
+risk moves from "can this service ever be tricked into releasing the key" to "is
+provisioning authorized tightly enough." That authorization was tightened beyond
+the platform's normal pattern for exactly this reason, and the code says so.
+
+The harder question is what happens after a compromise rather than before one,
+and that is where this design is thinnest. Rotation is the axis it gives up:
+recovering from a suspected leak is an operational response today rather than an
+engineered one. I would rather record that plainly than imply the design has an
+answer it does not.
+
+## What I would do differently
+
+I would add a key version to the signed payload before this goes further, even
+though it makes the QR content marginally larger. It is the one piece of this
+design that has no answer right now, and it is the piece most likely to matter if
+this were ever running at a scale where "just reissue everyone's ticket" stops
+being an acceptable incident response.

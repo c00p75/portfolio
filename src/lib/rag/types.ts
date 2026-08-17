@@ -6,13 +6,16 @@ export type Chunk = {
   title: string;
   /** Nearest enclosing heading, so a citation can point at a section. */
   section: string;
-  kind: 'adr' | 'playbook' | 'post';
+  kind: 'project' | 'adr' | 'playbook' | 'post' | 'profile';
   text: string;
   tokens: number;
 };
 
 /** A chunk with its embedding, as persisted in the build artifact. */
 export type IndexedChunk = Chunk & { embedding: number[] };
+
+/** A query whose vector is precomputed at build time. */
+export type CachedQuery = { key: string; embedding: number[] };
 
 export type IndexArtifact = {
   /** Bumped when the chunking or embedding scheme changes incompatibly. */
@@ -21,6 +24,12 @@ export type IndexArtifact = {
   dimensions: number;
   builtAt: string;
   chunks: IndexedChunk[];
+  /**
+   * Vectors for the suggested prompts. They are a fixed, known set and they
+   * dominate real traffic, so embedding them at build time takes the most
+   * common path off the model entirely.
+   */
+  queryCache: CachedQuery[];
 };
 
 /** One retrieved passage plus the scoring provenance behind it. */

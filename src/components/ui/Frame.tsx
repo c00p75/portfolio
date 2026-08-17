@@ -19,7 +19,7 @@ export function EdgeRail({
   return (
     <div
       className={cn(
-        'text-on-page-muted font-mono mx-auto flex max-w-[110rem] items-start justify-between gap-4 px-gutter text-micro font-medium uppercase',
+        'text-on-page-muted font-mono mx-auto flex max-w-[110rem] items-start justify-between gap-4 px-gutter text-micro font-medium uppercase mt-5',
         className,
       )}
     >
@@ -105,7 +105,10 @@ export function SectionHeading({
         </div>
       )}
       <h2 className="font-display text-display text-balance uppercase">{title}</h2>
-      {lead ? <p className={cn('max-w-2xl text-base leading-relaxed text-pretty', muted)}>{lead}</p> : null}
+      {/* Body copy takes the full text tone, not `muted` — the muted tone is
+          for labels and eyebrows, and at paragraph length it read as washed
+          out against the card. */}
+      {lead ? <p className="max-w-2xl text-base leading-relaxed text-pretty">{lead}</p> : null}
     </header>
   );
 }

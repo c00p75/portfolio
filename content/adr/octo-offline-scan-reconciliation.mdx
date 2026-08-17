@@ -1,0 +1,260 @@
+---
+title: 'Reconciling gate scans from devices that were offline and disagree'
+number: 3
+status: accepted
+date: '2026-07-27'
+domain: Distributed Systems
+project: octo
+shortTitle: 'Offline gate scan reconciliation'
+featured: true
+draft: false
+accent: cyan
+summary: >-
+  Two gates scan the same ticket fifteen seconds apart, neither is online, and both
+  let the holder through. When the batches finally reach the server they arrive in
+  the wrong order. The server re-sorts by the device's own clock and resolves
+  first-scan-wins — but it will not reverse a decision a gate has already acted on,
+  because a person who is already inside cannot be un-admitted by a database write.
+context: >-
+  Octo sells event tickets in Zambia, and the venues it sells into — open fields
+  and large halls around Lusaka — routinely saturate or lose mobile network
+  entirely during entry. Scanners therefore have to work with no connectivity and
+  reconcile later, which means the server cannot assume it sees scans in the order
+  they happened. The specific race the design exists for is a ticket scanned at
+  Gate A and presented at Gate B fifteen seconds later, before either device has
+  synced. Both devices will independently believe the ticket is valid.
+constraints:
+  - 'A scanner must reach an admit/reject decision with no network available.'
+  - 'The order scans arrive at the server carries no information about the order they happened in.'
+  - 'A decision a gate has already acted on cannot be retracted; the holder is already through the door.'
+  - 'Device clocks are not trustworthy, so a claimed scan time needs a plausibility bound.'
+  - 'A resubmitted batch must return the same decisions rather than creating new ones — the sync client will retry.'
+options:
+  - name: Resolve in server arrival order
+    summary: >-
+      Process each batch as it lands and let the first submission the server happens
+      to receive win the ticket.
+    verdict: rejected
+    because: >-
+      Arrival order is a function of which device regained signal first, which is
+      unrelated to which gate actually scanned first. A gate that syncs promptly
+      would beat a gate that scanned earlier but reconnected later, so the outcome
+      would be arbitrary rather than wrong-but-explainable.
+    pros:
+      - 'Trivial to implement; no sorting or clock handling at all.'
+      - 'No dependency on device clocks being remotely accurate.'
+    cons:
+      - 'The winner is decided by network recovery order, which is meaningless.'
+      - 'Impossible to explain to an organiser why one gate''s scan counted and another''s did not.'
+  - name: Sort by device clock, resolve sequentially, and treat prior decisions as final
+    summary: >-
+      Re-sort every batch by the timestamp the device recorded, resolve entries one
+      at a time under a per-ticket optimistic lock, and never re-evaluate a scan
+      already written down.
+    verdict: chosen
+    because: >-
+      The device clock is the only signal that carries any information about real
+      ordering, and sequential resolution is what makes first-scan-wins cascade
+      correctly when several entries in one batch target the same ticket. Refusing
+      to revisit persisted decisions is the part that matters most: a Valid result
+      that a gate acted on is a fact about the physical world, and no later batch
+      should be able to contradict it.
+    pros:
+      - 'Ordering is decided by something related to reality rather than to network conditions.'
+      - 'Sequential resolution means each entry sees the previous entry''s committed write, so duplicates within one batch resolve correctly.'
+      - 'A guarded conditional update makes admission atomic under concurrent batches without a table lock.'
+      - 'Resubmitting a batch returns the prior decisions verbatim rather than double-counting.'
+    cons:
+      - 'It depends on device clocks, which forces a plausibility window and a client-side clock discipline that is not built yet.'
+      - 'Sequential processing is slower than resolving a batch in parallel, and batches are capped at 500 entries partly because of it.'
+      - 'A chronologically earlier scan that arrives late is knowingly recorded as the loser. The result is explainable but not strictly correct.'
+      - 'Idempotency is enforced inside a transaction rather than by a unique index, so a genuinely simultaneous duplicate submission remains a narrow residual race.'
+  - name: Reverse earlier decisions when a chronologically earlier scan arrives late
+    summary: >-
+      Keep decisions provisional, and flip a previously-Valid scan to duplicate if a
+      later batch proves an earlier scan existed.
+    verdict: rejected
+    because: >-
+      There is nothing to flip it to. The gate has already read Valid off the screen
+      and let the holder in. Rewriting that row would make the audit trail disagree
+      with what physically happened, which is worse than recording an
+      order-of-arrival artefact honestly.
+    pros:
+      - 'Chronological correctness in the database, in every case.'
+    cons:
+      - 'The database would contradict what happened at the gate.'
+      - 'An admitted holder cannot be un-admitted, so the corrected record has no operational meaning.'
+      - 'Every scan decision becomes provisional, so nothing downstream can rely on it.'
+tradeoffs:
+  - criterion: Outcome is explainable to an organiser
+    scores:
+      'Resolve in server arrival order': weak
+      'Sort by device clock, resolve sequentially, and treat prior decisions as final': strong
+      'Reverse earlier decisions when a chronologically earlier scan arrives late': adequate
+  - criterion: Record matches what physically happened at the gate
+    scores:
+      'Resolve in server arrival order': adequate
+      'Sort by device clock, resolve sequentially, and treat prior decisions as final': strong
+      'Reverse earlier decisions when a chronologically earlier scan arrives late': weak
+  - criterion: Strict chronological correctness
+    scores:
+      'Resolve in server arrival order': weak
+      'Sort by device clock, resolve sequentially, and treat prior decisions as final': weak
+      'Reverse earlier decisions when a chronologically earlier scan arrives late': strong
+    note: >-
+      This is the axis the chosen option gives up. A late-arriving earlier scan is
+      recorded as the duplicate, and that is accepted deliberately.
+  - criterion: Independence from device clocks
+    scores:
+      'Resolve in server arrival order': strong
+      'Sort by device clock, resolve sequentially, and treat prior decisions as final': weak
+      'Reverse earlier decisions when a chronologically earlier scan arrives late': weak
+  - criterion: Throughput on a large batch
+    scores:
+      'Resolve in server arrival order': strong
+      'Sort by device clock, resolve sequentially, and treat prior decisions as final': adequate
+      'Reverse earlier decisions when a chronologically earlier scan arrives late': weak
+decision: >-
+  A sync submission carries up to 500 scan entries. The server re-sorts them by the
+  hardware timestamp the device recorded, explicitly not by arrival order, then
+  resolves them one at a time. Each admission is a conditional update guarded on the
+  ticket's current version and on its running scan count still being below the tier's
+  allowance, so two concurrent batches cannot both admit: whichever update matches
+  zero rows is a duplicate. Scan records already persisted are never re-evaluated.
+  The ticket id a device sends is treated only as a lookup hint until the QR
+  payload's signature verifies, and the identifiers inside the verified payload are
+  what the decision actually uses. Entries claiming a scan time more than five
+  minutes in the future are logged and excluded rather than admitted.
+reversibility: >-
+  The resolution rules live in one service, and the per-ticket lock is a version
+  column plus a counter, so changing the policy — different ordering, a finer
+  outcome taxonomy, parallel resolution within a batch — is contained. What is not
+  cheap to reverse is the decision that persisted scan outcomes are immutable.
+  Every downstream consumer, the audit trail, and the organiser-facing reports all
+  assume a scan record is final; making them provisional again would change what a
+  scan means everywhere. The response contract is also load-bearing: it separates
+  "the server durably decided this" from "the scan was valid", because a client that
+  only stopped retrying on Valid would retry legitimate duplicates forever.
+metrics:
+  - label: Clock-implausibility window
+    value: '5 minutes'
+    basis: >-
+      Chosen threshold, not a measurement. It is deliberately looser than the ±90
+      second client-side clock discipline the design document specifies, because the
+      server number has to absorb legitimate offline queueing and sync backoff
+      between the hardware scan and the server receiving it.
+    direction: neutral
+  - label: Maximum entries per sync batch
+    value: '500'
+    basis: 'Schema bound on the sync request. Sequential resolution is part of why it is capped.'
+    direction: neutral
+  - label: Oversell under concurrent reservation
+    value: '0'
+    basis: >-
+      Adjacent inventory path, measured against live Postgres: 200 parallel
+      single-seat reservations against a capacity of 100 yielded exactly 100
+      successes and 100 sold-out errors, repeated 20 times out of 20. The scan path
+      itself has unit coverage including three-gate overlapping resolution, but no
+      live-Postgres concurrency test.
+    direction: down-is-good
+failureModes:
+  - trigger: A forged or tampered QR is presented
+    blastRadius: 'None. The scan is rejected and deliberately leaves no scan record.'
+    detection: 'Constant-time signature comparison against the per-event key.'
+    mitigation: >-
+      No record is written for a signature failure, on purpose. Until the signature
+      verifies, the claimed ticket id is unauthenticated, so persisting a row would
+      let an attacker plant audit entries against tickets they do not hold.
+    severity: major
+  - trigger: A valid signature is presented for a different ticket than the one claimed
+    blastRadius: 'The scan is rejected; no ticket is admitted.'
+    detection: 'The identifiers inside the verified payload are cross-checked against the entry.'
+    mitigation: 'The verified payload wins and the mismatch is rejected. The claimed id is never trusted.'
+    severity: major
+  - trigger: Two offline gates admit the same ticket, then both sync
+    blastRadius: >-
+      One holder was admitted twice in the physical world. The system can record it
+      but cannot prevent it — this is the accepted limit of offline operation.
+    detection: 'The guarded conditional update matches zero rows for the second scan.'
+    mitigation: >-
+      The later-ordered scan is recorded as a duplicate and surfaced to the
+      organiser, so the double entry is visible after the fact even though it could
+      not be blocked in the moment.
+    severity: major
+  - trigger: A device clock is badly wrong
+    blastRadius: 'That device''s scans could be ordered incorrectly against other gates.'
+    detection: 'Entries claiming a time more than five minutes ahead are flagged server-side.'
+    mitigation: >-
+      Implausible-future entries are excluded from admission and logged. The
+      stronger mitigation — blocking a session from starting when the device clock
+      has drifted beyond a strict margin — is specified but not yet built.
+    severity: minor
+  - trigger: A scan batch is submitted twice
+    blastRadius: 'Would double-count admissions if unguarded.'
+    detection: >-
+      Deduplication on device, ticket and scan time, evaluated in the same
+      transaction as the insert.
+    mitigation: >-
+      A resubmitted scan returns its prior decision verbatim. This is enforced in
+      the transaction rather than by a unique index, which leaves a narrow race if
+      two identical submissions interleave precisely. A unique constraint on that
+      tuple is the obvious hardening and is not in place.
+    severity: minor
+stack:
+  - TypeScript
+  - tRPC
+  - Hono
+  - Prisma
+  - PostgreSQL
+  - Firebase Cloud Functions
+  - HMAC-SHA256
+---
+
+## Why this record exists
+
+Most writing about offline-first systems is about sync mechanics: queues, retries,
+vector clocks, merge functions. The genuinely hard question here turned out not to
+be mechanical at all. It was deciding what the server is *allowed* to conclude.
+
+A reconciliation algorithm can always compute the chronologically correct answer
+given enough ordering information. What it cannot do is change the fact that a
+steward looked at a green screen and waved someone through. Once that has happened,
+a database row saying otherwise is not a correction — it is a lie that makes the
+audit trail useless for the one thing an organiser needs it for, which is working
+out what actually occurred at the gate.
+
+So the rule is that already-persisted decisions are immutable even when a later
+batch proves they were chronologically second. The system prefers an explainable
+record of what happened over a correct record of what should have happened.
+
+## The trust boundary
+
+The other decision worth pulling out is smaller and more mundane, and I think it is
+the one an interviewer would push on hardest.
+
+A scan entry arrives with a ticket id and a QR payload. It would be natural to look
+up the ticket by that id and proceed. But the id is client-supplied and the payload
+is signed, so until the signature verifies, the id is just a claim. The
+implementation treats it as a lookup hint only, verifies the signature, and then
+uses the identifiers *inside the verified payload* for the actual decision — and
+rejects the scan if the two disagree.
+
+The same reasoning is why a failed signature writes nothing at all. Logging the
+attempt sounds obviously correct until you notice that the attacker chooses the
+ticket id in that log line.
+
+## What this is not, yet
+
+The server half of this is built and tested. The device half is not. The scanner
+application is currently a scaffold: the local database, the on-device signature
+verification, the clock discipline and the background sync queue are all designed
+in the specification and still on the backlog. So what I can defend in detail is
+the reconciliation policy, not a shipped end-to-end offline gate.
+
+Two further gaps are worth naming rather than discovering in an interview. Scan
+submission is not yet authenticated — possession of a validly signed QR is
+currently the de facto authorisation, and device registration comes later. And the
+outcome taxonomy is deliberately coarser than the specification asked for, because
+the guarded update genuinely cannot distinguish "already scanned" from "scan limit
+reached": both are the same zero rows updated. Collapsing them was better than
+inventing a distinction the mechanism could not actually make.

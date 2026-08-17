@@ -9,6 +9,7 @@
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
+
 :root {
   /* The grey surround the content card floats on. Darker than the reference
      artwork on purpose: at #8e8e8e the edge captions came out at 2.4:1, which
@@ -25,11 +26,20 @@
   --tone-cream-line: #cfc7b9;
   /* Text tones */
   --tone-on-ink: #efeae2;
-  --tone-on-ink-muted: #6d6969; /* #837c7c */
+  /* The muted label tone — eyebrows, mono captions, timestamps. `InkCard` no
+     longer paints its own black, so anything using the on-ink tones now sits
+     on the page grey, which is far lighter than the ink it was tuned for. This
+     is the darkest value that still clears 4.5:1 against --tone-page at the
+     micro sizes these labels use (the old #94908c sat at 1.9:1 there). It
+     reads as muted mainly by weight and size now, not by tone. */
+  --tone-on-ink-muted: #e3ded7;
   --tone-on-cream: #3f3f3f;
   --tone-on-cream-muted: #5f5a51;
   --tone-on-page: #f6f4f1;
   --tone-on-page-muted: #e4e0da;
+
+  /* Opacity of the hero's sketch layer. See `.doodle` in the components layer. */
+  --doodle-ink: 0.72;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,6 +52,7 @@
     --tone-on-cream-muted: #918b80;
     --tone-on-page: #efeae2;
     --tone-on-page-muted: #8d8d8d;
+    --doodle-ink: 0.4;
   }
 }
 
@@ -54,6 +65,7 @@
   --tone-on-cream-muted: #918b80;
   --tone-on-page: #efeae2;
   --tone-on-page-muted: #8d8d8d;
+  --doodle-ink: 0.4;
 }
 
 @theme {
@@ -113,7 +125,25 @@
   --radius-card: 1.25rem;
   --radius-panel: 0.75rem;
 
+  /* The single horizontal rhythm of the page: nav, edge rails, hero headline
+     and every card's contents all start exactly one `gutter` in from the
+     viewport edge. */
   --spacing-gutter: clamp(1rem, 4vw, 3rem);
+
+  /* Cards below the hero float on the page with a thin margin of page colour
+     around them, so their own padding is the rest of the gutter — edge + card
+     == gutter, which is what keeps card contents aligned with the nav and the
+     hero headline instead of sitting a second gutter further in. */
+  --spacing-edge: clamp(0.5rem, 1.25vw, 1rem);
+  --spacing-card: calc(var(--spacing-gutter) - var(--spacing-edge));
+}
+
+/* Angle for the Ask George conic ring. Top-level so the animation can
+   advance the gradient without rotating the pill itself. */
+@property --ask-ai-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
 }
 
 /* ---------------------------------------------------------------------------
@@ -126,6 +156,14 @@
   }
 
   html {
+    /*
+     * 18px base instead of the browser's 16px. Every size in the system is
+     * expressed in rem — type, spacing, the radii — so this is the single
+     * lever that scales the whole site up a step rather than a per-component
+     * override. Percent rather than px so a reader's own browser setting is
+     * still respected.
+     */
+    font-size: 112.5%;
     scroll-behavior: smooth;
     scroll-padding-top: 6rem;
     -webkit-text-size-adjust: 100%;
@@ -192,6 +230,329 @@
   .grid-paper-fade {
     -webkit-mask-image: radial-gradient(ellipse 120% 100% at 50% 45%, #000 55%, transparent 100%);
     mask-image: radial-gradient(ellipse 120% 100% at 50% 45%, #000 55%, transparent 100%);
+  }
+
+  /* -------------------------------------------------------------------------
+     Keycap wordmark — the nav's "GM" mark. A rounded outline with a serif
+     capital centred inside, one span per letter. Everything is in em so the
+     pair scales from the parent's font-size alone; the border is deliberately
+     heavy (0.11em) to match the drawn reference at small sizes.
+  ------------------------------------------------------------------------- */
+  .keycap {
+    display: grid;
+    place-items: center;
+    width: 1.45em;
+    height: 1.45em;
+    border: 0.11em solid currentColor;
+    border-radius: 0.28em;
+    font-family: ui-serif, Georgia, 'Times New Roman', serif;
+    font-size: inherit;
+    /* The cap is optically centred by the grid, but serif capitals sit slightly
+       high in their em box, so nudge down rather than trusting the metrics. */
+    line-height: 1;
+    padding-top: 0.04em;
+  }
+
+  /* -------------------------------------------------------------------------
+     Dog-eared corner — the nav band reads as a sheet with its top-left corner
+     already turned back. The gradient does the whole trick: the first half is
+     the page showing through the gap the corner left behind, the second half
+     is the underside of the folded flap, lit a shade lighter than the ink so
+     the crease reads. The 50% hard stop is the crease itself, on the diagonal.
+     Sized in em so the fold scales with the band's font size.
+  ------------------------------------------------------------------------- */
+  .nav-fold {
+    --fold: 2.6em;
+    /* The corner is genuinely cut out of the band, so whatever scrolls behind
+       the sticky header shows through the gap rather than a painted stand-in.
+       clip-path discards outer box-shadows, so the band's lift moves to a
+       drop-shadow filter, which follows the clipped silhouette. */
+    clip-path: polygon(var(--fold) 0, 100% 0, 100% 100%, 0 100%, 0 var(--fold));
+    filter: drop-shadow(0 10px 18px rgb(0 0 0 / 0.45));
+  }
+
+  /* The underside of the turned-back flap: a triangle hinged on the crease.
+     It has to be much lighter than the ink to read at all — flap tones only a
+     step off the card's own black vanish. So the crease edge lands near the
+     cream and falls away to ink across the triangle, which is what sells the
+     curl. Clipped to the band, so it needs no shadow of its own. */
+  .nav-fold::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--fold);
+    height: var(--fold);
+    clip-path: polygon(100% 0, 0 100%, 100% 100%);
+    background: linear-gradient(
+      135deg,
+      var(--tone-on-ink-muted) 0%,
+      var(--tone-ink-line) 45%,
+      var(--tone-ink) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* -------------------------------------------------------------------------
+     Hero doodles — the loose architecture sketches on the grid paper.
+     All motion is decorative and slow; the reduced-motion block in the base
+     layer flattens every animation below to a near-zero duration, which leaves
+     the sketches drawn and static rather than removing them.
+  ------------------------------------------------------------------------- */
+  .doodle {
+    color: var(--color-on-cream);
+    /* Ink strength is themed: dark strokes need to sit up off the cream, while
+       light strokes on the dark panel bloom and have to be pulled back. */
+    opacity: var(--doodle-ink, 0.72);
+    animation: doodle-float 9s ease-in-out infinite;
+  }
+
+  /* One pen for every sketch. `vector-effect` is not an inherited SVG property,
+     so setting it on a <g> does nothing for the children — without this rule
+     each doodle's strokes scale with its own viewBox and the large diagrams
+     render visibly heavier than the small ones. */
+  .doodle svg :is(path, rect, circle, ellipse, line, polyline, polygon) {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 2px;
+  }
+
+  /* Dashed strokes sit out the sweep: the draw keyframes animate
+     `stroke-dasharray` themselves, and an animation beats the attribute. */
+  .doodle-draw > .doodle-static {
+    animation: none;
+  }
+
+  /* The self-drawing loop: a single travelling dash sweeps along each path,
+     draws the whole stroke, then retreats — endlessly. Every path declares
+     `pathLength="360"` so one set of keyframes fits any geometry. */
+  .doodle-draw > * {
+    animation:
+      doodle-dash-array 4s ease-in-out infinite,
+      doodle-dash-offset 4s linear infinite;
+    animation-delay: var(--d, 0s);
+  }
+
+  .doodle-pulse {
+    animation: doodle-pulse 3.2s ease-in-out infinite;
+  }
+
+  @keyframes doodle-dash-array {
+    0% {
+      stroke-dasharray: 0 1 359 0;
+    }
+    50% {
+      stroke-dasharray: 0 359 1 0;
+    }
+    100% {
+      stroke-dasharray: 359 1 0 0;
+    }
+  }
+
+  @keyframes doodle-dash-offset {
+    0% {
+      stroke-dashoffset: 365;
+    }
+    100% {
+      stroke-dashoffset: 5;
+    }
+  }
+
+  @keyframes doodle-float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -0.45rem, 0);
+    }
+  }
+
+  @keyframes doodle-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* The paper boat's wake (see ScrollTrail). Rings are flattened hard rather
+     than circular: the water is read in perspective, so a true circle would
+     look like a bubble sitting on top of the page instead of a ripple lying
+     on it. Three of them run on staggered delays so one is always opening. */
+  .boat-ripple {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* Sized in units of the travelling boat and divided up to the hero, since
+       the rings inherit the sprite's scale. `--wake-k` is the travelling
+       shrink; with it unset these are the plain values. */
+    width: calc(6.6rem / var(--wake-k, 1));
+    height: calc(1.5rem / var(--wake-k, 1));
+    margin-top: calc(-0.75rem / var(--wake-k, 1));
+    margin-left: calc(-3.3rem / var(--wake-k, 1));
+    border: none;
+    border-radius: 50%;
+    /* Neumorphic rim rather than a drawn outline: a highlight along the upper
+       edge and a shadow under the lower one, inside and out, so the ring reads
+       as a swell raised out of the surface and lit from above. A 1px border
+       reads as ink on paper — which is right for the plane's contrail and wrong
+       for water. Every length divides by `--wake-k` with the rest, so the rim
+       keeps its weight relative to the hull at any size. */
+    box-shadow:
+      0 calc(-1px / var(--wake-k, 1)) calc(3px / var(--wake-k, 1)) rgb(255 255 255 / 0.5),
+      0 calc(1.5px / var(--wake-k, 1)) calc(4px / var(--wake-k, 1)) rgb(0 0 0 / 0.45),
+      inset 0 calc(1.5px / var(--wake-k, 1)) calc(3px / var(--wake-k, 1)) rgb(0 0 0 / 0.35),
+      inset 0 calc(-1px / var(--wake-k, 1)) calc(3px / var(--wake-k, 1)) rgb(255 255 255 / 0.4);
+    opacity: 0;
+    animation: boat-ripple 3.6s ease-out infinite;
+  }
+
+  @keyframes boat-ripple {
+    0% {
+      transform: scale(0.28);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.62;
+    }
+    100% {
+      transform: scale(1.75);
+      opacity: 0;
+    }
+  }
+
+  /* The plane's hover. Deliberately a slow, uneven bob rather than a clean
+     sine: a craft holding station in air drifts, it does not oscillate on a
+     metronome. Sits on its own element so it composes with the scroll-driven
+     transform on the sprite instead of fighting it. */
+  .craft-float {
+    animation: craft-float 5.5s ease-in-out infinite;
+  }
+
+  @keyframes craft-float {
+    0%,
+    100% {
+      transform: translateY(-3px);
+    }
+    35% {
+      transform: translateY(2px);
+    }
+    65% {
+      transform: translateY(4px);
+    }
+  }
+
+  /* The boat riding on the swell. Like the plane's hover this runs on its own
+     clock rather than on scroll, because water does not stop when the reader
+     does — the boat is at its most obviously afloat when nothing else moves.
+     Slower and shallower than the plane's bob: a hull sits in the water rather
+     than holding station in air. Two out-of-phase periods keep it from
+     metronoming. */
+  .boat-bob {
+    animation: boat-bob 7s ease-in-out infinite;
+  }
+
+  @keyframes boat-bob {
+    0%,
+    100% {
+      transform: translateY(-2px) rotate(-1.2deg);
+    }
+    30% {
+      transform: translateY(1.5px) rotate(0.8deg);
+    }
+    55% {
+      transform: translateY(2.5px) rotate(1.4deg);
+    }
+    80% {
+      transform: translateY(0px) rotate(-0.4deg);
+    }
+  }
+
+  /* Airflow off the tail. The container is turned to the sprite's own axis by
+     the component, so here "back along the fuselage" is simply -x. */
+  .airflow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+  }
+
+  .airflow-line {
+    position: absolute;
+    right: 0.5rem;
+    width: 2rem;
+    height: 1px;
+    border-radius: 1px;
+    background: currentColor;
+    opacity: 0;
+    animation: airflow 1.7s linear infinite;
+  }
+
+  @keyframes airflow {
+    0% {
+      transform: translateX(-0.85rem) scaleX(0.25);
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.45;
+    }
+    100% {
+      transform: translateX(-5.1rem) scaleX(1);
+      opacity: 0;
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+     Ask George — a cool, blue-and-ink conic ring around the chat entry. Only
+     deep and mid blues alternating with the card's own ink; kept at reduced
+     opacity and a slow sweep so it reads as an AI control without competing
+     with the coloured stickers. Reduced-motion (base layer) freezes the angle
+     on the first frame.
+  ------------------------------------------------------------------------- */
+  .ask-ai-border {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* The 2px rim. The pseudo extends 2px past the button and is padded the
+     same amount, so its content box matches the button. Two mask layers with
+     `exclude` compositing punch that content box out, leaving only the rim
+     painted with the conic. The button's own bg-cyan / hover:bg-lime shows
+     through the hole. */
+  .ask-ai-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+      from var(--ask-ai-angle),
+      #1e3a8a,
+      #60a5fa,
+      var(--tone-ink),
+      #3b82f6,
+      #1e3a8a
+    );
+    opacity: 0.7;
+    -webkit-mask-image: linear-gradient(#000, #000), linear-gradient(#000, #000);
+    -webkit-mask-origin: content-box, border-box;
+    -webkit-mask-clip: content-box, border-box;
+    -webkit-mask-composite: xor;
+    mask-image: linear-gradient(#000, #000), linear-gradient(#000, #000);
+    mask-origin: content-box, border-box;
+    mask-clip: content-box, border-box;
+    mask-composite: exclude;
+    animation: ask-ai-spin 5s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes ask-ai-spin {
+    to {
+      --ask-ai-angle: 360deg;
+    }
   }
 
   /* Wide content (tables, diagrams, code) scrolls inside its own box. */
@@ -385,6 +746,54 @@
     max-width: 100%;
     height: auto;
     border-radius: var(--radius-panel);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Marquee — the About page's "In the room" gallery scrolls two rows in
+   opposite directions. The list inside each row contains the item set twice;
+   the animation slides the track exactly one set's width so the loop is
+   seamless when it snaps back to 0. `--marquee-duration` is set inline so the
+   speed can scale with the number of tiles.
+--------------------------------------------------------------------------- */
+@keyframes marquee-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@layer components {
+  .marquee-track {
+    animation-name: marquee-left;
+    animation-duration: var(--marquee-duration, 45s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+  }
+  .marquee-track[data-direction='right'] {
+    animation-name: marquee-right;
+  }
+  /* Pause every track in the group whenever any row is hovered or a tile
+   * inside it takes keyboard focus — the two rows are a single composition
+   * and it feels off if only one stops. `:has(:focus-visible)` (rather than
+   * `:focus-within`) means the pause is triggered by real keyboard focus
+   * only: when the lightbox closes and restores focus to the tile
+   * programmatically the marquee resumes, as it should. */
+  .marquee-group:hover .marquee-track,
+  .marquee-group:has(:focus-visible) .marquee-track {
+    animation-play-state: paused;
   }
 }
 

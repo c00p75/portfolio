@@ -1,0 +1,258 @@
+---
+title: 'Splitting trading risk limits into a pre-order gate and a runtime circuit breaker'
+number: 2
+status: accepted
+date: '2026-05-08'
+domain: Trading Systems
+project: brindle
+shortTitle: 'Two-tier risk limits'
+featured: true
+draft: false
+accent: pink
+summary: >-
+  Some risk limits can be checked in microseconds from state you already hold.
+  Others need a broker round-trip and only make sense over a series of trades.
+  Putting both in front of every order would have meant either blocking the order
+  path on network I/O or leaving the slow limits unenforced, so they run in two
+  places with two different consequences: reject the order, or pause the bot.
+context: >-
+  Brindle runs automated trading bots against broker adapters. A bot places orders
+  on a one-second tick, so anything on the order path has a very small latency
+  budget. But the limits that actually protect an account are not all cheap to
+  evaluate: position notional and open-order counts can be computed from a
+  snapshot already in memory, while daily loss and drawdown depend on the broker's
+  real balance, which has to be polled. The failure I was designing against is a
+  bot that keeps trading while losing, because the limit that would have caught it
+  was too expensive to check on the order path and therefore was not checked at
+  all.
+constraints:
+  - 'Strategies must never call a broker adapter directly; every order goes through one gateway.'
+  - 'No network or database I/O on the pre-order risk path.'
+  - 'Drawdown must be computed from the broker''s reported balance, not from the bot''s own contract tracker.'
+  - 'When state is uncertain — adapter unhealthy, market data stale — the system does nothing and alerts, rather than guessing.'
+  - 'Every rejected order is still persisted and audited; a rejection is an event, not a silent no-op.'
+options:
+  - name: Risk checks inside each strategy
+    summary: >-
+      Each strategy is responsible for sizing its own orders and respecting its own
+      limits before emitting them.
+    verdict: rejected
+    because: >-
+      This was the original arrangement and it failed in the most predictable way.
+      The Deriv strategy computed its own stake without reading the risk context, so
+      the configured per-trade cap was simply not applied to it. A limit that each
+      caller has to remember to apply is not a limit.
+    pros:
+      - 'A strategy has the most context about what a sensible size is for its own signal.'
+      - 'No shared abstraction to design before the second strategy exists.'
+    cons:
+      - 'Every new strategy is a new opportunity to bypass a cap, and it fails silently.'
+      - 'The same sizing logic gets reimplemented slightly differently in each strategy.'
+      - 'Nothing can assert that a limit is enforced system-wide.'
+  - name: One synchronous gate that checks every limit before each order
+    summary: >-
+      A single risk check in front of the adapter call, evaluating all limits
+      including drawdown and daily loss.
+    verdict: rejected
+    because: >-
+      Drawdown and daily loss are only meaningful against the broker's actual
+      balance, and fetching that means a network call. Putting it on the order path
+      would either add broker latency to every tick or force the check to read a
+      cached balance, which is the same as not checking it.
+    pros:
+      - 'One place to look for every limit; conceptually the simplest thing to explain.'
+      - 'No possibility of a limit being enforced on a delay.'
+    cons:
+      - 'Network I/O on the order path, on a one-second tick.'
+      - 'Ties order latency to broker API availability.'
+      - 'Rejecting a single order is the wrong response to a drawdown breach anyway — the bot should stop, not retry.'
+  - name: A pure pre-order gate plus asynchronous runtime breakers
+    summary: >-
+      Cheap limits run as a pure function inside the execution gateway before every
+      order. Expensive, series-based limits run on a separate timer and pause the
+      bot instead of rejecting an order.
+    verdict: chosen
+    because: >-
+      The two kinds of limit have different costs and want different consequences.
+      A position-size breach means "not this order". A drawdown breach means "not
+      any more orders until a human looks at it". Separating them let the order path
+      stay pure and synchronous while the slower limits became genuinely enforced
+      rather than nominally configured.
+    pros:
+      - 'The pre-order gate does no I/O at all, so it is fast and testable without fixtures.'
+      - 'Breaching a sustained limit stops the bot, which is the response that actually protects the account.'
+      - 'Drawdown reads the persisted broker balance series, so it stays correct even when the bot''s own view of its positions has drifted.'
+      - 'Five consecutive rejections escalates to a pause, so a bot stuck against a limit does not spin.'
+    cons:
+      - 'Risk enforcement now lives in two places, and a reader has to know which limits are where.'
+      - 'Runtime breakers are enforced on a polling interval, so a fast drawdown is caught late by up to that interval.'
+      - 'A limit can be present in the config schema and validated, yet not wired into the runtime snapshot — which is exactly what happened to the open-orders limit.'
+tradeoffs:
+  - criterion: Latency added to the order path
+    scores:
+      'Risk checks inside each strategy': adequate
+      'One synchronous gate that checks every limit before each order': weak
+      'A pure pre-order gate plus asynchronous runtime breakers': strong
+    note: 'The chosen pre-order gate takes an injected snapshot and does no network or database work.'
+  - criterion: Can a limit be bypassed by a new strategy
+    scores:
+      'Risk checks inside each strategy': weak
+      'One synchronous gate that checks every limit before each order': strong
+      'A pure pre-order gate plus asynchronous runtime breakers': strong
+  - criterion: Enforcement is immediate rather than on a poll
+    scores:
+      'Risk checks inside each strategy': adequate
+      'One synchronous gate that checks every limit before each order': strong
+      'A pure pre-order gate plus asynchronous runtime breakers': weak
+    note: >-
+      This is the axis the chosen option gives up. Sustained-loss limits are checked
+      on a timer, not per order, so they are detected late by up to one poll interval.
+  - criterion: Correct response to a sustained loss
+    scores:
+      'Risk checks inside each strategy': weak
+      'One synchronous gate that checks every limit before each order': weak
+      'A pure pre-order gate plus asynchronous runtime breakers': strong
+    note: 'Only the two-tier design can pause the bot; the others can only reject the current order.'
+  - criterion: Ease of unit testing
+    scores:
+      'Risk checks inside each strategy': weak
+      'One synchronous gate that checks every limit before each order': adequate
+      'A pure pre-order gate plus asynchronous runtime breakers': strong
+decision: >-
+  All order-time risk lives in one pure function that the execution gateway calls
+  before it touches an adapter. It receives a portfolio snapshot and a mark price
+  and returns an allow/deny decision with a reason, in this order: kill switch,
+  open-order count, whether the notional can even be computed, position notional,
+  total exposure, daily loss, then drawdown. If the notional cannot be computed the
+  order is rejected rather than estimated. Separately, the runtime loop evaluates
+  four breakers on their own schedule — consecutive rejections, daily loss and
+  drawdown, consecutive losses, and allocation depletion — and each one pauses the
+  bot with the reason recorded. Position sizing was also pulled out of the
+  strategies into one module that caps a stake at the smaller of ten dollars or one
+  percent of the bot's allocation.
+reversibility: >-
+  The pre-order gate is a pure function behind a single call site in the execution
+  gateway, so changing what it checks, or collapsing it back into one tier, is a
+  change to two files. The runtime breakers are harder to move because they own the
+  bot's lifecycle: they pause it, which means they need the bot service, which means
+  they cannot trivially become pure. The genuinely expensive decision is that
+  strategies emit broker-agnostic intents and never see an adapter. Every strategy,
+  every adapter and the entire audit trail assume that boundary, and undoing it
+  would not be a refactor so much as a different system.
+metrics:
+  - label: I/O calls on the pre-order path
+    value: '0'
+    basis: >-
+      The risk engine takes an injected portfolio snapshot and mark price and makes
+      no network or database calls. This is verifiable rather than measured: its unit
+      tests run with no fixtures and no database.
+    direction: down-is-good
+  - label: Runtime conditions that pause a bot
+    value: '4'
+    basis: >-
+      Consecutive risk rejections, daily loss or drawdown breach, consecutive losing
+      trades, and allocation depletion. Each writes its reason into the pause record.
+    direction: neutral
+  - label: Consecutive rejections before escalation
+    value: '5'
+    basis: >-
+      Chosen threshold in the runtime loop, not a measurement. Below it, rejections
+      are treated as normal operation; at it, the bot is paused and a critical alert
+      is raised.
+    direction: neutral
+failureModes:
+  - trigger: The broker adapter is unhealthy or disconnected
+    blastRadius: 'That bot only. Other bots have their own adapter instances.'
+    detection: 'A health check on the adapter, evaluated in the execution gateway before risk runs.'
+    mitigation: >-
+      The order is rejected before the risk gate is even reached, a critical alert is
+      raised, and the attempt is still persisted and audited. Uncertain state
+      produces no action rather than a guess.
+    severity: major
+  - trigger: Market data goes stale, or the feed returns no bar
+    blastRadius: 'The affected symbol. The bot keeps running but takes no action on it.'
+    detection: 'Staleness check in the runtime loop, with a repeated-miss counter per symbol.'
+    mitigation: >-
+      The tick becomes a no-op and an alert is raised once per symbol rather than on
+      every tick. After ten consecutive empty bars the alert says the market may
+      simply be closed.
+    severity: minor
+  - trigger: A bot sits against a risk limit and keeps submitting orders
+    blastRadius: 'Wasted cycles and alert noise, but no financial exposure — the orders are rejected.'
+    detection: 'A counter of consecutive risk rejections in the runtime loop.'
+    mitigation: >-
+      At five in a row the bot is paused with the last rejection reason attached, and
+      a critical alert fires. Operationally there is also an alert on the rejection
+      rate exceeding ten in five minutes.
+    severity: minor
+  - trigger: The bot's own view of its positions diverges from the broker's balance
+    blastRadius: 'Drawdown and daily-loss enforcement would be computed from the wrong number.'
+    detection: >-
+      Found in practice: the contract tracker and the reported balance disagreed.
+    mitigation: >-
+      Drawdown is computed from the persisted balance snapshot series, which is
+      sourced from the broker's real balance, rather than from the contract tracker.
+      The tracker is no longer the source of truth for anything that gates trading.
+    severity: major
+  - trigger: A limit exists in the config schema but is never populated in the runtime snapshot
+    blastRadius: >-
+      The limit silently does nothing. This is real: the open-orders count is
+      hardcoded to zero when the runtime builds its snapshot, so that gate is inert
+      outside tests.
+    detection: 'None automated. It was found by reading the code, which is the problem.'
+    mitigation: >-
+      Concurrency is currently bounded by a separate open-contract count passed to
+      the strategy, so the account is not unprotected. The real fix is a test that
+      asserts every schema limit is exercised by the runtime, and it is not written yet.
+    severity: major
+stack:
+  - Python
+  - FastAPI
+  - Pydantic v2
+  - SQLAlchemy 2
+  - Alembic
+  - asyncio
+  - Prometheus
+---
+
+## Why this record exists
+
+The interesting part of this design is not the list of limits. It is that two
+limits which read almost identically in a configuration file — "max position
+notional" and "max drawdown percent" — cannot be enforced by the same mechanism,
+because one is a property of the order in front of you and the other is a property
+of a series of outcomes over time.
+
+Conflating them is the default mistake. You end up either putting a broker call on
+your order path, or you put drawdown in the schema, validate it, show it in the UI,
+and never actually check it.
+
+## The gap this closed
+
+That second failure is not hypothetical here. An earlier version of this system
+accepted `max_drawdown_pct` in the config, validated it, and enforced it only in
+the pre-order gate — where the number it needed was not available. The runtime
+ignored it entirely. The schema was making a promise to the operator that the
+running system did not keep.
+
+The same class of bug showed up in sizing. One strategy computed its own stake
+without consulting the risk context, so the configured per-trade cap did not apply
+to it. Both fixes were the same shape: move the decision to one place, and make the
+place that decides also be the place that has the data.
+
+## What I would do differently
+
+The open-orders limit is still an example of exactly the bug I have just described
+being fixed elsewhere. It is validated by the schema, it has a bound, it is covered
+by unit tests against a synthetic snapshot — and the runtime builds that snapshot
+with the count hardcoded to zero, so in the running system the gate never fires.
+
+The right response is not to patch that one field. It is a test that walks the risk
+configuration schema and asserts that every limit in it is reachable from the
+snapshot the runtime actually constructs. That would have caught the drawdown gap
+and this one, and it is the piece of work I would do next.
+
+I would also reconsider how audit records are written. A state change and its audit
+row are currently separate transactions, so a crash in between keeps the change and
+loses the record. For a system whose whole argument is that every state change is
+accounted for, that ordering is the weakest link.

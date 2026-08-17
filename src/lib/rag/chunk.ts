@@ -13,12 +13,29 @@ const TARGET_TOKENS = 215;
 const OVERLAP_TOKENS = 40;
 const MIN_TOKENS = 40;
 
+/**
+ * Prose the page may show but the index must never hold.
+ *
+ * The chat is an easier oracle than the writing it draws on: a visitor who
+ * would never read an ADR end to end will happily ask where a key lives. So
+ * operational detail — the endpoint behind a documented gap, what a compromise
+ * would enable — gets fenced, and retrieval never sees it. This is deliberately
+ * a build-time cut rather than an instruction to the model: a passage that is
+ * not in the index cannot be leaked by a model having a bad day.
+ *
+ * MDX comments, so the fence renders as nothing and the page reads as authored.
+ */
+const PRIVATE_BLOCK = /\{\/\*\s*private\s*\*\/\}[\s\S]*?\{\/\*\s*\/private\s*\*\/\}/g;
+
 /** Strip the syntax that would waste tokens or confuse retrieval. */
 function cleanMdx(raw: string): string {
   return (
     raw
       // Frontmatter is indexed separately via structured fields.
       .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '')
+      // Before any other pass: the JSX strip below would otherwise eat the
+      // fence markers and leave the prose they were guarding behind.
+      .replace(PRIVATE_BLOCK, '')
       // import/export lines from MDX.
       .replace(/^\s*(import|export)\s.+$/gm, '')
       // JSX tags — keep their text content, drop the markup.

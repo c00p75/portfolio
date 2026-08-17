@@ -1,0 +1,295 @@
+---
+title: 'Giving an LLM write access to someone’s finances without giving it a write path'
+number: 4
+status: accepted
+date: '2026-07-30'
+domain: AI Safety
+project: penda
+shortTitle: 'Confining what the assistant can write'
+featured: true
+draft: false
+accent: yellow
+summary: >-
+  The chat assistant in Penda can create a transaction, but it cannot edit or delete
+  one. Not because the prompt tells it not to — because the function holding the
+  model has no code that performs an update. Destructive intents are written to a
+  staging table and executed by a different function that only runs when the user
+  taps confirm.
+context: >-
+  Penda is a money app whose assistant can read and act on a user's finances. The
+  interesting risk is not the model saying something wrong, which a user can
+  discount. It is the model being confidently wrong about a number and silently
+  rewriting a ledger, because the value of a personal finance tool is entirely in
+  the user believing the balance. A hallucinated edit that lands in the database is
+  not a bad answer; it is data loss. Creates are recoverable, because a new row is
+  visible and can be removed. Updates and deletes are where a confused agent
+  destroys history and takes the user's trust with it.
+constraints:
+  - 'No prompt instruction may be the only thing preventing a destructive write.'
+  - 'A delete must always require an explicit human confirmation, with no exception path.'
+  - 'The assistant runs under the user''s own credentials, so database row-level security bounds everything it can reach.'
+  - 'A confirmation that is tapped twice, or replayed from an offline queue, must execute exactly once.'
+  - 'A single model turn must not be able to spend unbounded time or tokens.'
+options:
+  - name: Let tool calls execute directly
+    summary: >-
+      The model calls a tool, the handler performs the corresponding database write,
+      and the result is reported back to the conversation.
+    verdict: rejected
+    because: >-
+      This makes every write exactly as reliable as the model's worst turn. Given
+      that a wrong amount on an update is indistinguishable from a right one until
+      the user notices their balance is off, the failure is both silent and
+      destructive.
+    pros:
+      - 'Simplest possible implementation; the conversation stays fluent with no interruption.'
+      - 'No staging state to model, migrate, or clean up.'
+    cons:
+      - 'A misparsed amount permanently overwrites real data.'
+      - 'The blast radius of a bad turn is unbounded.'
+      - 'Nothing structural distinguishes a safe operation from a destructive one.'
+  - name: Instruct the model to ask before destructive actions
+    summary: >-
+      Keep direct execution, but add system-prompt rules requiring the assistant to
+      confirm with the user before editing or deleting anything.
+    verdict: rejected
+    because: >-
+      A prompt is a suggestion the model can misread or ignore, and it fails exactly
+      when you need it most — on an unusual phrasing or a long context. A safety
+      property that depends on a language model choosing to honour it is not a safety
+      property.
+    pros:
+      - 'Almost free to implement; no architectural change at all.'
+      - 'Works most of the time, which makes it dangerously reassuring.'
+    cons:
+      - 'Unenforceable. There is no mechanism, only an instruction.'
+      - 'Fails silently and unpredictably rather than loudly.'
+      - 'Cannot be tested; you can only sample it and hope.'
+  - name: One global "let the AI act without asking" toggle
+    summary: 'A single user setting that switches the assistant between propose-only and autonomous.'
+    verdict: rejected
+    because: >-
+      It collapses operations with very different consequences onto one switch. A
+      user who wants to stop confirming every small expense is not thereby saying the
+      assistant may delete a debt record.
+    pros:
+      - 'Easy to explain and to build.'
+      - 'Puts the choice in the user''s hands.'
+    cons:
+      - 'Grants delete authority to a user who only wanted convenience on creates.'
+      - 'No way to express "trusted for small things, never for large ones".'
+  - name: Tier by blast radius, and put execution in a different function
+    summary: >-
+      Reads and low-impact creates run inline. Updates, deletes, and high-impact
+      creates are staged as pending rows, and only a separate confirm function
+      invoked by a user tap can execute them.
+    verdict: chosen
+    because: >-
+      It converts a behavioural hope into a structural fact. The function that holds
+      the model contains no code that updates or deletes a record, so no amount of
+      prompt manipulation or model confusion can produce one. The gate is the absence
+      of a code path, not the presence of an instruction.
+    pros:
+      - 'The strongest guarantee available: the capability simply is not present where the model runs.'
+      - 'Confirmation is a compare-and-swap on the pending row''s status, so a double tap or a replayed offline confirm executes once.'
+      - 'Column allowlists per domain mean even an approved update cannot touch a structural field.'
+      - 'Trust can be earned for small, reversible operations without ever extending to deletes.'
+    cons:
+      - 'The same allowlist now exists in three places — the staging function, the execution function, and the client''s undo logic — and nothing tests that they agree.'
+      - 'Conversations are less fluent: the assistant has to say it has proposed something rather than done it, and is explicitly instructed not to claim otherwise.'
+      - 'A staging table is extra schema, extra migrations, and extra states to reason about.'
+      - 'Correctness leans on row-level security rather than on scoping inside every query, so an RLS policy mistake would be the single point of failure.'
+tradeoffs:
+  - criterion: Guarantee is structural rather than behavioural
+    scores:
+      'Let tool calls execute directly': weak
+      'Instruct the model to ask before destructive actions': weak
+      'One global "let the AI act without asking" toggle': adequate
+      'Tier by blast radius, and put execution in a different function': strong
+  - criterion: Conversational fluency
+    scores:
+      'Let tool calls execute directly': strong
+      'Instruct the model to ask before destructive actions': strong
+      'One global "let the AI act without asking" toggle': strong
+      'Tier by blast radius, and put execution in a different function': weak
+    note: >-
+      This is the axis the chosen option gives up. Staging means the assistant must
+      describe an intention rather than report a completed action.
+  - criterion: Implementation and schema cost
+    scores:
+      'Let tool calls execute directly': strong
+      'Instruct the model to ask before destructive actions': strong
+      'One global "let the AI act without asking" toggle': adequate
+      'Tier by blast radius, and put execution in a different function': weak
+  - criterion: Blast radius of one bad model turn
+    scores:
+      'Let tool calls execute directly': weak
+      'Instruct the model to ask before destructive actions': weak
+      'One global "let the AI act without asking" toggle': weak
+      'Tier by blast radius, and put execution in a different function': strong
+  - criterion: Expresses graduated trust
+    scores:
+      'Let tool calls execute directly': weak
+      'Instruct the model to ask before destructive actions': weak
+      'One global "let the AI act without asking" toggle': weak
+      'Tier by blast radius, and put execution in a different function': strong
+decision: >-
+  The chat function exposes seventeen tools. Queries and summaries run inline.
+  Low-impact creates run inline. Updates, deletes, and creates judged high-impact
+  are written to a pending-actions table together with a snapshot of the row's prior
+  state, and the tool returns a string telling the model it has staged rather than
+  applied the change and must not claim otherwise. A separate function executes
+  pending actions, and it does so behind a conditional update on the row still being
+  pending, so concurrent confirmations resolve to one winner and the losers are
+  handed the winner's terminal status. Editable columns are defined per domain in an
+  allowlist, and anything not listed is dropped rather than rejected — a wallet can
+  be renamed but its currency cannot be touched, and a wallet cannot be deleted at
+  all. Auto-apply is gated by an earned trust flag, but deletes and high-impact
+  changes are refused before trust is even consulted, and one undo resets the trust
+  state.
+reversibility: >-
+  Loosening this is easy and dangerous, which is worth stating plainly: allowing the
+  chat function to execute updates directly would be a small change, so the
+  discipline has to be maintained deliberately. Tightening is also cheap — the
+  allowlists and the high-impact rule are data, and the staging boundary already
+  exists for every mutation kind. What is expensive to reverse is the decision to
+  run the assistant under the user's own credentials rather than a service role.
+  Every query in the agent, including the one that loads a row before staging an
+  edit, omits its own tenant filter because row-level security supplies it. Moving
+  to a privileged connection would mean auditing and rewriting all of that, and
+  until then an RLS policy error is the one mistake that would cross tenants.
+metrics:
+  - label: Tools that can reach an update or delete
+    value: '0'
+    basis: >-
+      Structural, and the point of the design: the chat function's tool dispatch has
+      no case that performs an update or a delete. Both write to the pending-actions
+      table instead. Verifiable by reading the dispatch, not by sampling behaviour.
+    direction: down-is-good
+  - label: Independent allowlists a write must satisfy
+    value: '2'
+    basis: >-
+      One at staging time in the chat function, one at execution time in the confirm
+      function, kept in sync by hand. A third mirror exists client-side for undo.
+      Defence in depth, at the cost of three copies and no test asserting they match.
+    direction: neutral
+  - label: Clean confirmations before auto-apply unlocks
+    value: '10'
+    basis: >-
+      Chosen threshold. Ten confirmations with no undo graduates a user to
+      auto-applying low-impact mutations; a single undo resets it. Deletes and
+      high-impact changes never auto-apply regardless.
+    direction: neutral
+  - label: Turn budget
+    value: '40 s'
+    basis: >-
+      Chosen after working out the unbounded case: a twelve-second model timeout
+      across two providers over four tool iterations stacked to roughly 160 seconds.
+      The wall-clock budget bounds it directly rather than trusting the arithmetic.
+    direction: down-is-good
+failureModes:
+  - trigger: The model calls a tool that does not exist, or emits malformed arguments
+    blastRadius: 'That tool call only. The conversation continues.'
+    detection: 'A catch-all in the tool dispatch; a JSON parse guard on the provider''s tool-call payload.'
+    mitigation: >-
+      An unknown tool returns a benign string saying no action was taken. Malformed
+      arguments become empty arguments for that call alone rather than failing the
+      turn.
+    severity: minor
+  - trigger: A tool handler throws
+    blastRadius: 'One tool call. No partial write survives.'
+    detection: 'Caught at the dispatch boundary.'
+    mitigation: >-
+      The error is returned to the model as a tool result that explicitly tells it not
+      to claim success, instead of surfacing as a server error. Where a staged action
+      was already written and execution then failed, the pending row is removed.
+    severity: minor
+  - trigger: A confirmation is tapped twice, or replayed from an offline queue
+    blastRadius: 'Would apply the same mutation twice if unguarded.'
+    detection: 'The conditional update on status matches zero rows for the loser.'
+    mitigation: >-
+      Exactly one caller wins the claim. Losers receive the winner's terminal status,
+      which is what lets the client's offline queue drop the item rather than retry
+      forever. A failure during execution resets the row to pending so it can be
+      retried.
+    severity: major
+  - trigger: A user asks the assistant to do something structural, like change a wallet's currency
+    blastRadius: 'None. The field is not in the allowlist.'
+    detection: 'None needed; unlisted fields are dropped when the patch is built.'
+    mitigation: >-
+      Silently ignoring unlisted columns rather than erroring means a creative
+      request degrades to a partial edit instead of an error the model might try to
+      work around.
+    severity: minor
+  - trigger: AI-derived data feeds back into AI-generated advice
+    blastRadius: 'Would compound one extraction error into every subsequent insight.'
+    detection: 'Rows created from receipt scanning are written unconfirmed.'
+    mitigation: >-
+      Every proactive job — insights, burn-rate nudges, morning summaries — reads only
+      rows a human has confirmed. Machine-extracted data cannot influence generated
+      advice until someone has looked at it.
+    severity: major
+  - trigger: Untrusted text in a transaction description attempts to redirect the model
+    blastRadius: >-
+      Bounded by what the tools can do, which for destructive operations is nothing.
+    detection: >-
+      Not detection-based by design. This threat is answered by bounding what the
+      model can reach rather than by classifying the text it reads.
+    mitigation: >-
+      Confinement rather than instruction hardening: no write path for updates or
+      deletes, enum values for categories and accounts generated from the user's own
+      live data so an out-of-scope value is unrepresentable, search terms stripped to
+      alphanumerics before reaching a query filter, and identifiers rejected at the
+      door unless they match a UUID pattern. This is a real mitigation but it is not
+      injection defence, and it should not be described as such.
+    severity: major
+stack:
+  - Deno
+  - Supabase Edge Functions
+  - PostgreSQL
+  - Row Level Security
+  - Gemini
+  - Groq
+  - TypeScript
+---
+
+## Why this record exists
+
+There is a lot of writing about getting language models to call tools. There is much
+less about what happens when a tool call is wrong and the tool writes to a database
+people depend on.
+
+The framing I settled on is that a prompt cannot be a security boundary. Prompts are
+suggestions the model can misread, and they fail on exactly the inputs you did not
+anticipate. If the requirement is "the assistant must never delete a record without
+the user agreeing", then the only implementation that actually satisfies it is one
+where the code holding the model contains no deletion.
+
+That reframing is what produced the two-function split. Everything else — the
+staging table, the snapshots, the trust flag — follows from wanting the guarantee to
+be a property of the code rather than of the model's behaviour on the day.
+
+## Where the tiering line falls, and why
+
+Creates run inline and updates do not, which looks inconsistent until you consider
+recoverability. A spurious new transaction is visible in a list and can be deleted;
+the user loses thirty seconds. A spurious edit overwrites a number that no longer
+exists anywhere, and the user may not notice for a month.
+
+High-impact creates are the exception that proves the rule: a large amount, or a
+change touching more than one money field at once, gets staged even though it is a
+create. The dimension that matters is not the SQL verb, it is how much damage
+survives the mistake.
+
+## Two things I would not claim in an interview
+
+There is no prompt-injection defence here. What exists is capability confinement,
+which is a different and in some ways stronger thing, but it is not the same claim
+and I would rather say so than be caught conflating them. Nothing tags untrusted
+text as untrusted; the argument is simply that the model's reachable actions are too
+narrow for an injected instruction to do much with.
+
+And the allowlist is enforced at more than one layer, across two runtimes. Each
+copy is deliberate defence in depth, but keeping several copies of one rule in
+agreement is a maintenance burden rather than a free win, and tightening that
+into a single asserted source of truth is the next thing I would do here.

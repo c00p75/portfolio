@@ -1,0 +1,102 @@
+---
+title: Financial reconciliation platform
+tagline: Five reconciliation checks over one set of books, recomputed on every write
+summary: >-
+  A multi-tenant platform giving finance administrators a continuously reconciled
+  view of their position. Transactions arrive from file uploads, OCR'd invoices and
+  a nightly sync from the institution's own accounting system; five different checks
+  run over them and write tracked exceptions. The interesting problem is that these
+  five checks disagree, and the design has to let them.
+client: Employer product — name withheld
+role: >-
+  Full-stack feature development on the reconciliation engine and the financial
+  position surfaces, in a monorepo shared with a small team.
+period: '2026'
+status: production
+order: 6
+featured: false
+draft: false
+accent: lime
+disciplines:
+  - architecture
+  - data
+stack:
+  - Next.js
+  - React
+  - TypeScript
+  - tRPC
+  - Firebase Cloud Functions
+  - Firestore
+  - Turborepo
+  - Zod
+highlights:
+  - >-
+    Five checks run over the same records and answer different questions: is a
+    department inside its approved budget, do related revenue and expenses tie out,
+    are the records clean, does our view agree with the institution's general
+    ledger, and are approved expenses actually paid at the amount approved.
+  - >-
+    They produce tracked exceptions rather than blocking writes. A reconciliation
+    engine that refuses data it cannot reconcile is useless to a finance office,
+    because the whole reason they need it is that the data is already inconsistent.
+    The output is a worklist, not a validation error.
+  - >-
+    Money is tracked through a lifecycle — committed, then spent, then paid —
+    instead of as a single amount. Those are three genuinely different states, and
+    collapsing them is what produces a budget that looks fine until the invoices
+    land.
+  - >-
+    An AI pass suggests object codes for records that look miscategorised, and
+    never applies them. A suggestion a human accepts is a workflow; a silent
+    recategorisation inside someone's books is a liability.
+metrics:
+  - label: Reconciliation checks
+    value: '5'
+    basis: >-
+      Budget vs actual, revenue-to-expense tie-out, data quality, general-ledger
+      match, and three-way invoice/expense/payment match.
+    direction: neutral
+  - label: Tracked exception types
+    value: '18'
+    basis: 'Distinct exception types the five checks can raise, each separately triaged.'
+    direction: neutral
+  - label: AI categorisations applied automatically
+    value: '0'
+    basis: >-
+      Structural: the AI pass annotates records with a suggested object code and
+      the suggestion requires human acceptance. Same reasoning as confining an
+      assistant's write access elsewhere in this portfolio.
+    direction: down-is-good
+links: []
+---
+
+## Why exceptions rather than validation
+
+The instinct with financial data is to validate on the way in and reject what does
+not balance. That instinct is wrong here, and understanding why is most of the
+design.
+
+A finance office adopting a reconciliation tool already has inconsistent records —
+that is why they are adopting it. A system that refuses the inconsistent ones
+imports a clean subset and leaves the actual problem outside the tool. So every
+check writes exceptions instead: typed, tracked, assignable, and countable. The
+product is the worklist.
+
+## The part that is genuinely hard
+
+The five checks are not independent, and they can contradict each other. A record
+can be inside budget, tie out against revenue, and still fail the general-ledger
+match — and which of those an administrator should act on depends on context the
+system does not have. Most checks recompute on every write so the position is
+always current; the general-ledger tie-out is heavy enough that it runs on demand
+and after a journal import instead.
+
+Deciding which checks are cheap enough to be continuous and which have to be
+explicit is the same shape of problem as splitting risk limits between an order
+path and a supervision loop, elsewhere in this portfolio: the cost of evaluating a
+rule determines where the rule is allowed to live.
+
+## A note on this write-up
+
+Built for an employer; the product and institution are not named. The engineering
+described is my own work on it.

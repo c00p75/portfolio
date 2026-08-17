@@ -1,0 +1,96 @@
+---
+title: Prediction market platform
+tagline: Binary event markets with an automated market maker and a double-entry ledger underneath
+summary: >-
+  A platform where users trade YES/NO positions on real-world events. Prices come
+  from an automated market maker rather than a matched order book, every balance
+  movement is a double-entry ledger posting, and settlement pays out positions when
+  an event resolves. The engineering is ordinary web work sitting on top of two
+  things that are not: pricing and money.
+client: Employer product — name withheld
+role: >-
+  Full-stack feature development across the trading, wallet, settlement and admin
+  surfaces, in a remote engineering team.
+period: '2025 — 2026'
+status: production
+order: 5
+featured: false
+draft: false
+accent: cyan
+disciplines:
+  - architecture
+  - payments
+  - data
+stack:
+  - Next.js
+  - React
+  - TypeScript
+  - PostgreSQL
+  - Prisma
+  - Zustand
+  - Tailwind
+  - LMSR
+highlights:
+  - >-
+    Prices come from a logarithmic market scoring rule, not from matching buyers
+    against sellers. That is the decision that makes a thin market usable at all: a
+    new market with two participants still has a quotable price, where an order book
+    with two participants has a spread nobody will cross.
+  - >-
+    Every balance change is a double-entry posting rather than an increment on a
+    user row. Deposits, trades, fees, settlement payouts and withdrawals all have
+    to balance, which means a discrepancy is a detectable condition rather than a
+    number that quietly drifts.
+  - >-
+    Withdrawals above a threshold are gated on identity verification, and the fee
+    is charged on profit rather than on volume — both of which are policy decisions
+    that have to be enforced in the ledger rather than described in the interface.
+  - >-
+    Markets are embeddable in partner media sites as a widget, with affiliate
+    attribution carried through so commission can be traced back to the placement
+    that produced the trade.
+metrics:
+  - label: Pricing mechanism
+    value: LMSR
+    basis: >-
+      A logarithmic market scoring rule as the automated market maker, rather than
+      a central limit order book.
+    direction: neutral
+  - label: Accounting model
+    value: Double-entry
+    basis: >-
+      A ledger module every balance movement posts through — trades, fees,
+      settlement and wallet operations included.
+    direction: neutral
+  - label: Fee basis
+    value: '3% on profit'
+    basis: 'Charged on realised profit rather than on traded volume.'
+    direction: neutral
+links: []
+---
+
+## Why an automated market maker
+
+A prediction market with no liquidity is not a market, it is a form. An order book
+needs traders on both sides before it can quote anything, and a platform launching
+new markets continuously never has that on day one.
+
+A scoring-rule market maker always quotes, and its prices move as a function of
+the positions held rather than of who happens to be online. The cost is that the
+platform itself carries inventory risk, bounded by the liquidity parameter — which
+is the trade being made deliberately in exchange for a market that works from the
+first trade.
+
+## Why the ledger is double-entry
+
+Because the alternative is a balance column, and a balance column cannot tell you
+that it is wrong. In a system taking deposits, charging fees, and paying out
+settlements, the useful property is not that the arithmetic is correct — it is
+that incorrect arithmetic is *detectable*. Double-entry gives you an invariant to
+check rather than a number to trust.
+
+## A note on this write-up
+
+This was built for an employer and the product is not named here. The engineering
+described is my own work on it; the commercial detail, the numbers and the brand
+are theirs.

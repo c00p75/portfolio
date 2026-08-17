@@ -5,6 +5,8 @@ import { site } from '@/lib/site';
 import { NavBar } from '@/components/chrome/NavBar';
 import { Footer } from '@/components/chrome/Footer';
 import { ThemeScript } from '@/components/chrome/ThemeScript';
+import { AskGeorgeWidget } from '@/components/ask/AskGeorge';
+import { indexMeta } from '@/lib/rag/index-loader';
 
 /* Anton carries the ultra-condensed display voice; Archivo is the grotesque
    companion for body copy; JetBrains Mono handles labels and telemetry. */
@@ -63,6 +65,8 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const meta = indexMeta();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -78,6 +82,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NavBar />
         <main id="main">{children}</main>
         <Footer />
+        <AskGeorgeWidget indexChunks={meta.chunks} />
       </body>
     </html>
   );

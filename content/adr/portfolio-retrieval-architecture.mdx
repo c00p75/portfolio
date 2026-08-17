@@ -4,23 +4,24 @@ number: 1
 status: accepted
 date: '2026-08-10'
 domain: AI Infrastructure
+shortTitle: 'Static index instead of a vector database'
 featured: true
 accent: cyan
 diagram: retrieval-pipeline
 summary: >-
-  A managed vector database is the reflex answer for RAG. At this corpus size and
-  traffic shape it is the wrong one: it adds a network hop, a monthly floor cost,
-  and a vendor boundary to solve a problem that fits in a fraction of a megabyte
-  of process memory.
+  A managed vector database is the usual answer for RAG, and at this corpus size it
+  buys nothing. The whole index is about 480 KB, so it lives in the route handler's
+  own memory instead: no network hop, no monthly floor cost, and nothing to be down
+  when someone opens the demo mid-interview.
 context: >-
   The assistant on this site answers questions about my own architecture writing.
-  The corpus is currently ~8.5k tokens of MDX that changes only when I publish, and
+  The corpus is currently ~20k tokens of MDX that changes only when I publish, and
   traffic is bursty and low — a handful of recruiters and engineers, clustered
   around whenever a link gets shared. The hard constraint is that it must never
   be down or embarrassing when someone opens it during a hiring conversation, and
   it must not carry a standing monthly cost for a personal site.
 constraints:
-  - 'Corpus is small (~8.5k tokens, 56 chunks) and changes only at deploy time, never at runtime.'
+  - 'Corpus is small (~20k tokens, 120 chunks) and changes only at deploy time, never at runtime.'
   - 'Traffic is bursty and low; a per-hour idle cost is pure waste.'
   - 'Cold-start latency is user-visible — this is a demo people open once and judge.'
   - 'A stranger can drive the LLM, so per-IP abuse and token spend must be bounded.'
@@ -109,23 +110,26 @@ decision: >-
   Embed the corpus at build time with Voyage, ship the vectors as a static JSON
   artifact, and run hybrid retrieval — BM25 lexical scoring fused with dense cosine
   similarity via reciprocal rank fusion — inside the route handler. Generation
-  streams from Claude over SSE. Retrieval and generation are separated behind an
-  interface so the index can move without the generation path changing.
+  streams over SSE from the first available of an ordered provider chain, so a
+  free tier answers by default and a paid one only bills when the free tiers are
+  down. Retrieval and generation are separated behind an interface so the index
+  can move without the generation path changing.
 reversibility: >-
-  The lock-in is bounded on three axes deliberately. Retrieval sits behind a
+  I bounded the lock-in on three axes. Retrieval sits behind a
   `Retriever` interface whose only contract is `search(query) -> Chunk[]`, so
   swapping the in-process index for pgvector is one new implementation and a
   changed import — the route handler does not know which is behind it. The
   embedding provider sits behind an `embed(texts) -> number[][]` function, so
   moving off Voyage is one file, with a re-index as the only migration. The
-  generation call is the plain Anthropic SDK with no framework wrapper, so the
-  prompt and tool surface stay portable. The decision that is genuinely expensive
-  to reverse is the corpus-size assumption — and that is the one I have written
-  down as the trigger to revisit.
+  generation call sits behind a `generate()` boundary with no framework wrapper:
+  adding or reordering a provider is an entry in one list, and three of the four
+  share a single OpenAI-wire adapter, so the prompt stays portable. The decision that is genuinely expensive
+  to reverse is the corpus-size assumption, so that is the one with a written-down
+  trigger to revisit it.
 metrics:
   - label: Chunks indexed
-    value: '56'
-    basis: 'Output of `npm run ingest` over 1 ADR, 1 playbook and 4 posts; ~8,537 tokens, mean 152 per chunk.'
+    value: '120'
+    basis: 'Output of `npm run ingest` over 6 ADRs, 1 playbook and 4 posts; ~20,048 tokens, mean 167 per chunk.'
     direction: neutral
   - label: Retrieval latency (p50)
     value: '0.06 ms'
@@ -146,12 +150,16 @@ metrics:
     basis: 'No provisioned datastore. Embedding spend occurs at build time only; generation is per-query.'
     direction: down-is-good
 failureModes:
-  - trigger: Anthropic API is unavailable or rate-limits the request
+  - trigger: The primary generation provider is unavailable or rate-limits the request
     blastRadius: 'Generation only. Retrieval still succeeds and returns cited sources.'
-    detection: 'Non-2xx from the SDK, surfaced as a typed error on the SSE stream.'
+    detection: 'Non-2xx from the provider SDK, caught at the `generate()` boundary.'
     mitigation: >-
-      The UI degrades to showing retrieved passages with citations and an explicit
-      notice, rather than an empty chat box. The user still gets the source material.
+      The request falls through to the next provider in the chain, and the trace
+      panel names the one that served it rather than hiding the switch. Fallback
+      is skipped once a provider has streamed its first token, since splicing two
+      models mid-sentence produces prose neither of them wrote. If every provider
+      fails, the UI degrades to retrieved passages with citations and an explicit
+      notice rather than an empty chat box.
     severity: major
   - trigger: A visitor scripts the endpoint to burn tokens
     blastRadius: 'Token spend, capped. No data exposure — the corpus is public content.'
@@ -160,12 +168,15 @@ failureModes:
       Fixed-window per-IP rate limit, a hard cap on `max_tokens`, and a rejected
       request budget that returns 429 rather than degrading silently.
     severity: major
-  - trigger: Query embedding call fails
+  - trigger: Query embedding call fails or is rate-limited
     blastRadius: 'Dense retrieval only; lexical retrieval is unaffected.'
     detection: 'Caught at the embedding boundary and reported on the telemetry stream.'
     mitigation: >-
       Retrieval falls back to BM25-only scoring. Answer quality degrades on
       paraphrased queries but the system stays up, and the telemetry panel says so.
+      This is not hypothetical: the embedding tier in use allows 3 requests per
+      minute, so a burst of visitors trips it and the trace shows `lexical-only`
+      until the window resets.
     severity: minor
   - trigger: Corpus grows past the point where brute-force scoring is viable
     blastRadius: 'Retrieval latency degrades linearly; bundle size grows.'
@@ -178,74 +189,90 @@ stack:
   - Next.js Route Handlers
   - Server-Sent Events
   - Voyage embeddings
-  - Claude
+  - Groq / Gemini / OpenAI / Claude
   - BM25
   - Reciprocal rank fusion
 ---
 
 ## Why this ADR exists
 
-The interesting thing about a RAG system at this size is not that it works — it is
-that the obvious architecture is wrong, and the reason it is wrong is a cost and
-availability argument rather than a technical one.
-
 Almost every RAG tutorial reaches for a managed vector database in the first
-paragraph. That reflex is correct at scale and expensive below it. The question
-worth asking is not "which vector store" but **"does this workload have the shape
-that a vector store is for?"** — a large corpus, mutating independently of deploys,
-queried often enough that an index amortises its own cost.
+paragraph. That is the right call at scale, and it is why I nearly did the same
+thing here before working out what the index would actually weigh.
 
-This corpus has none of those properties. It is small, immutable between deploys,
-and queried rarely. Every property that would justify the infrastructure is absent.
+A vector store earns its keep when the corpus is large, changes independently of
+deploys, and gets queried often enough for the index to pay for itself. This
+corpus is small, it only changes when I publish, and it gets queried a handful of
+times a week. None of the conditions hold, so I went looking for what does fit.
 
 ## The sizing argument
 
 The whole decision turns on one calculation, done before any code was written:
 
 ```text
-~8,500 tokens of MDX
-  ÷ ~152 tokens per chunk (semantic split, ~40 token overlap)
-  = 56 chunks
+~20,000 tokens of MDX
+  ÷ ~167 tokens per chunk (semantic split, ~40 token overlap)
+  = 120 chunks
   × 1024 dimensions × 4 bytes
-  ≈ 229 KB of raw float32
+  ≈ 480 KB of raw float32
 ```
 
-A fraction of a megabyte. That fits in the memory of the smallest serverless
-runtime many times over, and brute-force scoring across 56 vectors is arithmetic
-measured in microseconds — far below the latency of the network call the managed
-option would have added in order to reach a *faster* index.
+Under half a megabyte. That fits in the smallest serverless runtime several
+times over, and comparing a query against 120 vectors is arithmetic that
+finishes in microseconds. The managed option would have spent more time on the
+network round-trip than the whole in-process scan takes.
 
-The build enforces the ceiling rather than trusting me to notice it: `npm run
-ingest` fails above 4,000 chunks, which is roughly 70× the current corpus. That
-is the documented trigger to swap the retriever for pgvector, and it is a limit
-I will not reach by writing prose.
+I did not want this to rest on me remembering the limit, so the build checks it:
+`npm run ingest` fails above 4,000 chunks, roughly 33× the current corpus. When
+that fires, it is the trigger to move the retriever to pgvector.
 
 ## Why hybrid rather than pure vector search
 
-Dense retrieval alone reliably fails on the queries this assistant actually gets.
-Someone asking *"what did he use for rate limiting?"* is searching for a specific
-term, and embeddings are lossy about exactly the rare tokens that make a query
-precise — proper nouns, library names, error codes.
+Dense retrieval on its own does badly on the questions this assistant actually
+gets. Someone asking *"what did he use for rate limiting?"* wants a specific term,
+and embeddings are lossy about precisely those rare tokens: proper nouns, library
+names, error codes.
 
-So retrieval fuses two rankings:
+So retrieval runs two rankings and combines them:
 
-- **BM25** over tokenised chunks, which is unbeatable on exact terms and needs no
-  model call.
+- **BM25** over tokenised chunks, which is very hard to beat on exact terms and
+  needs no model call.
 - **Dense cosine similarity** over Voyage embeddings, which handles paraphrase and
-  conceptual queries that share no vocabulary with the source.
+  questions that share no vocabulary with the source text.
 
-They are combined with **reciprocal rank fusion** rather than a weighted score sum.
-This matters more than it looks: score-sum fusion requires the two scoring systems
-to be calibrated against each other, and BM25 scores and cosine similarities have
-no common scale. RRF only consumes *rank position*, which sidesteps the calibration
-problem entirely and is the reason it survives corpus changes without retuning.
+They are combined with **reciprocal rank fusion** rather than a weighted sum of
+scores. Summing scores would mean calibrating the two systems against each other,
+and BM25 scores and cosine similarities have no shared scale to calibrate on. RRF
+only looks at rank position, which avoids the problem and means I do not have to
+retune weights every time the corpus changes.
+
+## Why generation runs on a chain rather than one model
+
+The first version of this called Claude directly, and the write-up said so. What
+changed is not a quality judgement — it is that the retrieval half is the part
+worth showing, and the retrieval half costs nothing to run. Paying per token so a
+stranger can watch a demo work was the only standing cost left in the system, and
+it was attached to the least interesting component.
+
+So generation now tries providers in order and takes the first that answers: a
+free tier by default, a second free tier behind it, and metered providers last,
+where they only bill if both free tiers are down. The switch is reported in the
+trace rather than hidden, because a demo that quietly degrades is making a claim
+it has not earned.
+
+Two things this cost me, both worth stating. Open-weight models hold citation
+discipline less reliably — one would not stop emitting `【2†L4-L9】` no matter how
+the prompt was worded, so the stream is normalised in code as well as asked for
+in the prompt. And ranking providers by cost rather than quality means the
+default answer is not the best answer available; that is the trade I chose,
+knowing the passages under it are identical either way.
 
 ## What I would do differently at 100× the corpus
 
-Move the index to pgvector, keep the hybrid strategy, and switch fusion inputs from
-brute-force scores to an ANN recall set. The retrieval interface is already shaped
-for that swap — which is the whole point of having drawn the boundary there.
+Move the index to pgvector, keep the hybrid strategy, and feed fusion from an ANN
+recall set instead of a brute-force scan. The retrieval interface is already shaped
+for that swap, which is why I drew the boundary where I did.
 
-The honest caveat: I have not load-tested this beyond a single user, because a
-single user is the actual workload. Designing for the traffic you have is the
-decision; pretending to have measured traffic you do not is not.
+One caveat worth stating: I have not load-tested this past a single user, since a
+single user is the real workload. So the latency figures below tell you the
+pipeline is fast, not that it holds up under concurrency.

@@ -88,20 +88,31 @@ export function StickerSeal({
   children,
   accent = 'lime',
   rotate = 0,
+  caption,
+  icon,
   className,
-}: Omit<StickerProps, 'caption'>) {
+  interactive = false,
+}: StickerProps & { icon?: ReactNode }) {
   return (
     <div
       style={{ '--sticker-rotate': `${rotate}deg` } as React.CSSProperties}
       className={cn(
-        'grid aspect-square place-items-center rounded-full rotate-(--sticker-rotate) p-5 text-center shadow-[0_6px_18px_-6px_rgba(0,0,0,0.55)]',
+        'grid aspect-square place-items-center content-center gap-1 rounded-full rotate-(--sticker-rotate) p-5 text-center shadow-[0_6px_18px_-6px_rgba(0,0,0,0.55)]',
         accentSurface[accent],
+        interactive &&
+          'transition-transform duration-300 ease-out hover:-translate-y-1 hover:rotate-0 motion-reduce:hover:translate-y-0 motion-reduce:hover:rotate-(--sticker-rotate)',
         className,
       )}
     >
+      {icon ? <span aria-hidden="true">{icon}</span> : null}
       <span className="font-display text-[clamp(0.8rem,1.7vw,1.15rem)] leading-[0.92] tracking-tight uppercase">
         {children}
       </span>
+      {caption ? (
+        <span className="font-mono block max-w-[9rem] text-[0.5rem] leading-tight font-semibold tracking-[0.05em] uppercase opacity-80">
+          {caption}
+        </span>
+      ) : null}
     </div>
   );
 }

@@ -1,15 +1,17 @@
 import type { MetadataRoute } from 'next';
 import { site } from '@/lib/site';
-import { allAdrs, allPlaybooks, allPosts } from '@/lib/content';
+import { allAdrs, allPlaybooks, allPosts, allProjects } from '@/lib/content';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const url = (path: string) => `${site.url}${path}`;
 
+  /* `/architecture` and `/playbooks` are gone — both now permanently redirect
+     (see next.config.mjs), and a redirecting URL does not belong in a sitemap.
+     Their detail pages keep their URLs and are still listed below. */
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: url('/'), priority: 1, changeFrequency: 'monthly' },
-    { url: url('/architecture'), priority: 0.9, changeFrequency: 'monthly' },
+    { url: url('/work'), priority: 0.9, changeFrequency: 'monthly' },
     { url: url('/sandbox'), priority: 0.8, changeFrequency: 'monthly' },
-    { url: url('/playbooks'), priority: 0.8, changeFrequency: 'monthly' },
     { url: url('/blog'), priority: 0.7, changeFrequency: 'monthly' },
     { url: url('/about'), priority: 0.6, changeFrequency: 'yearly' },
     { url: url('/contact'), priority: 0.5, changeFrequency: 'yearly' },
@@ -17,7 +19,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...staticRoutes,
-    ...allAdrs().map((a) => ({ url: url(a.url), lastModified: new Date(a.date), priority: 0.9 })),
+    ...allProjects().map((p) => ({ url: url(p.url), priority: 0.9 as const })),
+    ...allAdrs().map((a) => ({ url: url(a.url), lastModified: new Date(a.date), priority: 0.8 })),
     ...allPlaybooks().map((p) => ({ url: url(p.url), lastModified: new Date(p.date), priority: 0.7 })),
     ...allPosts().map((p) => ({
       url: url(p.url),

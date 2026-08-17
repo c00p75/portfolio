@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { site } from '@/lib/site';
 import { cn } from '@/lib/cn';
 import { ThemeToggle } from './ThemeToggle';
@@ -12,14 +12,16 @@ function Wordmark({ onClick }: { onClick?: () => void }) {
     <Link
       href="/"
       onClick={onClick}
-      className=" text-on-ink-muted flex shrink-0 items-center gap-3"
+      className="text-on-ink flex shrink-0 items-center gap-3 pl-3"
       aria-label={`${site.name} — home`}
     >
-      {/* The cream pill from the reference layout, standing in for a logotype. */}
-      <span className="text-[0.9rem] pl-2 leading-[1.05] font-extrabold tracking-tight">
-        George
-        <br />
-        M&apos;sapenda
+      {/* Keycap mark, drawn in CSS rather than set in a keyboard face: two
+          rounded outlines with a serif initial centred in each. Squares are
+          sized in em off the letter, so the whole mark scales with one font
+          size. aria-hidden — the link's own label carries the full name. */}
+      <span aria-hidden="true" className="flex items-center gap-[0.22em] text-[1.05rem] sm:text-[1.2rem]">
+        <span className="keycap">G</span>
+        <span className="keycap">M</span>
       </span>
     </Link>
   );
@@ -29,6 +31,9 @@ export function NavBar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [menuPath, setMenuPath] = useState(pathname);
+  /** Hidden while the reader is scrolling down; slides back in on the way up. */
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
 
   // Close the menu on route change so a tapped link doesn't leave it open.
   // Adjusted during render rather than in an effect: React re-runs this
@@ -50,6 +55,40 @@ export function NavBar() {
     };
   }, [open]);
 
+  /*
+   * Hide on the way down, reveal on the way up — the bar is out of the way
+   * while reading and one upward flick away when wanted.
+   *
+   * Measured in a frame rather than in the listener, and only acted on past a
+   * few pixels: momentum scrolling reports tiny deltas in both directions, and
+   * reading the raw sign would flap the bar on every one of them. Always shown
+   * near the top, where there is nothing to scroll back up to.
+   */
+  useEffect(() => {
+    if (open) return;
+    let frame = 0;
+    lastY.current = window.scrollY;
+
+    const measure = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const delta = y - lastY.current;
+      if (Math.abs(delta) < 6) return;
+      lastY.current = y;
+      setHidden(y > 96 && delta > 0);
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [open]);
+
   // Escape closes the menu.
   useEffect(() => {
     if (!open) return;
@@ -62,26 +101,39 @@ export function NavBar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 pt-3 pb-1 sm:pt-5">
+      <header
+        className={cn(
+          'sticky top-0 z-40 pt-3 pb-1 transition-transform ease-out sm:pt-5',
+          // Leaves unhurriedly, returns promptly: the exit is incidental to
+          // reading, but the return is answering a request.
+          hidden && !open ? 'duration-700 -translate-y-[130%]' : 'duration-300',
+        )}
+      >
         <nav
           aria-label="Primary"
           className="mx-auto flex max-w-[110rem] items-center justify-between gap-4 px-gutter"
         >
-          <div className="bg-cream text-on-ink flex w-full items-center justify-between gap-6 rounded-full py-3 pr-3 pl-5 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.7)] backdrop-blur-md sm:pl-6">
+          {/* A black band, per the reference: the chrome reads as the top of
+              the ink card rather than as a floating cream pill. */}
+          {/* `nav-fold` draws the turned-back top-left corner (see globals.css).
+              The wordmark gets extra left padding so it clears the flap. */}
+          <div className="nav-fold bg-ink text-on-ink relative flex w-full items-center justify-between gap-6 py-3 pr-3 pl-7 backdrop-blur-md sm:pl-8">
             <Wordmark />
 
-            <div className="flex items-center gap-1">
-              <ul className="hidden items-center gap-1 lg:flex">
-                {site.nav.map((item) => (
+            <div className="flex items-center gap-2 sm:gap-4">
+              {/* Plain sentence-case links, generously spaced — the reference
+                  has no chips or CTA button up here; Contact is just a link. */}
+              <ul className="hidden items-center gap-6 lg:flex xl:gap-8">
+                {[...site.nav, { href: '/contact', label: 'Contact' }].map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
                       aria-current={isActive(item.href) ? 'page' : undefined}
                       className={cn(
-                        'font-mono rounded-full px-3.5 py-2 text-micro font-semibold uppercase transition-colors',
+                        'text-[0.9375rem] font-medium underline-offset-[6px] transition-colors',
                         isActive(item.href)
-                          ? 'bg-cyan text-ink'
-                          : 'text-on-ink-muted hover:text-on-cream',
+                          ? 'text-on-ink underline decoration-cyan decoration-2'
+                          : 'text-on-ink hover:text-cyan',
                       )}
                     >
                       {item.label}
@@ -90,21 +142,14 @@ export function NavBar() {
                 ))}
               </ul>
 
-              <ThemeToggle className="text-on-ink-muted hover:text-on-cream ml-1" />
-
-              <Link
-                href="/contact"
-                className="bg-cream text-on-ink-muted font-mono ml-1 hidden rounded-full px-4 py-2.5 text-micro font-bold uppercase transition-colors hover:bg-cyan sm:inline-block border border-current/25" 
-              >
-                Get in touch
-              </Link>
+              <ThemeToggle className="text-on-ink-muted hover:text-on-ink" />
 
               <button
                 type="button"
                 onClick={() => setOpen((v) => !v)}
                 aria-expanded={open}
                 aria-controls="mobile-menu"
-                className="text-on-ink ml-1 grid h-9 w-9 place-items-center rounded-full border border-current/25 lg:hidden"
+                className="text-on-ink grid h-9 w-9 place-items-center rounded-full border border-current/25 lg:hidden"
               >
                 <span className="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
                 <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4">

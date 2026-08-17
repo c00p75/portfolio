@@ -1,5 +1,6 @@
 import { buildBm25Index, bm25Search, type Bm25Index } from './bm25';
 import { cosineSimilarity, embedQuery, EmbeddingError } from './embed';
+import { queryKey } from './suggestions';
 import type { IndexArtifact, Retrieved, RetrievalResult, Retriever } from './types';
 
 /**
@@ -26,8 +27,15 @@ function rrfScore(rank: number): number {
  */
 export class StaticHybridRetriever implements Retriever {
   private readonly lexical: Bm25Index;
+  /** Precomputed vectors for the suggested prompts, keyed by normalised text. */
+  private readonly queryCache: Map<string, number[]>;
 
   constructor(private readonly artifact: IndexArtifact) {
+    this.queryCache = new Map(
+      (artifact.queryCache ?? [])
+        .filter((q) => q.embedding.length === artifact.dimensions)
+        .map((q) => [q.key, q.embedding] as const),
+    );
     this.lexical = buildBm25Index(
       // Index the section heading alongside the body so a query naming a section
       // can find it even when the body never repeats the heading's words.
@@ -61,13 +69,18 @@ export class StaticHybridRetriever implements Retriever {
     try {
       if (!hasVectors) throw new EmbeddingError('index built without embeddings');
       const tEmbed = performance.now();
-      const vector = await embedQuery(query);
+      // A suggested prompt was embedded at build time; clicking one should not
+      // pay for the model at all, and on a cold process should not wait for it
+      // to load either.
+      const vector = this.queryCache.get(queryKey(query)) ?? (await embedQuery(query));
       embedMs = performance.now() - tEmbed;
 
       const tDense = performance.now();
       const scored: [number, number][] = this.artifact.chunks.map((chunk, i) => [
         i,
-        cosineSimilarity(vector, chunk.embedding),
+        chunk.embedding.length === this.artifact.dimensions
+          ? cosineSimilarity(vector, chunk.embedding)
+          : -1,
       ]);
       scored.sort((a, b) => b[1] - a[1]);
       denseHits = scored.slice(0, CANDIDATES);

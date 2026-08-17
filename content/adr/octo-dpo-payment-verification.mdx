@@ -1,0 +1,212 @@
+---
+title: 'Never trusting a browser redirect to say a ticket has been paid for'
+number: 6
+status: accepted
+date: '2026-07-19'
+domain: Payments
+project: octo
+shortTitle: 'Trusting only server-to-server payment confirmation'
+featured: false
+draft: false
+accent: orange
+summary: >-
+  A payment gateway redirect is client-controlled and trivially spoofable, so the
+  only thing allowed to mark an order paid and mint tickets is a server-to-server
+  confirmation call that gets retried, deduplicated at three separate points, and
+  still leaves one real gap I have not closed: nothing yet re-checks an order that
+  the gateway never called back about.
+context: >-
+  Octo takes payment through DPO Pay, a regional gateway that redirects a customer
+  back to the site after checkout and separately calls the site's own endpoint to
+  confirm the result. Ticket buyers are also retrying and refreshing on a mobile
+  connection that drops mid-checkout, which means the same confirmation will
+  sometimes arrive more than once, and a confirmation will sometimes not arrive at
+  all. Getting either of those wrong means either a customer paying and receiving
+  no ticket, or a ticket being minted twice for one payment.
+constraints:
+  - 'A completed order and its tickets must never depend on anything the browser reports.'
+  - 'Only a server-to-server confirmation with an explicit success result may complete an order.'
+  - 'The same confirmation, retried by the gateway, must produce exactly one completion, not one per retry.'
+  - 'A confirmation callback body from this gateway cannot be assumed to arrive in one consistent shape.'
+options:
+  - name: Complete the order on the browser redirect
+    summary: >-
+      When the customer's browser returns to the success URL with the gateway''s
+      status parameters, mark the order paid.
+    verdict: rejected
+    because: >-
+      Every value in a redirect is something the client controls and can replay or
+      fabricate. Trusting it would mean anyone who knows the URL shape can mint
+      tickets for an order they never paid for.
+    pros:
+      - 'Immediate feedback the moment the customer lands back on the site.'
+      - 'No dependency on a separate callback arriving at all.'
+    cons:
+      - 'Fully spoofable; nothing about it is authenticated.'
+      - 'A dropped connection before the redirect completes leaves no path to confirmation at all.'
+  - name: Trust the callback body as sent
+    summary: >-
+      Accept whatever the gateway posts to the webhook endpoint as sufficient proof
+      of payment.
+    verdict: rejected
+    because: >-
+      A callback endpoint is a public URL, and the payload is XML I did not fully
+      trust the shape of. Treating an inbound POST as proof of payment without
+      independently confirming it back to the gateway would make the endpoint
+      itself the attack surface.
+    pros:
+      - 'Simpler; no second call back to the gateway needed.'
+      - 'Faster completion, since it skips a round trip.'
+    cons:
+      - 'The callback endpoint becomes forgeable by anyone who can guess its shape.'
+      - 'No independent confirmation that the gateway itself still agrees payment succeeded.'
+  - name: Server-to-server verification call, with layered idempotency
+    summary: >-
+      On any callback, always call the gateway''s own verification endpoint and only
+      complete the order if it independently reports success, guarding completion
+      with an atomic conditional update and a follow-up check for existing tickets.
+    verdict: chosen
+    because: >-
+      This is the only version where completion depends on something the gateway
+      itself confirms, not on anything a client sent. The retries were the forcing
+      function for the layering: a webhook a gateway will genuinely resend needed a
+      guard that made resending safe rather than merely "usually fine."
+    pros:
+      - 'Completion depends on an independently confirmed result, not on an inbound claim.'
+      - 'An atomic conditional update means only one caller can win the transition from pending to completed.'
+      - 'A final check for already-minted tickets catches a partial prior attempt even after the update succeeds.'
+      - 'Defensive parsing handles the gateway returning XML on error responses, not just success ones.'
+    cons:
+      - 'An order the gateway never calls back about stays pending indefinitely; nothing currently sweeps and re-checks it.'
+      - 'Every confirmation costs a real network round trip to the gateway, on top of the callback itself.'
+      - 'The XML response shape needed defensive parsing for cases the gateway''s documentation did not fully specify.'
+tradeoffs:
+  - criterion: Resistant to a spoofed or replayed client request
+    scores:
+      'Complete the order on the browser redirect': weak
+      'Trust the callback body as sent': weak
+      'Server-to-server verification call, with layered idempotency': strong
+  - criterion: Correct under a retried or duplicated callback
+    scores:
+      'Complete the order on the browser redirect': adequate
+      'Trust the callback body as sent': weak
+      'Server-to-server verification call, with layered idempotency': strong
+  - criterion: Recovers when the callback never arrives at all
+    scores:
+      'Complete the order on the browser redirect': weak
+      'Trust the callback body as sent': weak
+      'Server-to-server verification call, with layered idempotency': weak
+    note: >-
+      This is the axis every option here is weak on. A reconciliation sweep for
+      orders that never received a callback is designed but not built, and it is the
+      most important piece of unfinished work in this record.
+  - criterion: Latency to complete an order
+    scores:
+      'Complete the order on the browser redirect': strong
+      'Trust the callback body as sent': strong
+      'Server-to-server verification call, with layered idempotency': adequate
+decision: >-
+  A browser redirect after checkout is never treated as authoritative. The only
+  path to completing an order is the webhook endpoint independently calling the
+  gateway's own verification call and checking for an explicit success result code;
+  an unpaid or ambiguous result leaves the order untouched. Completion itself is
+  guarded three times: an early check short-circuits if the order is already
+  completed, an atomic conditional update ensures only one caller can flip a
+  pending order to completed, and a final check counts existing tickets in case a
+  prior attempt got partway through before failing. The gateway's response is
+  parsed defensively, because it is XML that does not arrive in one consistent
+  shape across success and error cases, and the webhook body itself is accepted in
+  more than one encoding since the gateway does not send it consistently either.
+reversibility: >-
+  The verification call and its parsing sit behind one client module, so adapting
+  to a different gateway or a different response shape is contained to that layer;
+  the three-layer completion guard is gateway-agnostic and would carry over as-is.
+  What is not easily undone is a design built around callbacks arriving eventually.
+  If the actual failure mode in production turns out to be callbacks that never
+  arrive rather than callbacks that arrive twice, the missing piece is not a
+  refinement of what exists, it is a scheduled job that does not exist yet, and
+  every order sitting in pending today is invisible to it until it is built.
+metrics:
+  - label: Independent guards against double completion
+    value: '3'
+    basis: >-
+      An early already-completed check, an atomic conditional update on the order''s
+      status, and a final check for tickets already minted against the order.
+    direction: neutral
+  - label: Reconciliation sweep for orders with no callback
+    value: 'not built'
+    basis: >-
+      Specified as a follow-up task — a scheduled re-check of pending orders past a
+      time threshold — but no scheduled function exists in the codebase that
+      performs it.
+    direction: neutral
+failureModes:
+  - trigger: The gateway retries the same payment callback
+    blastRadius: 'Would otherwise mint a second set of tickets for one payment.'
+    detection: 'An already-completed short-circuit, then an atomic conditional update.'
+    mitigation: >-
+      The second attempt sees the order already completed and returns without
+      writing anything further; if it arrives in the narrow window before the first
+      attempt''s update commits, the conditional update itself ensures only one
+      caller succeeds.
+    severity: major
+  - trigger: A callback triggers completion logic but a previous attempt already minted tickets
+    blastRadius: 'Would otherwise mint a duplicate set of tickets.'
+    detection: 'A count of existing tickets for the order, checked after the status update succeeds.'
+    mitigation: 'Any existing tickets short-circuit the rest of completion rather than adding more.'
+    severity: major
+  - trigger: The gateway returns an error response as XML in a shape the happy path was not written for
+    blastRadius: 'Would otherwise crash the verification call or silently misread the result.'
+    detection: 'Parsing attempts to read API-shaped XML even from non-success HTTP responses.'
+    mitigation: 'Typed errors for empty bodies, non-API bodies, and missing result fields, rather than an unhandled exception.'
+    severity: minor
+  - trigger: A customer is charged but the callback is delayed or never arrives
+    blastRadius: 'The order remains pending indefinitely and the customer has no ticket despite paying.'
+    detection: 'None currently. The order has an expiry timestamp written to it, but nothing acts on it.'
+    mitigation: >-
+      Not mitigated. This is the clearest open gap in the design: a scheduled
+      re-verification of pending orders past a threshold is the specified fix and it
+      has not been built.
+    severity: critical
+stack:
+  - TypeScript
+  - Hono
+  - Prisma
+  - PostgreSQL
+  - DPO Pay
+  - XML
+---
+
+## Why this record exists
+
+The interesting decision in a payment integration is rarely the happy path. It is
+what you refuse to trust, and what you do when the thing you're waiting for simply
+does not show up.
+
+The refusal here is straightforward once stated: a browser redirect is not proof
+of anything, because the browser is not a party you can authenticate. Every value
+in it came from the client, and the client is exactly who has the incentive to lie
+about whether they paid. So completion had to depend on the site independently
+asking the gateway, not on the gateway's own claim arriving through the customer's
+browser.
+
+## The part that is still open
+
+The honest gap is what happens when the gateway's callback never arrives at all —
+network partition, a dropped queue on their end, whatever the cause. Today that
+order sits in `PENDING` forever. It has an expiry timestamp written to it, and
+nothing reads that timestamp. A customer in that state has been charged and has no
+ticket, and the system does not know it needs to look.
+
+I designed the fix — a scheduled sweep that re-verifies any order past its pending
+threshold and either completes or expires it — and did not build it. I would rather
+say that plainly than let the layered idempotency work imply the integration is
+more finished than it is. The three guards against double-completion are real and
+they work; they solve a different problem than the one a lost callback creates.
+
+## What I would build next
+
+The reconciliation sweep, specifically, and specifically before this handles real
+volume. Everything else in this record is defence against a callback behaving
+badly. This is defence against a callback not showing up at all, and it is the
+failure mode most likely to generate an actual support ticket from a real customer.

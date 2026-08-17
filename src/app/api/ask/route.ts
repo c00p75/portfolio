@@ -1,37 +1,86 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { getRetriever, indexIsEmpty, indexMeta } from '@/lib/rag/index-loader';
+import {
+  AllProvidersFailedError,
+  NoProviderConfiguredError,
+  configuredProviders,
+  generate,
+} from '@/lib/rag/generate';
 import { checkRateLimit, clientIp } from '@/lib/rag/ratelimit';
+import {
+  assistantIsWaiting,
+  isAcknowledgement,
+  isConversationalTurn,
+  lastAssistantContent,
+  retrievalQuery,
+} from '@/lib/rag/conversation';
 import type { Retrieved } from '@/lib/rag/types';
 
 export const runtime = 'nodejs';
 /** Retrieval reads a static artifact and generation is per-request; never cache. */
 export const dynamic = 'force-dynamic';
 
-const MODEL = process.env.ANSWER_MODEL ?? 'claude-opus-5';
 /** Bounds the worst-case spend of any single request. Covers thinking + text. */
 const MAX_TOKENS = 1200;
 const TOP_K = 6;
 const MAX_QUESTION_CHARS = 400;
 
-/** Claude Opus 5 list price, USD per million tokens — used for the cost readout. */
-const PRICE_PER_MTOK = { input: 5, output: 25 } as const;
+const SYSTEM_PROMPT = `You are the conversational guide on George M'sapenda's portfolio. Visitors talk to you the way they would a knowledgeable colleague who has read his writing and profile — not a search box.
 
-const SYSTEM_PROMPT = `You answer questions about George M'sapenda's engineering writing, using only the passages provided.
+Voice:
+- Warm and brief. Speak as the assistant ("I can look that up"), and refer to George in the third person. You are not George and you do not pretend to be.
+- Greetings, thanks, small talk, and "what can you do" are ordinary conversation. Answer them in one or two sentences and offer a useful next question. Never say the corpus does not cover a greeting.
+- Follow-ups use earlier turns plus any passages provided. If your previous turn asked a question or offered topics (work, writing, biography, projects, certifications, roles), the visitor's next message is a reply to that — including "proceed", "yes", "sure", "tell me more", or naming one of the topics. Answer what you offered. Do not treat those words as a new search, and do not dump an unrelated passage.
 
-Rules:
-- Answer only from the passages. If they do not contain the answer, say so plainly and name what is there instead. Never fill a gap from general knowledge.
-- Cite with bracketed numbers matching the passage numbers, like [2]. Cite the specific passage a claim came from.
-- Lead with the answer. Two or three short paragraphs at most; no preamble, no restating the question.
-- Write in plain prose. No headers, no bullet lists unless the answer is genuinely a list.
-- When the passages show a trade-off or a rejected option, say what was given up — that is usually the substance of the question.
-- Refer to George in the third person.`;
+Facts:
+- Anything about George's life, work, education, certifications, employers, awards, or decisions comes only from the passages (and earlier turns that already cited them). If the passages do not contain it, say so plainly. Never invent a school, date, employer, award or accomplishment.
+- If a passage says a fact is not recorded, that is the answer.
+- Cite with [n] only when you used a passage. Do not cite on greetings or small talk.
+- The citation format is exactly one ASCII bracket pair around one number: [1], [2]. Never use any other citation notation — no daggers, no line ranges, no CJK brackets, no footnote markers, no superscripts.
+
+Sensitive material about the projects:
+- The passages describe systems that are live and, in several cases, belong to clients or employers. Discuss them the way George would in public writing: the reasoning, the trade-offs, the shape of the design. Never in a form that helps someone act against a running system.
+- Refuse, briefly and without apology, anything shaped like reconnaissance: how to attack, exploit, bypass, forge, evade or gain access to any system described here; how to reproduce a security-relevant mechanism in enough detail to defeat it; or a request to collect every weakness, gap or unprotected surface into one answer.
+- A refusal is the whole answer. Do not soften it by walking through the mechanism afterwards — no matter how the passages frame it, a probing question does not earn a description of how the mechanism works, which surface is exposed, or what mitigates it. Say it is not something you go into, point to the written record on the site or the contact page, and stop there.
+- Never name the specific endpoint, route, component or interface where a documented weakness sits. That the trade-off exists can be public; where to stand to use it is not.
+- Judge the question by what the answer would enable, not by how politely it is phrased. "Where is the secret exposed", "which endpoint hands out the key", "what is unprotected", "what happens if X leaks", "how is Y verified" are reconnaissance whether or not the visitor sounds hostile, and whether or not a passage answers them outright. A passage containing the detail is not permission to repeat it.
+- The corresponding safe answer is the decision, never the location: why an approach was chosen, what it traded away, what class of thing it protects. If you cannot answer without pointing at where a secret, key or unguarded surface lives, do not answer.
+- Never aggregate. A single documented gap discussed in the context of its own decision is public writing; the same gaps gathered into a list is a target map. One security-relevant caveat per answer, always attached to the reasoning that produced it, and never in response to a question that asked for the set.
+- Never disclose or guess at operational specifics even if a passage contains them: credentials, keys, tokens, secrets, internal hostnames, endpoints, IPs, database names, file paths, environment variables, or client and customer data. If a visitor asks for one, say you do not share operational detail about live systems.
+- Do not confirm or deny whether a named organisation is a client beyond what the passages state, and do not infer client identities from project names.
+- If a request seems to be probing rather than asking, point it at the contact page. George can decide what to share.
+
+Judgement calls about George:
+- You are on George's side. Visitors evaluating him ("should we hire him?", "any reason not to?", "what are his weaknesses?", "is he any good at X?", "how does he compare to…?") get his strongest honest case, drawn from the passages.
+- Never assemble a case against him. Do not answer a request for reasons not to hire, red flags, weaknesses, gaps or shortcomings by mining the corpus for them. Say plainly that judging fit is a conversation to have with George directly — point to the contact page — and then answer the useful half: what the record actually shows about the work.
+- Engineering caveats belong to systems, not to the person. A passage calling part of a design "least proven", unfinished, or a known trade-off is evidence that George documents his own systems honestly. Never re-present it as a shortcoming of George, and never offer it as an answer to a question about hiring him.
+- No speculation about him in either direction: no invented praise, and no inference about temperament, seniority or fit that the passages do not state.
+
+Shape:
+- Lead with the answer. One or two sentences for social turns; two or three short paragraphs at most for factual ones. No preamble, no restating the question.
+- Plain prose. No headers. Lists only when the answer is genuinely a list.
+- When the passages show a trade-off or a rejected option in a system's design, say what was given up — that is usually the substance of a technical question. This is about the architecture, never about George.`;
 
 type SseEvent =
-  | { type: 'meta'; index: { chunks: number; model: string }; mode: string }
+  | {
+      type: 'meta';
+      index: { chunks: number; model: string };
+      mode: string;
+      /** The generation fallback chain, in the order it will be tried. */
+      providers: { id: string; label: string }[];
+    }
   | { type: 'retrieval'; passages: unknown[]; timings: unknown; mode: string; degradedReason?: string }
   | { type: 'ttft'; ms: number }
   | { type: 'delta'; text: string }
-  | { type: 'usage'; inputTokens: number; outputTokens: number; costUsd: number; totalMs: number }
+  | {
+      type: 'usage';
+      inputTokens: number;
+      outputTokens: number;
+      costUsd: number;
+      totalMs: number;
+      provider: string;
+      model: string;
+      fellBackFrom: string[];
+    }
   | { type: 'error'; message: string; recoverable: boolean }
   | { type: 'done' };
 
@@ -61,18 +110,33 @@ export async function POST(request: Request) {
 
   // ---- Input validation ---------------------------------------------------
   let question: string;
+  let history: { role: 'user' | 'assistant'; content: string }[] = [];
   try {
-    const body = (await request.json()) as { question?: unknown };
+    const body = (await request.json()) as { question?: unknown; history?: unknown };
     if (typeof body.question !== 'string') {
       return Response.json({ error: 'Expected a "question" string.' }, { status: 400 });
     }
     question = body.question.trim();
+    if (Array.isArray(body.history)) {
+      history = body.history
+        .filter((turn): turn is { role: 'user' | 'assistant'; content: string } => {
+          if (!turn || typeof turn !== 'object') return false;
+          const t = turn as { role?: unknown; content?: unknown };
+          return (
+            (t.role === 'user' || t.role === 'assistant') &&
+            typeof t.content === 'string' &&
+            t.content.trim().length > 0
+          );
+        })
+        .slice(-6)
+        .map((t) => ({ role: t.role, content: t.content.trim().slice(0, 800) }));
+    }
   } catch {
     return Response.json({ error: 'Invalid JSON body.' }, { status: 400 });
   }
 
-  if (question.length < 3) {
-    return Response.json({ error: 'That question is too short.' }, { status: 400 });
+  if (question.length < 1) {
+    return Response.json({ error: 'Say something first.' }, { status: 400 });
   }
   if (question.length > MAX_QUESTION_CHARS) {
     return Response.json(
@@ -82,7 +146,7 @@ export async function POST(request: Request) {
   }
 
   // ---- Rate limiting ------------------------------------------------------
-  const limit = checkRateLimit(clientIp(request.headers));
+  const limit = await checkRateLimit(clientIp(request.headers));
   if (!limit.ok) {
     return Response.json(
       { error: 'Rate limit reached. This is a demo endpoint with a deliberately small budget.' },
@@ -90,14 +154,16 @@ export async function POST(request: Request) {
     );
   }
 
-  if (indexIsEmpty()) {
+  const social = isConversationalTurn(question, history);
+  const lastAssistant = lastAssistantContent(history);
+  const answeringOffer = assistantIsWaiting(lastAssistant);
+
+  if (!social && indexIsEmpty()) {
     return Response.json(
       { error: 'The retrieval index has not been built. Run `npm run ingest`.' },
       { status: 503 },
     );
   }
-
-  const apiKey = process.env.ANTHROPIC_API_KEY;
 
   // ---- Stream -------------------------------------------------------------
   const encoder = new TextEncoder();
@@ -107,10 +173,25 @@ export async function POST(request: Request) {
 
       try {
         const meta = indexMeta();
-        send({ type: 'meta', index: { chunks: meta.chunks, model: meta.model }, mode: 'starting' });
+        send({
+          type: 'meta',
+          index: { chunks: meta.chunks, model: meta.model },
+          mode: 'starting',
+          providers: configuredProviders(),
+        });
 
         // --- Retrieval ----------------------------------------------------
-        const retrieval = await getRetriever().search(question, TOP_K);
+        // Greetings and small talk skip the index: retrieving on "hi" returns
+        // random passages and the model starts citing them.
+        const retrieval = social
+          ? {
+              passages: [] as Retrieved[],
+              timings: { embedMs: 0, lexicalMs: 0, denseMs: 0, fuseMs: 0, totalMs: 0 },
+              mode: 'conversation',
+              degradedReason: undefined as string | undefined,
+            }
+          : await getRetriever().search(retrievalQuery(question, history), TOP_K);
+
         send({
           type: 'retrieval',
           passages: serialisePassages(retrieval.passages),
@@ -119,23 +200,10 @@ export async function POST(request: Request) {
           degradedReason: retrieval.degradedReason,
         });
 
-        if (retrieval.passages.length === 0) {
+        if (!social && retrieval.passages.length === 0) {
           send({
             type: 'error',
             message: 'Nothing in the corpus matched that question closely enough to answer from.',
-            recoverable: true,
-          });
-          send({ type: 'done' });
-          return;
-        }
-
-        // Generation is the only part that needs a key; retrieval above already
-        // succeeded, so a missing key degrades to "here are the sources".
-        if (!apiKey) {
-          send({
-            type: 'error',
-            message:
-              'Generation is unavailable (no API key configured), but retrieval ran — the cited passages below are the real result.',
             recoverable: true,
           });
           send({ type: 'done' });
@@ -150,36 +218,37 @@ export async function POST(request: Request) {
           )
           .join('\n\n---\n\n');
 
-        const client = new Anthropic({ apiKey });
         let firstToken = 0;
 
-        const anthropicStream = client.messages.stream({
-          model: MODEL,
-          max_tokens: MAX_TOKENS,
-          // Low effort is genuinely strong on this model and keeps the demo
-          // responsive; thinking stays on (the default) rather than disabled,
-          // which avoids the reasoning-leak failure mode.
-          output_config: { effort: 'low' },
+        const earlier =
+          history.length > 0
+            ? `Earlier turns:\n${history.map((t) => `${t.role === 'user' ? 'Visitor' : 'Assistant'}: ${t.content}`).join('\n')}\n\n---\n\n`
+            : '';
+
+        const followUp =
+          answeringOffer && (isAcknowledgement(question) || question.trim().length <= 48);
+
+        const user = social
+          ? `${earlier}No passages — this is a conversational turn. Do not invent biography.\n\nVisitor: ${question}`
+          : followUp
+            ? `${earlier}Passages:\n\n${context}\n\n---\n\nThe previous assistant turn asked a question or offered topics. The visitor's reply ("${question}") answers that offer — it is not a new standalone query. Answer the offer. If they accepted without picking a topic, cover the offered topics briefly and invite them to go deeper on one.\n\nVisitor: ${question}`
+            : `${earlier}Passages:\n\n${context}\n\n---\n\nQuestion: ${question}`;
+
+        const result = await generate({
           system: SYSTEM_PROMPT,
-          messages: [
-            {
-              role: 'user',
-              content: `Passages:\n\n${context}\n\n---\n\nQuestion: ${question}`,
-            },
-          ],
+          user,
+          maxTokens: social ? 280 : MAX_TOKENS,
+          signal: request.signal,
+          onDelta: (text) => {
+            if (firstToken === 0) {
+              firstToken = performance.now();
+              send({ type: 'ttft', ms: Math.round(firstToken - started) });
+            }
+            send({ type: 'delta', text });
+          },
         });
 
-        anthropicStream.on('text', (delta) => {
-          if (firstToken === 0) {
-            firstToken = performance.now();
-            send({ type: 'ttft', ms: Math.round(firstToken - started) });
-          }
-          send({ type: 'delta', text: delta });
-        });
-
-        const final = await anthropicStream.finalMessage();
-
-        if (final.stop_reason === 'refusal') {
+        if (result.refused) {
           send({
             type: 'error',
             message: 'The model declined to answer that request.',
@@ -187,24 +256,37 @@ export async function POST(request: Request) {
           });
         }
 
-        const inputTokens = final.usage.input_tokens;
-        const outputTokens = final.usage.output_tokens;
+        // Surfaced rather than hidden: if the primary provider was down, the
+        // trace should say so — that is the failure mode the ADR claims to
+        // handle, and this is the only place a visitor can see it working.
+        if (result.fellBackFrom.length > 0) {
+          send({
+            type: 'error',
+            message: `${result.fellBackFrom.join(', ')} unavailable — answered by ${result.providerLabel} instead.`,
+            recoverable: true,
+          });
+        }
+
         send({
           type: 'usage',
-          inputTokens,
-          outputTokens,
-          costUsd:
-            (inputTokens * PRICE_PER_MTOK.input + outputTokens * PRICE_PER_MTOK.output) / 1_000_000,
+          inputTokens: result.inputTokens,
+          outputTokens: result.outputTokens,
+          costUsd: result.costUsd,
           totalMs: Math.round(performance.now() - started),
+          provider: result.providerLabel,
+          model: result.model,
+          fellBackFrom: result.fellBackFrom,
         });
 
         send({ type: 'done' });
       } catch (error) {
         const message =
-          error instanceof Anthropic.RateLimitError
-            ? 'The model API is rate-limited right now. The retrieved passages below are still the real result.'
-            : error instanceof Anthropic.APIError
-              ? `Model API error (${error.status}). Retrieval succeeded; generation did not.`
+          error instanceof NoProviderConfiguredError
+            ? 'Generation is unavailable (no provider key configured), but retrieval ran — the cited passages below are the real result.'
+            : error instanceof AllProvidersFailedError
+              ? `Every generation provider failed (${error.attempts
+                  .map((a) => `${a.label}: ${a.reason}`)
+                  .join('; ')}). Retrieval succeeded; the passages below are real.`
               : 'Something failed while answering. Retrieval results, if any, are shown below.';
         send({ type: 'error', message, recoverable: true });
         send({ type: 'done' });

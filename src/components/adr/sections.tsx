@@ -84,7 +84,7 @@ export function TradeoffMatrix({ adr }: { adr: Adr }) {
               <th scope="row" className="p-4 text-[0.8125rem] font-medium">
                 {row.criterion}
                 {row.note ? (
-                  <span className="text-on-ink-muted mt-1 block text-xs font-normal">
+                  <span className="mt-1 block text-xs font-normal">
                     {row.note}
                   </span>
                 ) : null}
@@ -144,7 +144,7 @@ export function OptionsConsidered({ adr }: { adr: Adr }) {
             </div>
 
             <h3 className="font-display text-xl leading-none uppercase">{option.name}</h3>
-            <p className="text-on-ink-muted text-sm leading-relaxed text-pretty">
+            <p className="text-on-ink text-sm leading-relaxed text-pretty">
               {option.summary}
             </p>
 
@@ -155,7 +155,7 @@ export function OptionsConsidered({ adr }: { adr: Adr }) {
                 </h4>
                 <ul className="flex flex-col gap-1.5">
                   {option.pros.map((p) => (
-                    <li key={p} className="text-on-ink-muted flex gap-2 text-xs leading-relaxed">
+                    <li key={p} className="text-on-ink flex gap-2 text-xs leading-relaxed">
                       <span aria-hidden="true" className="text-lime">
                         +
                       </span>
@@ -173,7 +173,7 @@ export function OptionsConsidered({ adr }: { adr: Adr }) {
                 </h4>
                 <ul className="flex flex-col gap-1.5">
                   {option.cons.map((c) => (
-                    <li key={c} className="text-on-ink-muted flex gap-2 text-xs leading-relaxed">
+                    <li key={c} className="text-on-ink flex gap-2 text-xs leading-relaxed">
                       <span aria-hidden="true" className="text-pink">
                         −
                       </span>
@@ -244,19 +244,31 @@ export function FailureModes({ adr }: { adr: Adr }) {
   );
 }
 
-/** Quantified outcomes. Each carries the basis so a number is never bare. */
-export function MetricsStrip({ adr }: { adr: Adr }) {
-  if (adr.metrics.length === 0) return null;
+/**
+ * Quantified outcomes. Each carries the basis so a number is never bare.
+ *
+ * Takes the metrics rather than the record so project case studies can render
+ * the same strip — both collections use the identical metric shape, which is
+ * what keeps `basis` required in both places.
+ */
+export function MetricsStrip({
+  metrics,
+  accent,
+}: {
+  metrics: Adr['metrics'];
+  accent: Adr['accent'];
+}) {
+  if (metrics.length === 0) return null;
 
   return (
     <dl className="border-ink-line grid gap-px overflow-hidden rounded-panel border bg-current/10 sm:grid-cols-2 xl:grid-cols-4">
-      {adr.metrics.map((m) => (
+      {metrics.map((m) => (
         <div key={m.label} className="bg-ink flex flex-col gap-2 p-6">
-          <dd className={cn('font-display text-3xl leading-none', accentText[adr.accent])}>
+          <dd className={cn('font-display text-3xl leading-none', accentText[accent])}>
             {m.value}
           </dd>
           <dt className="font-mono text-micro uppercase">{m.label}</dt>
-          <p className="text-on-ink-muted text-xs leading-relaxed text-pretty">{m.basis}</p>
+          <p className="text-on-ink text-xs leading-relaxed text-pretty">{m.basis}</p>
         </div>
       ))}
     </dl>

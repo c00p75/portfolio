@@ -9,8 +9,8 @@ principle: >-
 summary: >-
   Teams adopting AI coding tools rarely fail because the generated code is bad.
   They fail because throughput outruns the review, testing, and architectural
-  judgement that used to be applied at a slower rate. This is the set of gates I
-  put in front of that.
+  judgement that used to be applied at a slower rate. These are the gates I put in
+  front of that.
 tags:
   - SDLC
   - Code review
@@ -22,9 +22,9 @@ tags:
 
 The naive adoption story is "the team writes code 3× faster." What actually
 happens is that the team produces 3× more diff, and every downstream
-capacity — review attention, test coverage, architectural coherence, on-call
-understanding of the system — stays exactly where it was. The bottleneck does not
-disappear; it moves, and it moves somewhere with far less instrumentation.
+capacity stays exactly where it was: review attention, test coverage,
+architectural coherence, and how well anyone actually understands the system. The
+bottleneck has not gone away. It has moved somewhere nobody is measuring.
 
 The symptom is a repository that passes CI and that nobody can confidently
 change six months later.
@@ -51,14 +51,15 @@ that. They are the things a model has no way to infer: which module owns which
 concern, which dependencies are deliberately absent, which patterns were tried
 and rejected, where the transaction boundaries are.
 
-> A rules file that repeats what the linter already enforces is dead weight. One
-> that records a rejected approach and why saves the same argument every sprint.
+> If a rules file only repeats what the linter already enforces, it is doing
+> nothing. The useful entries are the ones recording an approach that was tried
+> and dropped, and why.
 
 ## Gate 3 — Tests are the review surface that scales
 
-Human review does not scale linearly with diff volume; test suites do. The
-practical consequence is that faster generation raises the *required* level of
-automated verification rather than lowering it.
+A test suite can absorb a larger diff without getting slower or more careless.
+Human attention cannot. So generating code faster raises the level of automated
+verification you need rather than lowering it.
 
 The distribution that has worked for me:
 
@@ -76,10 +77,10 @@ structure — a boundary drawn in the wrong place, a synchronous call that shoul
 have been an event, a shared database between two services that now cannot deploy
 independently.
 
-That review has to happen at the design stage, because it is precisely the
-category that tests cannot express and that is most expensive to reverse. This is
-also the honest limit of the whole playbook: the gates make fast code safe, they
-do not make design decisions for you.
+That review has to happen at the design stage, because it is the one category
+tests cannot express and the one that is most expensive to unpick later. It is
+also where this playbook stops being useful. The gates catch bad implementations
+of a sound design; none of them will tell you the design is wrong.
 
 ## What I do not do
 

@@ -1,0 +1,111 @@
+---
+title: Octo
+tagline: Event ticketing for venues where the network drops exactly when you need it
+summary: >-
+  A ticketing platform for Zambian events — selling through mobile money, and
+  admitting people through QR gates that keep working when the venue's mobile
+  network saturates. Most of the engineering is in the two places where the
+  network cannot be trusted: taking money, and letting someone through a door.
+client: Ballo Innovations
+role: >-
+  Architecture and backend implementation — payments, ticket integrity, and the
+  offline scan reconciliation model.
+period: '2026 — present'
+status: in-build
+statusNote: 'Server-side sale, payment and reconciliation paths built; scanner app still a scaffold.'
+order: 3
+featured: true
+draft: false
+accent: cyan
+disciplines:
+  - architecture
+  - payments
+  - mobile
+stack:
+  - TypeScript
+  - tRPC
+  - Hono
+  - Prisma
+  - PostgreSQL
+  - Firebase Cloud Functions
+  - DPO Pay
+  - HMAC-SHA256
+highlights:
+  - >-
+    Gate scanners have to admit or reject with no connectivity at all, so the
+    server cannot assume it sees scans in the order they happened. Scans are
+    re-sorted by the device's own clock and resolved first-scan-wins — but a
+    decision a gate already acted on is never reversed, because a person who is
+    already inside cannot be un-admitted by a database write.
+  - >-
+    Nothing marks an order paid except a server-to-server confirmation with the
+    payment gateway. A browser redirect is client-controlled, and the client is
+    exactly who has the incentive to lie about having paid.
+  - >-
+    A ticket carries its own proof — a payload plus an HMAC signature a scanner
+    can verify offline. That requirement is also why the signing key lives in
+    Postgres rather than a KMS: a wrapped key cannot be handed to a phone.
+metrics:
+  - label: Oversell under concurrent reservation
+    value: '0'
+    basis: >-
+      200 parallel single-seat reservations against a capacity of 100 yielded
+      exactly 100 successes and 100 sold-out errors, 20 runs out of 20, measured
+      against live Postgres.
+    direction: down-is-good
+  - label: Independent guards against double payment
+    value: '3'
+    basis: >-
+      An early already-completed check, an atomic conditional update on the
+      order's status, and a final check for tickets already minted.
+    direction: neutral
+  - label: Maximum entries per sync batch
+    value: '500'
+    basis: 'Schema bound on the sync request; sequential resolution is part of why it is capped.'
+    direction: neutral
+links:
+  - label: Public ticketing site
+    href: https://octo-public-web.vercel.app
+    kind: live
+cover: ../../public/images/projects/octo-home.png
+gallery:
+  - image: ../../public/images/projects/octo-home.png
+    alt: Octo public ticketing landing page
+    caption: Public web — Lusaka365 Tickets
+  - image: ../../public/images/projects/octo-events.png
+    alt: Trending events and ticket cards on Octo
+    caption: Event discovery
+---
+
+## The problem
+
+Octo sells tickets for events in Zambia — open fields and large halls around
+Lusaka, where a few thousand people arriving at once will saturate or entirely
+sink the mobile network. That single fact drives most of the architecture.
+Payment happens on a connection that drops mid-checkout, and admission happens
+on devices that may have no connection at all for the length of the event.
+
+Both are cases where the easy implementation is quietly wrong rather than
+visibly broken, which is what made them worth writing down.
+
+## What I built
+
+The sale and payment paths, the ticket integrity scheme, and the server side of
+offline scan reconciliation. Tickets are minted only after the server has
+independently asked the gateway whether money arrived, and each one carries a
+signed payload so a scanner at the gate can verify it with no network call.
+
+## What is not built yet
+
+The scanner application is a scaffold. The on-device database, the local
+signature verification, the clock discipline and the background sync queue are
+specified and still on the backlog, so what I can defend in detail is the
+reconciliation policy rather than a shipped end-to-end offline gate. Scan
+submission is also not yet authenticated: possession of a validly signed QR is
+currently the de facto authorisation.
+
+There is one more open gap on the payment side. If the gateway's callback never
+arrives at all, the order sits pending forever — it has an expiry timestamp
+written to it and nothing reads that timestamp. The reconciliation sweep that
+fixes it is designed and not built, and it is the next thing I would do before
+this handles real volume.

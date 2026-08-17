@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { THEME_KEY } from './ThemeScript';
 import { cn } from '@/lib/cn';
 
@@ -19,23 +19,21 @@ function subscribe(onChange: () => void) {
   };
 }
 
-/** The theme is external state (a DOM attribute + the OS preference), so it is
- *  read through `useSyncExternalStore` rather than mirrored into React state in
- *  an effect. That also makes the media-query change a first-class update. */
 function getSnapshot(): Mode {
   const attr = document.documentElement.dataset.theme;
   if (attr === 'dark' || attr === 'light') return attr;
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-/** The server has no way to know the viewer's preference; render the neutral
- *  label until hydration reads the real value. */
-function getServerSnapshot(): Mode | null {
-  return null;
-}
-
 export function ThemeToggle({ className }: { className?: string }) {
-  const mode = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  // Neutral until after mount so the server HTML and the first client paint match.
+  // ThemeScript has already applied the real palette; this only chooses the icon.
+  const [mode, setMode] = useState<Mode | null>(null);
+
+  useEffect(() => {
+    setMode(getSnapshot());
+    return subscribe(() => setMode(getSnapshot()));
+  }, []);
 
   const toggle = useCallback(() => {
     const next: Mode = getSnapshot() === 'dark' ? 'light' : 'dark';

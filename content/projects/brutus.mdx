@@ -1,0 +1,106 @@
+---
+title: Brutus
+tagline: One AI service for a whole product suite, behind ports rather than SDK calls
+summary: >-
+  A centralised AI hub serving the products around it: marketing copy, WhatsApp
+  and SMS template mapping, sender-ID compliance, and fraud and phishing scanning.
+  Built as a modular monolith on hexagonal architecture so the model provider is an
+  implementation detail rather than something spread through every codebase that
+  wants to generate text.
+client: Ballo Innovations
+role: Architecture and implementation.
+period: '2026 — present'
+status: production
+statusNote: 'Task pipeline, RAG and safety scanning in use; the agentic planning layer is the newest and least proven part.'
+order: 2
+featured: true
+draft: false
+accent: pink
+disciplines:
+  - ai
+  - architecture
+stack:
+  - NestJS
+  - TypeScript
+  - Groq
+  - Llama 3.1
+  - PostgreSQL
+  - Hexagonal architecture
+  - RAG
+  - Embeddings
+highlights:
+  - >-
+    The alternative was every product calling a model SDK directly. That spreads
+    prompt logic, provider credentials, cost accounting and safety rules across
+    four codebases, and guarantees they drift. One hub behind a port means a
+    provider change, a prompt fix or a new guardrail lands in one place.
+  - >-
+    Provider selection is explicit routing rather than a hardcoded client, for the
+    same reason the retrieval demo on this site ranks providers: the cheapest
+    acceptable model should answer, and the system should say which one did.
+  - >-
+    Safety scanning is a standalone task rather than a mandatory pipeline stage.
+    Fraud and phishing detection is a real capability with a real cost, and
+    forcing every copywriting request through it would have made the common path
+    pay for the rare one.
+  - >-
+    Generation is grounded through a retrieval layer over company profiles, brand
+    documents and past campaigns, because the failure mode that matters for
+    marketing copy is not a clumsy sentence — it is a confidently invented product
+    claim going out over SMS to a real customer list.
+metrics:
+  - label: Task types exposed
+    value: '6'
+    basis: >-
+      Copywriting, WhatsApp template mapping, sender-ID compliance, fraud
+      detection, content generation and template mapping, per the capabilities
+      document.
+    direction: neutral
+  - label: Core domains behind ports
+    value: '6'
+    basis: >-
+      Agent, AI engine, context, retrieval, safety and trends. Consuming products
+      reach them through adapters rather than importing internals.
+    direction: neutral
+  - label: Model SDKs in consuming products
+    value: '0'
+    basis: >-
+      Structural, and the point of the design: products call this service, not a
+      model provider. Verifiable by grepping the consumers for provider SDKs.
+    direction: down-is-good
+links:
+  - label: Used inside BalloAds
+    href: https://app.balloads.com
+    kind: live
+---
+
+## Why a hub rather than a library
+
+A shared library would have solved the duplication and none of the operational
+problems. Prompts change more often than releases, provider outages need a
+response measured in minutes rather than deploys, and someone has to be able to
+answer "what did we spend on AI last month, and on what". A library gives you one
+copy of the code and four copies of the runtime behaviour.
+
+Putting it behind a service boundary also made the cost accounting possible at
+all. Usage and spend are attributed per consuming product and per task type,
+because "AI costs" as a single line item is not a number anyone can act on.
+
+## The architecture, and what it bought
+
+Hexagonal was not a stylistic choice. The volatile parts of this system are
+exactly the ones at the edges — which model provider, which messaging channel's
+template format, which product is asking — and the stable part is the middle:
+what a task is, what context it gets, what safety means. Ports and adapters put
+the churn where churn is cheap.
+
+The concrete payoff: adding a consuming product is an adapter, and changing model
+provider does not touch task logic.
+
+## What is least proven
+
+The agentic planning layer — multi-step workflows with a tool registry and human
+approval gates — is the newest part and the part I would be most cautious about
+claiming. The task-oriented paths have been exercised by real campaign traffic.
+Planning has not, to the same degree, and an agent that plans badly fails in more
+interesting ways than a copywriter that writes badly.

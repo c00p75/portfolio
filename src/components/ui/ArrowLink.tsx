@@ -31,7 +31,7 @@ export function ArrowLink({ children, className, variant = 'underline', ...props
         variant === 'solid' &&
           'bg-cyan text-ink rounded-full px-5 py-3 no-underline transition-colors hover:bg-lime',
         variant === 'outline' &&
-          'rounded-full border border-current/35 px-5 py-3 transition-colors hover:border-current',
+          'rounded-full border border-current/15 px-5 py-3 transition-colors hover:border-current',
         className,
       )}
     >

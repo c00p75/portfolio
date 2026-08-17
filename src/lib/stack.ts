@@ -1,8 +1,8 @@
 import type { Accent } from '@/components/ui/Sticker';
 
 /**
- * Tooling grouped by architectural concern rather than by language. The grouping
- * is the point: it shows which layers of a system I actually operate at.
+ * Grouped by the layer each tool sits in rather than by language, so the list
+ * says something about where I work rather than just what I have installed.
  */
 export const stackDomains: {
   domain: string;
@@ -11,46 +11,73 @@ export const stackDomains: {
   items: string[];
 }[] = [
   {
-    domain: 'Interface & Edge',
+    domain: 'Interface & Mobile',
     accent: 'cyan',
-    note: 'Streaming UIs, optimistic state, and the rendering choice that follows from the latency budget.',
-    items: ['React', 'Next.js', 'TypeScript', 'Tailwind', 'Server Components', 'SSE / WebSockets'],
+    note: 'Web and mobile from the same design language, including apps that have to keep working when the connection does not.',
+    items: [
+      'TypeScript',
+      'React',
+      'Next.js',
+      'React Native',
+      'Flutter',
+      'Tailwind',
+      'Offline-first',
+    ],
   },
   {
     domain: 'Services & APIs',
     accent: 'pink',
-    note: 'Async pipelines that keep slow model calls off fast request paths.',
-    items: ['Node.js', 'Python', 'Ruby on Rails', 'REST', 'Route Handlers', 'Queues & workers'],
+    note: 'Endpoint and payload design, and keeping the contract between client and server something the compiler can check.',
+    items: ['FastAPI', 'NestJS', '.NET', 'Node.js', 'Ruby on Rails', 'tRPC', 'REST'],
   },
   {
-    domain: 'AI Orchestration',
+    domain: 'AI & Retrieval',
     accent: 'yellow',
-    note: 'Routing, retrieval and guardrails — the parts that decide whether an LLM feature is reliable or a demo.',
+    note: 'Most of the work in an LLM feature is getting the right context in front of the model and being able to tell whether it helped.',
     items: [
-      'Claude / Anthropic SDK',
-      'Embeddings',
+      'Anthropic / Claude',
+      'Groq',
+      'OpenAI',
+      'Gemini',
+      'Vertex AI',
+      'RAG',
       'Hybrid retrieval',
-      'Reranking',
+      'Embeddings',
       'Eval harnesses',
-      'Prompt-injection defence',
     ],
   },
   {
-    domain: 'Data & Storage',
+    domain: 'Data & Infrastructure',
     accent: 'orange',
-    note: 'Schema design, access patterns, and knowing when a vector index is not the answer.',
-    items: ['PostgreSQL', 'pgvector', 'SQL', 'Redis', 'Schema design', 'Migrations'],
+    note: 'Schemas shaped around how they will actually be read, and enough infrastructure to deploy them repeatably.',
+    items: ['PostgreSQL', 'Supabase', 'Prisma', 'Firebase', 'Docker', 'GCP', 'Vercel'],
   },
   {
-    domain: 'Delivery & Operations',
+    domain: 'Payments & Messaging',
     accent: 'lime',
-    note: 'The feedback loops that make fast change safe.',
-    items: ['Git / GitHub', 'CI pipelines', 'AWS', 'Vercel', 'Structured logging', 'Tracing'],
+    note: 'Mobile money and SMS are the default rails in the markets I build for, which makes them an architectural constraint rather than an integration detail.',
+    items: [
+      'DPO Pay',
+      'Mobile Money',
+      'SMPP',
+      'SMS gateways',
+      'Firebase Cloud Messaging',
+      'Webhook reconciliation',
+    ],
   },
   {
-    domain: 'Verification',
+    domain: 'Architecture & Practice',
     accent: 'cyan',
-    note: 'The gate that has to scale when code generation gets cheap.',
-    items: ['Jest', 'RSpec', 'Playwright', 'Integration tests', 'TDD', 'Contract tests'],
+    note: 'The habits that let a small team keep changing a system quickly without losing track of why it is shaped the way it is.',
+    items: [
+      'Hexagonal architecture',
+      'Event-driven systems',
+      'Monorepos',
+      'ADRs',
+      'CI/CD',
+      'Vitest',
+      'RSpec',
+      'TypeScript strict',
+    ],
   },
 ];
