@@ -130,9 +130,6 @@ const CATCH_UP_TAU = 0.62;
  */
 const PRINTS = 26;
 
-/** Pixels of travel between wake rings. Wider than a stride: water is lazier. */
-const WAKE_SPACING = 46;
-
 /**
  * How far the reader has to scroll before the craft lets go of its berth.
  *
@@ -144,11 +141,48 @@ const WAKE_SPACING = 46;
  */
 const DROP_TRIGGER = 0.012;
 
-/** Seconds the fall itself takes, once triggered. */
-const DROP_SECONDS = 0.72;
+/**
+ * Seconds the fall itself takes, once triggered. Short on purpose: the craft
+ * covers most of a screen height, and anything slower reads as lowering rather
+ * than dropping — the acceleration curve cannot sell weight on its own if the
+ * whole fall lasts longer than a real one would.
+ */
+const DROP_SECONDS = 0.42;
 
 /** Seconds to return to the berth when the reader scrolls back up. */
-const RISE_SECONDS = 0.5;
+const RISE_SECONDS = 0.34;
+
+/**
+ * The impact. A hull hitting water does not settle in one motion — it slaps,
+ * rings, and damps out fast. This is deliberately shorter, faster and harsher
+ * than the swell the boat rides afterwards: a fraction of a second of real
+ * shake is what sells the fall as having had weight behind it.
+ */
+const SHAKE_SECONDS = 0.55;
+
+/** Peak roll of the impact shake, in degrees, before damping. */
+const SHAKE_DEG = 15;
+
+/** Oscillations per second. High enough to read as a judder, not a rock. */
+const SHAKE_HZ = 9.5;
+
+/** Peak vertical judder of the impact, in pixels. */
+const SHAKE_LIFT = 6;
+
+/**
+ * Droplets thrown up by the landing, as offsets in rem from the point of
+ * impact. Hand-placed rather than generated: a splash is not symmetrical, and
+ * an even spread reads as a decoration. Negative `dy` is upward.
+ */
+const SPLASH_DROPS = [
+  { dx: -2.6, dy: -1.5, delay: 0 },
+  { dx: -1.5, dy: -2.2, delay: 0.02 },
+  { dx: -0.6, dy: -1.7, delay: 0 },
+  { dx: 0.7, dy: -2.4, delay: 0.03 },
+  { dx: 1.6, dy: -1.6, delay: 0.01 },
+  { dx: 2.4, dy: -2.1, delay: 0.04 },
+  { dx: 3.2, dy: -1.1, delay: 0.02 },
+] as const;
 
 /** Share of the intro spent falling; the rest is the landing. */
 const DROP_FALL = 0.78;
@@ -398,6 +432,9 @@ export function ScrollTrail({
   const craftRef = useRef<HTMLDivElement>(null);
   const spriteRef = useRef<HTMLDivElement>(null);
   const wakeRef = useRef<HTMLSpanElement>(null);
+  /** The element carrying the idle float, so it can be held off until landing. */
+  const floatRef = useRef<HTMLDivElement>(null);
+  const splashRef = useRef<HTMLSpanElement>(null);
   const framesRef = useRef<(HTMLElement | null)[]>([]);
   /** Which walk frame is showing, so we only touch the DOM when it changes. */
   const frameShown = useRef(-1);
@@ -418,21 +455,17 @@ export function ScrollTrail({
   const frames = sprite.frames ?? [];
   /* A walker leaves footprints, not vapour. */
   const prints = motion === 'walk';
+  const marks = prints;
   /*
-   * A boat leaves a wake, not a line. A drawn stroke reads as pen on paper —
-   * fine behind a plane, where the reference is a contrail, but water does not
-   * hold an edge. So the sail trail is marks too: rings dropped on the surface
-   * that spread and fade where they were left.
+   * Neither a rolling ball nor a boat leaves anything behind.
+   *
+   * The ball has no real-world equivalent to draw — a line behind it just reads
+   * as the ball dragging a pen. The boat did have one, and it was drawn as
+   * spreading arcs rather than a stroke, but the hull already carries its own
+   * rings: two wakes competing for the same idea, with the trailing one adding
+   * clutter down the length of the page for no gain.
    */
-  const wakeMarks = motion === 'sail';
-  const marks = prints || wakeMarks;
-  /*
-   * A rolling ball leaves nothing. The other three craft each have a real-world
-   * reason for a trail — vapour, a wake, footprints — and a crumpled draft
-   * rolling over a page has no equivalent; a drawn line behind it just reads as
-   * the ball dragging a pen.
-   */
-  const trailless = motion === 'roll';
+  const trailless = motion === 'roll' || motion === 'sail';
   const contentHeight = sprite.contentHeight ?? 96;
   const intro = sprite.intro;
   const outro = sprite.outro;
@@ -442,6 +475,8 @@ export function ScrollTrail({
    * always completes once it starts.
    */
   const dropRef = useRef(0);
+  /** When the craft last touched down, for the impact shake. Null if it has not. */
+  const landedAtRef = useRef<number | null>(null);
   const grow = sprite.grow;
   const rollDiameter = sprite.rollDiameter ?? 56;
   /** Pinned spans that dictate a facing, measured on layout. */
@@ -484,7 +519,7 @@ export function ScrollTrail({
       const headPx = head * total;
       const tailPx = tail * total;
       const window = Math.max(1, headPx - tailPx);
-      const spacing = prints ? STRIDE : WAKE_SPACING;
+      const spacing = STRIDE;
 
       for (let i = 0; i < PRINTS; i += 1) {
         const mark = printsRef.current[i];
@@ -509,46 +544,16 @@ export function ScrollTrail({
         /** 0 at the craft, 1 at the far end of the trail. */
         const age = (headPx - dist) / window;
 
-        if (prints) {
-          // Offset to one side of the centre line; which side alternates with
-          // the stride, so the tracks read as two feet rather than one.
-          const side = stride % 2 === 0 ? 1 : -1;
-          const ox = (-dy / len) * 4.5 * side;
-          const oy = (dx / len) * 4.5 * side;
-          mark.setAttribute(
-            'transform',
-            `translate(${(at.x + ox).toFixed(1)} ${(at.y + oy).toFixed(1)}) rotate(${angle.toFixed(1)})`,
-          );
-          mark.style.opacity = String(0.42 * Math.pow(1 - age, 1.3));
-          continue;
-        }
-
-        /*
-         * A wake arc: half an oval, opening across the path and bowing away
-         * from the boat — the trailing half of a spreading ring, which is the
-         * only half a moving hull actually leaves. A closed ring reads as a
-         * dropped stone; the open arc reads as travel.
-         *
-         * Drawn in the mark's own frame, where +x is the direction of travel,
-         * so the arc runs from one side of the path to the other and bulges
-         * backwards. `sweep-flag: 0` is what puts the bulge behind: from
-         * (0,−w) to (0,w) the clockwise sweep would pass in front of the hull.
-         *
-         * It widens as it ages, and the bow deepens with it. The fade is
-         * steeper than the growth, so an arc thins out as it opens rather than
-         * lingering as a hard curve.
-         */
-        const w = 4 + 26 * Math.pow(age, 1.15);
-        const bow = w * 0.5;
+        // Offset to one side of the centre line; which side alternates with
+        // the stride, so the tracks read as two feet rather than one.
+        const side = stride % 2 === 0 ? 1 : -1;
+        const ox = (-dy / len) * 4.5 * side;
+        const oy = (dx / len) * 4.5 * side;
         mark.setAttribute(
           'transform',
-          `translate(${at.x.toFixed(1)} ${at.y.toFixed(1)}) rotate(${angle.toFixed(1)})`,
+          `translate(${(at.x + ox).toFixed(1)} ${(at.y + oy).toFixed(1)}) rotate(${angle.toFixed(1)})`,
         );
-        mark.setAttribute(
-          'd',
-          `M 0 ${(-w).toFixed(1)} A ${bow.toFixed(1)} ${w.toFixed(1)} 0 0 0 0 ${w.toFixed(1)}`,
-        );
-        mark.style.opacity = String(0.4 * Math.pow(1 - age, 1.7) * Math.min(1, age * 6));
+        mark.style.opacity = String(0.42 * Math.pow(1 - age, 1.3));
       }
     };
 
@@ -611,6 +616,12 @@ export function ScrollTrail({
        */
       /** In the middle of the drop: not on the route, and not yet on water. */
       const airborne = !!intro && dropRef.current > 0 && dropRef.current < 1;
+      /**
+       * Actually on the water. Everything that means "floating" — the wake,
+       * the idle bob — is gated on this, so none of it plays while the craft
+       * is still berthed or still falling.
+       */
+      const afloat = !intro || dropRef.current >= 1;
 
       if (intro && dropRef.current < 1) {
         const t = dropRef.current;
@@ -684,6 +695,25 @@ export function ScrollTrail({
       let orientation: string;
       /** `sail` only: the hull's tilt, which the wake has to cancel out. */
       let rock = 0;
+
+      /*
+       * The impact shake, as a fraction of full violence: 1 at the instant of
+       * contact, 0 once it has rung out. Squared so it collapses fast — a hull
+       * that damped linearly would look like it was bobbing, not recovering.
+       */
+      let impact = 0;
+      if (landedAtRef.current !== null) {
+        const elapsed = (performance.now() - landedAtRef.current) / 1000;
+        if (elapsed < SHAKE_SECONDS) {
+          const remaining = 1 - elapsed / SHAKE_SECONDS;
+          impact = remaining * remaining;
+        }
+      }
+      /** Phase of the judder. Shared by the roll and the lift below. */
+      const impactPhase =
+        landedAtRef.current === null
+          ? 0
+          : ((performance.now() - landedAtRef.current) / 1000) * Math.PI * 2 * SHAKE_HZ;
 
       if (motion === 'walk') {
         /*
@@ -764,10 +794,22 @@ export function ScrollTrail({
         if (pin) flipRef.current = pin.face === 'right';
         else if (!airborne && Math.abs(dx) > 4) flipRef.current = dx > 0;
 
-        // Rock on a slow swell, independent of which way the route curves.
+        // Rock on a slow swell, independent of which way the route curves —
+        // plus, for a fraction of a second after touchdown, the judder of a
+        // hull that has just hit the water hard. The two simply add: the swell
+        // is already there underneath as the impact rings out.
         rock =
-          6 * Math.sin(progress * Math.PI * 2 * 5) + 2 * Math.sin(progress * Math.PI * 2 * 11);
-        orientation = ` rotate(${rock.toFixed(1)}deg)` + (flipRef.current ? ' scaleX(-1)' : '');
+          6 * Math.sin(progress * Math.PI * 2 * 5) +
+          2 * Math.sin(progress * Math.PI * 2 * 11) +
+          SHAKE_DEG * impact * Math.sin(impactPhase);
+
+        // A vertical judder off the same phase but a different multiple, so
+        // the hull is not simply pivoting about a point — it is being thrown.
+        const lift = SHAKE_LIFT * impact * Math.sin(impactPhase * 1.7);
+
+        orientation =
+          ` translateY(${lift.toFixed(1)}px) rotate(${rock.toFixed(1)}deg)` +
+          (flipRef.current ? ' scaleX(-1)' : '');
       } else {
         const ahead = path.getPointAtLength(Math.min(total, here + 2));
         const heading = (Math.atan2(ahead.y - at.y, ahead.x - at.x) * 180) / Math.PI;
@@ -875,7 +917,20 @@ export function ScrollTrail({
          * disturbance in a surface. Fading them to a fifth is what keeps the
          * berth still.
          */
-        wake.style.opacity = airborne ? '0' : String(1 - 0.8 * heroness);
+        wake.style.opacity = afloat ? String(1 - 0.8 * heroness) : '0';
+      }
+
+      /*
+       * The idle float is held off for the same reason. It is the animation
+       * that says "sitting on water", and a boat still in its berth in mid-air
+       * is doing neither — bobbing gently while suspended is what made the
+       * hero read as floating in space rather than waiting to fall.
+       *
+       * Cleared to '' rather than set to a value, so the stylesheet's own
+       * animation resumes ownership instead of being overridden forever.
+       */
+      if (floatRef.current && intro) {
+        floatRef.current.style.animation = afloat ? '' : 'none';
       }
     };
 
@@ -911,10 +966,32 @@ export function ScrollTrail({
       if (intro) {
         const target = head > DROP_TRIGGER ? 1 : 0;
         const rate = dt / (target === 1 ? DROP_SECONDS : RISE_SECONDS);
+        const before = dropRef.current;
         dropRef.current =
           target === 1
             ? Math.min(1, dropRef.current + rate)
             : Math.max(0, dropRef.current - rate);
+
+        // Impact is an event, so it is stamped on the frame the fall completes
+        // rather than derived from the drop position — which would restart the
+        // shake every frame the craft sat at 1.
+        if (before < 1 && dropRef.current >= 1) {
+          landedAtRef.current = now;
+          /*
+           * Restart the splash. Re-adding the class is not enough on its own —
+           * the browser coalesces the remove and the add into no change at all
+           * — so the layout read between them is load-bearing: it forces the
+           * style recalculation that makes this two events rather than none.
+           */
+          const splash = splashRef.current;
+          if (splash) {
+            splash.classList.remove('is-splashing');
+            void splash.offsetWidth;
+            splash.classList.add('is-splashing');
+          }
+        }
+        // Lifting off again clears it, so climbing home does not shake.
+        if (dropRef.current < 1) landedAtRef.current = null;
       }
 
       tail += (head - tail) * (1 - Math.exp(-dt / CATCH_UP_TAU));
@@ -934,8 +1011,12 @@ export function ScrollTrail({
       // A drop in flight keeps the loop alive on its own account: the reader
       // may well have stopped scrolling the moment they triggered it.
       const dropping = !!intro && dropRef.current > 0 && dropRef.current < 1;
+      // The shake outlives the fall, and the reader has almost certainly
+      // stopped scrolling by the time it starts.
+      const ringing =
+        landedAtRef.current !== null && now - landedAtRef.current < SHAKE_SECONDS * 1000;
 
-      if (Math.abs(head - tail) > 0.0008 || isMoving() || dropping) {
+      if (Math.abs(head - tail) > 0.0008 || isMoving() || dropping || ringing) {
         frame.current = requestAnimationFrame(step);
       } else {
         // Fully caught up: hide the segments outright rather than painting a
@@ -1072,35 +1153,21 @@ export function ScrollTrail({
               fill="none"
               stroke="none"
             />
-            {/* A footprint is a pressed mark, so it is a filled ellipse; a
-                wake arc is the leading edge of a spreading disturbance, so it
-                is an open stroked curve whose `d` is set per frame. */}
-            {trailless ? null : Array.from({ length: PRINTS }, (_, i) =>
-              wakeMarks ? (
-                <path
-                  key={i}
-                  ref={(el) => {
-                    printsRef.current[i] = el;
-                  }}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1}
-                  strokeLinecap="round"
-                  opacity={0}
-                />
-              ) : (
-                <ellipse
-                  key={i}
-                  ref={(el) => {
-                    printsRef.current[i] = el;
-                  }}
-                  rx="5.6"
-                  ry="3"
-                  fill="currentColor"
-                  opacity={0}
-                />
-              ),
-            )}
+            {/* A footprint is a pressed mark, so it is a filled ellipse. */}
+            {trailless
+              ? null
+              : Array.from({ length: PRINTS }, (_, i) => (
+                  <ellipse
+                    key={i}
+                    ref={(el) => {
+                      printsRef.current[i] = el;
+                    }}
+                    rx="5.6"
+                    ry="3"
+                    fill="currentColor"
+                    opacity={0}
+                  />
+                ))}
           </>
         ) : (
           Array.from({ length: SEGMENTS }, (_, i) => (
@@ -1128,7 +1195,12 @@ export function ScrollTrail({
          * rotation, so the bob stays vertical on screen rather than tilting
          * with the plane, and inside the translation, so it rides along.
          */}
-        <div className={motion === 'fly' ? 'craft-float' : motion === 'sail' ? 'boat-bob' : undefined}>
+        <div
+          ref={floatRef}
+          className={
+            motion === 'fly' ? 'craft-float' : motion === 'sail' ? 'boat-bob' : undefined
+          }
+        >
           <div ref={spriteRef} className="will-change-transform">
             {/*
              * The wake. Rings sit at the hull's waterline and run on their own
@@ -1157,6 +1229,36 @@ export function ScrollTrail({
                 <span className="boat-ripple" />
                 <span className="boat-ripple" style={{ animationDelay: '1.2s' }} />
                 <span className="boat-ripple" style={{ animationDelay: '2.4s' }} />
+              </span>
+            ) : null}
+
+            {/*
+             * The landing splash. A one-shot, so it lives outside the wake —
+             * the wake's opacity is driven every frame and would fight it —
+             * and it is triggered by a class the component re-applies on
+             * impact rather than by anything scroll-derived.
+             */}
+            {motion === 'sail' && intro ? (
+              <span
+                ref={splashRef}
+                aria-hidden="true"
+                className="splash text-on-page-muted"
+                style={{ '--wake-k': 1 / intro.scale } as CSSProperties}
+              >
+                {SPLASH_DROPS.map((d) => (
+                  <span
+                    key={`${d.dx},${d.dy}`}
+                    className="splash-drop"
+                    style={
+                      {
+                        '--dx': `${d.dx}rem`,
+                        '--dy': `${d.dy}rem`,
+                        animationDelay: `${d.delay}s`,
+                      } as CSSProperties
+                    }
+                  />
+                ))}
+                <span className="splash-ring" />
               </span>
             ) : null}
 

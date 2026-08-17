@@ -87,11 +87,11 @@ export default function WritingIndex() {
             {/* The sheet the rolled-up draft below started life as. Slightly
                 off-square so it reads as pinned up rather than placed. */}
             <Image
-              src="/icons/paper-writing.png"
+              src="/icons/paper-writing-2.png"
               alt=""
               aria-hidden="true"
-              width={991}
-              height={778}
+              width={922}
+              height={614}
               priority
               className="pointer-events-none hidden h-auto w-[clamp(22rem,35vw,38rem)] rotate-2 select-none drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)] lg:block"
             />

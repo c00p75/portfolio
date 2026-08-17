@@ -1,17 +1,4 @@
-import { ScrollTrail, type Pin, type Waypoint } from '@/components/ui/ScrollTrail';
-
-/**
- * "Also worth a look" is a dense, left-aligned list — the one section on the
- * page where a boat crossing the column is a distraction rather than a
- * decoration. The route holds to the right margin for its whole measured
- * height instead.
- */
-/*
- * Facing left for the held run, since a pinned stretch has no direction of
- * travel to read a facing from. Left has the boat looking in at the list rather
- * than off the edge of the page.
- */
-const PINS: Pin[] = [{ id: 'more-projects', x: 0.84, face: 'left' }];
+import { ScrollTrail, type Waypoint } from '@/components/ui/ScrollTrail';
 
 /**
  * The work page route.
@@ -36,23 +23,48 @@ const ROUTE: Waypoint[] = [
   { x: 0.744, y: 0.13 },
   { x: 0.744, y: 0.18 },
   /*
-   * Only now does it start to sail — and it sails, rather than tacks. The
-   * earlier route crossed the page five times between x 0.2 and 0.82, which at
-   * this width reads as a zigzag: each crossing is a decision, and a drifting
-   * boat does not make five of them.
+   * Only now does it start to sail — and it tacks: full width left, full width
+   * right, repeatedly.
    *
-   * This is one long sweep out to the left and back, with the swings both
-   * fewer and shallower — roughly half the old lateral range. The vertical
-   * spacing is wider too, so what lateral movement remains is spread over more
-   * page and stays gentle.
+   * The reason is the facing. A boat never rotates to its heading — it only
+   * mirrors, left or right — so the *only* heading it can honestly express is a
+   * horizontal one. On a steeply descending leg the hull points sideways while
+   * the motion is mostly downward, and the two visibly disagree. Keeping each
+   * leg shallow makes horizontal the dominant component of every movement, so
+   * the direction it faces is the direction it is going.
+   *
+   * That is what sets the vertical spacing: each crossing drops only 0.10 of
+   * the page while covering better than half its width, which at this page's
+   * proportions is roughly 30° off horizontal. Fewer, longer legs would be
+   * calmer but steeper — and steeper is precisely the thing that breaks.
+   *
+   * The two ends are not symmetrical. The far left stops around 0.38, short of
+   * the margin, because that side is where every heading, lead and body
+   * paragraph on the page begins and a boat out there sits on the text. The
+   * right has nothing to collide with, so it runs out to the edge. The
+   * amplitudes vary by a couple of points either side to keep the tacking off
+   * a metronome.
    */
-  { x: 0.68, y: 0.28 },
-  { x: 0.55, y: 0.38 },
-  { x: 0.42, y: 0.5 },
-  { x: 0.38, y: 0.62 },
-  { x: 0.46, y: 0.74 },
-  { x: 0.58, y: 0.86 },
-  { x: 0.64, y: 1 },
+  { x: 0.38, y: 0.3 },
+  { x: 0.92, y: 0.4 },
+  { x: 0.36, y: 0.5 },
+  { x: 0.9, y: 0.6 },
+  { x: 0.4, y: 0.7 },
+  { x: 0.92, y: 0.8 },
+  /*
+   * The last two waypoints break the tacking, because the outro is growing the
+   * boat back to hero size across exactly this stretch. At 4.3× it is no longer
+   * a small craft that can pass anywhere: it is 30rem wide, and out at the
+   * right margin it covers the Contact link in the closing rail, while out at
+   * the left it would cover the rail's label.
+   *
+   * So the run finishes in the open span between the two — pushed as far right
+   * as that span allows. At 30rem wide the hull reaches roughly 8% of the page
+   * either side of its centre, so 0.74 brings its bow up close to the Contact
+   * link without crossing it, rather than parking mid-page with an obvious gap.
+   */
+  { x: 0.7, y: 0.9 },
+  { x: 0.74, y: 1 },
 ];
 
 export function SailPath() {
@@ -60,7 +72,6 @@ export function SailPath() {
     <ScrollTrail
       route={ROUTE}
       motion="sail"
-      pins={PINS}
       sprite={{
         src: '/icons/paper-boat.png',
         width: 2800,

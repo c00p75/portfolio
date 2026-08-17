@@ -444,6 +444,90 @@
     }
   }
 
+  /* The splash thrown up when the boat lands.
+     Anchored at the waterline inside the sprite, so it inherits the hull's
+     scale exactly as the wake does — and sized in the same travelling units,
+     divided up by --wake-k.
+     Nothing runs until `.is-splashing` is set: the component adds it on the
+     frame of impact and the class is re-applied from scratch each time, which
+     is what restarts a one-shot animation. */
+  .splash {
+    position: absolute;
+    top: 62%;
+    left: 50%;
+    width: 0;
+    height: 0;
+  }
+
+  .splash > * {
+    animation: none;
+  }
+
+  .splash-drop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(0.3rem / var(--wake-k, 1));
+    height: calc(0.3rem / var(--wake-k, 1));
+    margin-top: calc(-0.15rem / var(--wake-k, 1));
+    margin-left: calc(-0.15rem / var(--wake-k, 1));
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+  }
+
+  /* Thrown out and up, then pulled back down past the waterline — the arc is
+     in the keyframes rather than in an easing curve, so the rise and the fall
+     can have different shapes the way a real one does. */
+  .splash.is-splashing .splash-drop {
+    animation: splash-drop 0.62s cubic-bezier(0.2, 0.7, 0.5, 1) both;
+  }
+
+  @keyframes splash-drop {
+    0% {
+      transform: translate(0, 0) scale(1);
+      opacity: 0.75;
+    }
+    45% {
+      transform: translate(calc(var(--dx) * 0.62), var(--dy)) scale(0.9);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translate(var(--dx), calc(var(--dy) * -0.35)) scale(0.35);
+      opacity: 0;
+    }
+  }
+
+  /* One hard ring off the point of impact. Faster and stronger than the idle
+     wake rings, and it only ever plays once. */
+  .splash-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(6.6rem / var(--wake-k, 1));
+    height: calc(1.5rem / var(--wake-k, 1));
+    margin-top: calc(-0.75rem / var(--wake-k, 1));
+    margin-left: calc(-3.3rem / var(--wake-k, 1));
+    border: calc(1.5px / var(--wake-k, 1)) solid currentColor;
+    border-radius: 50%;
+    opacity: 0;
+  }
+
+  .splash.is-splashing .splash-ring {
+    animation: splash-ring 0.72s ease-out both;
+  }
+
+  @keyframes splash-ring {
+    0% {
+      transform: scale(0.2);
+      opacity: 0.85;
+    }
+    100% {
+      transform: scale(2.1);
+      opacity: 0;
+    }
+  }
+
   /* The boat riding on the swell. Like the plane's hover this runs on its own
      clock rather than on scroll, because water does not stop when the reader
      does — the boat is at its most obviously afloat when nothing else moves.

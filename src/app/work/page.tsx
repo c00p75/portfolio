@@ -106,11 +106,8 @@ export default function WorkIndex() {
       </section>
 
       {/* More projects — secondary, denser */}
-      {/* `id="more-projects"` is the boat's, not the heading's: the trail holds
-          to the right edge for this section's measured span so it is not
-          crossing the left-aligned list while it is being read. */}
       {more.length > 0 ? (
-        <section id="more-projects" className="px-edge pt-6 sm:pt-10" aria-labelledby="more-work">
+        <section className="px-edge pt-6 sm:pt-10" aria-labelledby="more-work">
           <InkCard className="px-card py-14 sm:py-20">
             <SectionHeading
               index="02"
