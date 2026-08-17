@@ -2,6 +2,10 @@ import BlogPage from "@/components/blog/blog_page/BlogPage";
 import {allBlogs} from "/.contentlayer/generated";
 import '../globals.css';
 import siteMetadata from "@/utils/siteMetaData";
+// next/image resolves a string src against the server root, and this
+// deployment is served under a prefix — so the prefix has to be in the
+// src itself or the optimiser is handed a path that does not exist.
+import { asset } from '@/constants/basePath';
 
 export async function generateStaticParams() {
   return allBlogs.map((blog) => ({slug: blog._raw.flattenedPath}));
@@ -14,7 +18,7 @@ export async function generateMetadata({ params }) {
   let imageList = [siteMetadata.socialBanner]
   if(blog.image){
     imageList = typeof(blog.image.filePath) === "string" ?
-      [siteMetadata.siteUrl + blog.image.filePath.replace("../public","")] :
+      [siteMetadata.siteUrl + asset(blog.image.filePath.replace("../public", ""))] :
       blog.image;
   }
 

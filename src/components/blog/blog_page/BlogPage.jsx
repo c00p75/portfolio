@@ -8,6 +8,9 @@ import { useContext } from "react";
 import { ThemeContext } from "@/app/theme-provider";
 import "./blogPage.css";
 import RecentPosts from '../recent_posts/RecentPosts';
+// The cover goes into a CSS url() rather than through next/image, so the
+// deployment's prefix has to be added by hand.
+import { asset } from '@/constants/basePath';
 
 export default function BlogPage({ blog }) {
   const { darkMode } = useContext(ThemeContext);
@@ -28,7 +31,7 @@ export default function BlogPage({ blog }) {
     <section style={{opacity: "1"}} className="flex-center flex-col" id={darkMode ? 'dark' : 'light'}>
       <span className="current-section" id="current-section-blog" />
       <article id="full-blog">
-        <div className="cover-blog-container position-relative d-flex flex-center overflow-hidden" id="blog-details" style={{ backgroundImage: `url(${blog.image.filePath.replace("../public", "")})` }}>
+        <div className="cover-blog-container position-relative d-flex flex-center overflow-hidden" id="blog-details" style={{ backgroundImage: `url(${asset(blog.image.filePath.replace("../public", ""))})` }}>
           <div className="cover-blog-overlay" />
           <div className="cover-blog-link position-absolute text-light z-1 flex-center flex-column text-center" style={{height:"fit-content"}}>
             <h1 className="text-capitalize fw-bolder flex-center">

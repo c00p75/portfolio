@@ -7,6 +7,8 @@ import Image from 'next/image';
 import me from 'public/images/me.jpg';
 import colorSharp2 from 'public/images/color-sharp2.png'
 import { ThemeContext } from '@/app/theme-provider';
+// A plain anchor to a file in public/, so Next cannot apply basePath for us.
+import { asset } from '@/constants/basePath';
 
 const About = () => {
   const { darkMode } = useContext(ThemeContext);
@@ -35,7 +37,7 @@ const About = () => {
               I&apos;m great with documentation, and proficient in a range
               of modern technologies including Javacsript, Ruby, Python, and SQL.
             </p>
-            <a href="/docs/Resume.pdf" target="_blank" rel="noreferrer" className="mt-4 btn btn-info">
+            <a href={asset("/docs/Resume.pdf")} target="_blank" rel="noreferrer" className="mt-4 btn btn-info">
               Download my resume
             </a>
           </Col>

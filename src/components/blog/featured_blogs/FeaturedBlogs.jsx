@@ -3,6 +3,10 @@ import "./featuredBlogs.css";
 import Image from "next/image";
 import { format } from "date-fns";
 import { slug } from "github-slugger";
+// next/image resolves a string src against the server root, and this
+// deployment is served under a prefix — so the prefix has to be in the
+// src itself or the optimiser is handed a path that does not exist.
+import { asset } from '@/constants/basePath';
 
 const FeaturedBlogs = ({blogs}) => {
   const firstFeaturedBlog = blogs.find((blog) => blog.title === "3 pieces of advice I would give someone who’s just beginning their journey with software development");
@@ -26,7 +30,7 @@ const FeaturedBlogs = ({blogs}) => {
               <span className="date-text mt-2">{format(new Date(firstFeaturedBlog.publishedAt), "MMM dd, yyyy")}</span>
             </Link>
             <Image
-              src={firstFeaturedBlog.image.filePath.replace("../public", "")}
+              src={asset(firstFeaturedBlog.image.filePath.replace("../public", ""))}
               alt={firstFeaturedBlog.title}
               placeholder="blur"
               blurDataURL={firstFeaturedBlog.image.blurhashDataUrl}
@@ -41,7 +45,7 @@ const FeaturedBlogs = ({blogs}) => {
           <article className="featured-blog row position-relative d-flex flex-center overflow-hidden">
             <Link href={`blogs/${secondFeaturedBlog._raw.flattenedPath}`} className="text-light d-flex">
               <Image
-                src={secondFeaturedBlog.image.filePath.replace("../public", "")}
+                src={asset(secondFeaturedBlog.image.filePath.replace("../public", ""))}
                 alt={secondFeaturedBlog.title}
                 placeholder="blur"
                 blurDataURL={secondFeaturedBlog.image.blurhashDataUrl}
@@ -67,7 +71,7 @@ const FeaturedBlogs = ({blogs}) => {
           <article className="featured-blog row position-relative d-flex flex-center overflow-hidden">
             <Link href={`blogs/${thirdFeaturedBlog._raw.flattenedPath}`} className="text-light d-flex">
               <Image
-                src={thirdFeaturedBlog.image.filePath.replace("../public", "")}
+                src={asset(thirdFeaturedBlog.image.filePath.replace("../public", ""))}
                 alt={thirdFeaturedBlog.title}
                 placeholder="blur"
                 blurDataURL={thirdFeaturedBlog.image.blurhashDataUrl}

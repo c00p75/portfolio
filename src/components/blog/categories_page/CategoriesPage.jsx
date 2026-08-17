@@ -8,6 +8,10 @@ import {allBlogs} from "/.contentlayer/generated";
 import GithubSlugger, { slug } from 'github-slugger';
 import "./categoriesPage.css";
 import { ThemeContext } from '@/app/theme-provider';
+// next/image resolves a string src against the server root, and this
+// deployment is served under a prefix — so the prefix has to be in the
+// src itself or the optimiser is handed a path that does not exist.
+import { asset } from '@/constants/basePath';
 
 export async function generateStaticParams() {
   const categories = [];
@@ -62,7 +66,7 @@ const CategoriesPage = ({category}) => {
               <Link href={`/blogs/${slug(blog._raw.flattenedPath)}`} className="blog-post text-light d-flex flex-col">
                 <div className="blog-img-container">
                   <Image
-                    src={blog.image.filePath.replace("../public", "")}
+                    src={asset(blog.image.filePath.replace("../public", ""))}
                     alt={blog.title}
                     placeholder="blur"
                     blurDataURL={blog.image.blurhashDataUrl}

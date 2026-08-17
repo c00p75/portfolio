@@ -15,19 +15,19 @@ body {
 
 @font-face {
   font-family: 'Centra', sans-serif;
-  src: url('/public/font/centra-font-family-1687149871-0/CentraNo2-Bold-BF646c26904e7ce.ttf');
+  src: url('../../public/font/centra-font-family-1687149871-0/CentraNo2-Bold-BF646c26904e7ce.ttf');
   font-weight: 700;
 }
 
 @font-face {
   font-family: 'Centra', sans-serif;
-  src: url('/public/font/centra-font-family-1687149871-0/CentraNo2-Medium-BF646c26901ce01.ttf');
+  src: url('../../public/font/centra-font-family-1687149871-0/CentraNo2-Medium-BF646c26901ce01.ttf');
   font-weight: 500;
 }
 
 @font-face {
   font-family: 'Centra', sans-serif;
-  src: url('/public/font/centra-font-family-1687149871-0/CentraNo2-Book-BF646c2690591ba.ttf');
+  src: url('../../public/font/centra-font-family-1687149871-0/CentraNo2-Book-BF646c2690591ba.ttf');
   font-weight: 400;
 }
 
