@@ -41,3 +41,7 @@ yarn-error.log*
 # The retrieval index is committed on purpose: it is a build artifact that must
 # version and roll back with the content it describes, and committing it means a
 # deploy never needs an embedding API key. Regenerate with `npm run ingest`.
+# Added by `vercel link`: the OIDC token it writes, and the project link.
+# Narrower than the `.env*` it suggests, so .env.example stays tracked.
+.env*.local
+.vercel
