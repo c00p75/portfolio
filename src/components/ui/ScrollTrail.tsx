@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/cn';
 
@@ -151,6 +151,22 @@ const DROP_SECONDS = 0.42;
 
 /** Seconds to return to the berth when the reader scrolls back up. */
 const RISE_SECONDS = 0.34;
+
+/**
+ * Where the craft rests when the reader has asked for reduced motion.
+ *
+ * The start of the route, not the end. Parking at the end is the loudest static
+ * state there is — a craft that has visibly finished a journey the reader never
+ * saw it take, sitting at the foot of a page whose trail is fully drawn. At the
+ * start it simply reads as waiting.
+ *
+ * A hair above zero rather than zero: the travel logic hides the craft entirely
+ * below `0.002` when there is no `intro` to berth it, and a hidden craft is a
+ * worse answer than a still one.
+ */
+const REDUCED_REST = 0.02;
+
+const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
 
 /**
  * The impact. A hull hitting water does not settle in one motion — it slaps,
@@ -482,8 +498,24 @@ export function ScrollTrail({
   /** Pinned spans that dictate a facing, measured on layout. */
   const pinSpansRef = useRef<PinSpan[]>([]);
 
+  /**
+   * Held in state rather than read once inside the animation effect, so that a
+   * reader who changes the setting gets the change without a reload — and so
+   * the effect below rebuilds around it instead of having decided at mount.
+   */
+  const [reducedMotion, setReducedMotion] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(REDUCED_QUERY).matches,
+  );
+
   useEffect(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const query = window.matchMedia(REDUCED_QUERY);
+    const onChange = () => setReducedMotion(query.matches);
+    onChange();
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
 
     /** Rebuild the path in pixels. Called on mount and on every resize. */
     const layout = () => {
@@ -1050,16 +1082,18 @@ export function ScrollTrail({
       nudge();
     };
 
-    layout();
-
-    if (reduced.matches) {
-      // No journey. The whole route is shown at rest, craft parked at the end
-      // — which means the drop is over, not un-started.
+    /**
+     * The reduced-motion pose: no journey, no listeners, craft waiting at the
+     * head of its route with nothing drawn behind it. The drop counts as over
+     * rather than un-started, so a hero craft sits berthed instead of hanging.
+     */
+    const rest = () => {
       dropRef.current = 1;
-      paintTrail(1, 0);
-      positionCraft(1, false);
-      return;
-    }
+      paintTrail(REDUCED_REST, 0);
+      positionCraft(REDUCED_REST, false);
+    };
+
+    layout();
 
     let scrollFrame = 0;
 
@@ -1096,32 +1130,79 @@ export function ScrollTrail({
     const onScroll = () => {
       if (!scrollFrame) scrollFrame = requestAnimationFrame(measure);
     };
-    const onResize = () => {
+    /*
+     * Everything here is derived from the page's height, and the page is rarely
+     * its final height when this effect first runs: web fonts swap, images
+     * without intrinsic dimensions reserve no space, and sections hydrate late.
+     * Measured too early, `rect.height` is short, `endAt` collapses onto
+     * `startAt`, and progress clamps to 1 — the craft lands at the foot of the
+     * page before the reader has scrolled at all. Which of those races is won
+     * depends on the browser and on whether the assets are cached, so the same
+     * build animates in one browser and sits parked in the next.
+     *
+     * So: re-measure on anything that can change the height, not on `resize`
+     * alone.
+     */
+    const relayout = () => {
       layout();
-      onScroll();
+      if (reducedMotion) rest();
+      else onScroll();
     };
 
-    measure();
+    if (reducedMotion) rest();
+    else {
+      measure();
 
-    /*
-     * A page restored mid-scroll — a reload, or a back navigation — should
-     * find the craft already sailing. Without this the drop would play from
-     * the berth on arrival, at a point where the berth is far off screen.
-     */
-    if (intro && head > DROP_TRIGGER) {
-      dropRef.current = 1;
-      positionCraft(head, false);
+      /*
+       * A page restored mid-scroll — a reload, or a back navigation — should
+       * find the craft already sailing. Without this the drop would play from
+       * the berth on arrival, at a point where the berth is far off screen.
+       */
+      if (intro && head > DROP_TRIGGER) {
+        dropRef.current = 1;
+        positionCraft(head, false);
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
+    window.addEventListener('resize', relayout);
+    window.addEventListener('load', relayout);
+    // The route is measured against the whole document, so the body's height is
+    // what matters — the root only tracks it because it is stretched to fit.
+    const observer =
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(relayout);
+    observer?.observe(document.body);
+    if (rootRef.current) observer?.observe(rootRef.current);
+    // Not covered by the observer: a font swap changes text metrics, and the
+    // reflow may leave the body's own height untouched while moving everything
+    // the route is pinned to.
+    let live = true;
+    document.fonts?.ready.then(() => {
+      if (live) relayout();
+    });
+
     return () => {
+      live = false;
       if (frame.current) cancelAnimationFrame(frame.current);
       if (scrollFrame) cancelAnimationFrame(scrollFrame);
+      observer?.disconnect();
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', relayout);
+      window.removeEventListener('load', relayout);
     };
-  }, [route, motion, nose, intro, outro, grow, rollDiameter, trailless, pins]);
+  }, [
+    route,
+    motion,
+    nose,
+    intro,
+    outro,
+    grow,
+    rollDiameter,
+    trailless,
+    pins,
+    reducedMotion,
+  ]);
 
   return (
     <div

@@ -27,7 +27,7 @@ const capabilities = [
     round: true,
   },
   {
-    label: 'AI Integra—tion',
+    label: 'AI Integration',
     caption: 'Retrieval · prompts · evals',
     accent: 'pink',
     rotate: 5,

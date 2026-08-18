@@ -264,17 +264,14 @@ export default function AboutPage() {
               </h1>
 
               <p className="text-on-ink mt-8 max-w-2xl text-lg leading-relaxed text-pretty">
-                CTO at Ballo Innovations and software engineer at Hytel. I design systems end to
-                end — then build them with the team — especially where product decisions meet
-                payments, messaging, offline mobile, and AI retrieval.
+                I design systems end to end, then build them with the team, especially where product decisions meet
+                payments, AI features, and core product logic.
               </p>
 
               <p className="text-on-ink mt-5 max-w-2xl text-base leading-relaxed text-pretty">
                 I came to software via Library &amp; Information Science and Demography, then
                 trained as a full-stack developer. Organising information so it can be found again
-                turned out to be useful preparation for retrieval architecture. In the markets I
-                work in, mobile money and SMS are how people actually pay and get notified — that
-                shapes failure and reconciliation more than any framework has.
+                turned out to be useful preparation for retrieval architecture. That focus on data structure and system constraints shapes how I design for failure, scale, and recovery far more than popular frameworks do.
               </p>
 
               <ul className="mt-8 flex flex-wrap gap-2">
