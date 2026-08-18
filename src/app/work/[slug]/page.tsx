@@ -5,14 +5,13 @@ import { adrsByProject, allProjects, formatDate, projectBySlug } from '@/lib/con
 import { MDXContent } from '@/components/mdx/MDXContent';
 import { Blueprint } from '@/components/blueprints';
 import { StatusPill } from '@/components/work/ProjectCard';
-import { ProjectMedia } from '@/components/work/ProjectMedia';
+import { ProjectHeroCover, ProjectMedia } from '@/components/work/ProjectMedia';
 import { MetricsStrip, StackTags } from '@/components/adr/sections';
 import { StatusPill as AdrStatusPill } from '@/components/adr/AdrCard';
 import { EdgeRail, InkCard, SectionHeading } from '@/components/ui/Frame';
 import { ArrowLink } from '@/components/ui/ArrowLink';
 import { accentText, Tag } from '@/components/ui/Sticker';
 import { cn } from '@/lib/cn';
-import Image from 'next/image';
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -75,17 +74,11 @@ export default async function ProjectPage({ params }: Params) {
           </p>
 
           {project.cover ? (
-            <div className="border-ink-line mt-10 overflow-hidden rounded-panel border">
-              <Image
-                src={project.cover.src}
-                alt={`${project.title} interface`}
-                width={project.cover.width ?? 1600}
-                height={project.cover.height ?? 1000}
-                priority
-                className="h-auto w-full object-cover object-top"
-                sizes="(max-width: 1100px) 100vw, 1100px"
-              />
-            </div>
+            <ProjectHeroCover
+              cover={project.cover}
+              title={project.title}
+              className="mt-10"
+            />
           ) : null}
 
           {project.statusNote ? (
