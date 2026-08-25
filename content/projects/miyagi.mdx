@@ -13,7 +13,7 @@ role: >-
   cross-platform speech pipeline, and the packaging that ships it.
 period: '2026'
 status: prototype
-statusNote: 'Source published and installable from the repository. Progress state is in-memory and resets with the client.'
+statusNote: 'Published to npm as miyagi-mcp and installable with npx. No users yet, so the gamification is still an untested hypothesis.'
 order: 9
 featured: false
 draft: false
@@ -63,9 +63,9 @@ metrics:
   - label: Runtime dependencies
     value: '2'
     basis: >-
-      The MCP SDK and zod, per package.json. 25.7 kB packed and 90.4 kB unpacked,
-      from `npm pack` output. Small enough that reading the whole server before
-      you trust it is a realistic ask.
+      The MCP SDK and zod, per package.json. 31.7 kB packed and 110.7 kB unpacked,
+      from the published `npm pack` output. Small enough that reading the whole
+      server before you trust it is a realistic ask.
     direction: down-is-good
   - label: Bound on a single command
     value: 60 s / 4 MB
@@ -73,7 +73,17 @@ metrics:
       Wall-clock timeout and output buffer cap passed to every exec call, so a hung
       or runaway command degrades into a diagnostic instead of a wedged session.
     direction: down-is-good
+  - label: Tests guarding the danger screen
+    value: '16'
+    basis: >-
+      Cases on node:test with no framework added, over the pattern screen, the
+      speech sanitiser, the title ladder and every way the saved profile can be
+      malformed. CI also drives a real stdio handshake on Node 18, 20 and 22.
+    direction: up-is-good
 links:
+  - label: Install from npm
+    href: https://www.npmjs.com/package/miyagi-mcp
+    kind: live
   - label: Source
     href: https://github.com/c00p75/miyagi
     kind: repo
@@ -113,6 +123,15 @@ never reads raw stdout aloud, drains through a FIFO queue so lines can't overlap
 and probes for a working engine before calling one. A missing `spd-say` on a
 Linux box degrades to silence instead of taking the server down mid-lesson.
 
+Progress is the other place that rule shows up. XP, streaks and roadmap position
+are written to a file on every change that earns them, and the file is read back
+as untrusted input: it's hand-editable, a crash can truncate it, and a future
+version of the server may have written it. Anything unparseable is discarded for
+a fresh profile rather than raised, out-of-range values are clamped instead of
+rejected, and level is recomputed from XP rather than read, so a file claiming
+level 99 at 40 XP gets corrected. Writes land in a temp file and are renamed, so
+an interrupted write costs the last change and not the profile.
+
 ## Where the boundary actually is
 
 **A denylist is a backstop, not a sandbox.** The nine patterns catch nine named
@@ -130,6 +149,7 @@ which of those two situations you're in is most of the design.
 
 **The numbers above are structural, not operational.** They're properties of the
 source that a reader can check by opening it, which is the kind of claim I'd
-rather make than a usage statistic. The open question is whether XP and streaks
-actually hold someone to a roadmap. That's a product hypothesis, and persisting
-progress across sessions is the change that would let me test it.
+rather make than a usage statistic. Whether XP and streaks actually hold someone
+to a roadmap is still an open question, and not one the code can answer. Progress
+now survives a restart, which was the prerequisite for asking it at all; what is
+missing is people.
