@@ -91,7 +91,7 @@ function adrPreamble(adr: AdrDoc): string {
   const metrics = adr.metrics.map((m) => `Metric ${m.label}: ${m.value} (${m.basis})`).join('\n');
 
   return [
-    `${adr.ref} — ${adr.title}. Domain: ${adr.domain}.`,
+    `${adr.ref}: ${adr.title}. Domain: ${adr.domain}.`,
     adr.summary,
     `Context: ${adr.context}`,
     options,
@@ -114,7 +114,7 @@ function projectPreamble(p: ProjectDoc): string {
   const metrics = p.metrics.map((m) => `Metric ${m.label}: ${m.value} (${m.basis})`).join('\n');
 
   return [
-    `${p.title} — ${p.tagline}. Built for ${p.client}. Status: ${p.status}.`,
+    `${p.title}: ${p.tagline}. Built for ${p.client}. Status: ${p.status}.`,
     p.statusNote,
     p.summary,
     `My role: ${p.role} (${p.period})`,
@@ -161,7 +161,7 @@ async function main() {
       ...chunkDocument({
         id: `adr:${adr.slug}`,
         url: adr.url,
-        title: `${adr.ref} — ${adr.title}`,
+        title: `${adr.ref}: ${adr.title}`,
         kind: 'adr',
         raw: adr.raw,
         preamble: adrPreamble(adr),

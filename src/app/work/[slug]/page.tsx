@@ -126,6 +126,16 @@ export default async function ProjectPage({ params }: Params) {
         </InkCard>
       </div>
 
+      {/* ------------------------------ Long form --------------------------- */}
+      <section className="px-edge pt-6 sm:pt-10">
+        <InkCard className="px-card py-14 sm:py-20">
+          <SectionHeading eyebrow="Write-up" title="The longer version" />
+          <div className="mt-10">
+            <MDXContent code={project.body} />
+          </div>
+        </InkCard>
+      </section>
+
       {/* ------------------------------ Media -------------------------------- */}
       {hasMedia ? (
         <section className="px-edge pt-6 sm:pt-10" aria-labelledby="project-media">
@@ -134,7 +144,7 @@ export default async function ProjectPage({ params }: Params) {
               index={nextIndex()}
               eyebrow="Look & feel"
               title={<span id="project-media">Screens and demos</span>}
-              lead="What it looks like in use — not just what it was designed to do."
+              lead="What it looks like in use, not just what it was designed to do."
             />
             <div className="mt-12">
               <ProjectMedia video={project.video} gallery={project.gallery ?? []} />
@@ -200,16 +210,6 @@ export default async function ProjectPage({ params }: Params) {
           </InkCard>
         </section>
       ) : null}
-
-      {/* ------------------------------ Long form --------------------------- */}
-      <section className="px-edge pt-6 sm:pt-10">
-        <InkCard className="px-card py-14 sm:py-20">
-          <SectionHeading eyebrow="Write-up" title="The longer version" />
-          <div className="mt-10">
-            <MDXContent code={project.body} />
-          </div>
-        </InkCard>
-      </section>
 
       {/* ----------------------------- Hard calls --------------------------- */}
       {/* Where the decision records live now: as the evidence behind a specific

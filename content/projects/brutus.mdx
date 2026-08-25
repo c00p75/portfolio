@@ -4,9 +4,9 @@ tagline: One AI service for a whole product suite, behind ports rather than SDK 
 summary: >-
   A centralised AI hub serving the products around it: marketing copy, WhatsApp
   and SMS template mapping, sender-ID compliance, and fraud and phishing scanning.
-  Built as a modular monolith on hexagonal architecture so the model provider is an
-  implementation detail rather than something spread through every codebase that
-  wants to generate text.
+  Built as a modular monolith on hexagonal architecture, so the model provider
+  stays an implementation detail instead of something smeared across every
+  codebase that wants to generate text.
 client: Ballo Innovations
 role: Architecture and implementation.
 period: '2026 — present'
@@ -32,8 +32,8 @@ highlights:
   - >-
     The alternative was every product calling a model SDK directly. That spreads
     prompt logic, provider credentials, cost accounting and safety rules across
-    four codebases, and guarantees they drift. One hub behind a port means a
-    provider change, a prompt fix or a new guardrail lands in one place.
+    four codebases, and guarantees they drift apart. One hub behind a port means a
+    provider change, a prompt fix or a new guardrail lands in exactly one place.
   - >-
     Provider selection is explicit routing rather than a hardcoded client, for the
     same reason the retrieval demo on this site ranks providers: the cheapest
@@ -45,9 +45,9 @@ highlights:
     pay for the rare one.
   - >-
     Generation is grounded through a retrieval layer over company profiles, brand
-    documents and past campaigns, because the failure mode that matters for
-    marketing copy is not a clumsy sentence — it is a confidently invented product
-    claim going out over SMS to a real customer list.
+    documents and past campaigns. The failure mode that matters for marketing copy
+    was never a clumsy sentence. It's a confidently invented product claim going
+    out over SMS to a real customer list.
 metrics:
   - label: Task types exposed
     value: '6'
@@ -66,7 +66,8 @@ metrics:
     value: '0'
     basis: >-
       Structural, and the point of the design: products call this service, not a
-      model provider. Verifiable by grepping the consumers for provider SDKs.
+      model provider. You can verify it by grepping the consumers for provider
+      SDKs.
     direction: down-is-good
 links:
   - label: Used inside BalloAds
@@ -88,19 +89,19 @@ because "AI costs" as a single line item is not a number anyone can act on.
 
 ## The architecture, and what it bought
 
-Hexagonal was not a stylistic choice. The volatile parts of this system are
-exactly the ones at the edges — which model provider, which messaging channel's
-template format, which product is asking — and the stable part is the middle:
-what a task is, what context it gets, what safety means. Ports and adapters put
-the churn where churn is cheap.
+Hexagonal wasn't a stylistic choice. The volatile parts of this system all sit at
+the edges: which model provider, which messaging channel's template format, which
+product is asking. The stable part is the middle, meaning what a task is, what
+context it gets, and what safety means. Ports and adapters put the churn where
+churn is cheap.
 
 The concrete payoff: adding a consuming product is an adapter, and changing model
 provider does not touch task logic.
 
 ## What is least proven
 
-The agentic planning layer — multi-step workflows with a tool registry and human
-approval gates — is the newest part and the part I would be most cautious about
-claiming. The task-oriented paths have been exercised by real campaign traffic.
-Planning has not, to the same degree, and an agent that plans badly fails in more
-interesting ways than a copywriter that writes badly.
+The agentic planning layer, meaning multi-step workflows with a tool registry and
+human approval gates, is the newest part and the one I'd be most cautious about
+claiming. Real campaign traffic has exercised the task-oriented paths. It hasn't
+exercised planning to the same degree, and an agent that plans badly fails in far
+more interesting ways than a copywriter that writes badly.

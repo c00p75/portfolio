@@ -45,7 +45,7 @@ const practice = [
   {
     label: 'Leadership',
     k: 'Lead from inside the work',
-    v: 'Titles are easier to respect when the person holding one is in the same repo — I take real tickets and sit in the same review queue. The rest of the job is stating the goal, the constraints and the bar out loud, then carrying context across the gap: what the business needs into the backlog, what the constraint costs back into the room where budgets get set.',
+    v: 'Titles are easier to respect when the person holding one is in the same repo, so I take real tickets and sit in the same review queue. The rest of the job is stating the goal, the constraints and the bar out loud, then carrying context across the gap: what the business needs into the backlog, and what the constraint costs back into the room where budgets get set.',
     points: [
       'Real tickets, same review queue',
       'The goal, the constraint and the bar, in writing',
@@ -56,7 +56,7 @@ const practice = [
   {
     label: 'Architecture',
     k: 'Show the options you rejected',
-    v: 'A design is only settled once the alternatives are written down next to it. I price the running cost, the failure behaviour and the lock-in while I am choosing — not at the first invoice or the first outage.',
+    v: "A design is only settled once the alternatives are written down next to it. I price the running cost, the failure behaviour and the lock-in while I'm still choosing, not at the first invoice or the first outage.",
     points: [
       'Every choice ships with its rejected alternative',
       'Cost, failure and lock-in priced while choosing',
@@ -104,7 +104,7 @@ export default function HomePage() {
               index="01"
               eyebrow="Selected work"
               title={<span id="work">Projects</span>}
-              lead="Four systems. The case studies are on the work page — this is the scan."
+              lead="Four systems. The full case studies live on the work page. This is the scan."
             />
             <ArrowLink href="/work" className="text-on-ink-muted hover:text-on-ink">
               All work
@@ -124,7 +124,7 @@ export default function HomePage() {
             index="02"
             eyebrow="Practice"
             title={<span id="how-i-work">How I work</span>}
-            lead="I build the system, I lead the people who ship it, and I write down why it is shaped the way it is. The three are the same job — a preference that never meets a constraint does not survive any of them."
+            lead="I build the system, I lead the people who ship it, and I write down why it's shaped the way it is. All three are the same job, because a preference that never meets a constraint doesn't survive any of them."
           />
 
           <dl className="mt-12 grid gap-px overflow-hidden rounded-panel bg-current/10 lg:grid-cols-3">
@@ -166,7 +166,7 @@ export default function HomePage() {
                 index="03"
                 eyebrow="Ask this site"
                 title={<span id="ai">Working, not claimed</span>}
-                lead="Ask a question about my work and get an answer drawn from what is actually written here, with the passages it used shown alongside. If the answer is not on the site, it says so instead of inventing one — which is the hard part, and the reason this is a demo rather than a claim."
+                lead="Ask a question about my work and get an answer drawn from what's actually written here, with the passages it used shown alongside. If the answer isn't on the site, it says so instead of inventing one. That part is the hard part, and it's why this is a demo rather than a claim."
               />
 
               {/*
@@ -231,7 +231,7 @@ export default function HomePage() {
                 {[
                   {
                     k: 'What it reads',
-                    v: `Everything written on this site — ${meta.chunks} passages — plus my CV, certifications, LinkedIn history and public GitHub.`,
+                    v: `Everything written on this site, ${meta.chunks} passages in all, plus my CV, certifications, LinkedIn history and public GitHub.`,
                   },
                   {
                     k: 'What it answers',

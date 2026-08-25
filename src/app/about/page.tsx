@@ -67,7 +67,7 @@ const principles: {
   },
   {
     t: 'Know what it costs to run',
-    d: 'API calls, tokens and instance hours end up on a bill. I want a rough figure while choosing — not at month end.',
+    d: 'API calls, tokens and instance hours all end up on a bill. I want a rough figure while I am choosing, not at month end.',
     accent: 'lime',
   },
 ];
@@ -89,7 +89,7 @@ const awardsGroupPhoto: Photo = {
   src: awardTeam,
   alt: 'Three Ballo Innovations team members holding Zambia Business Awards certificates',
   label: 'Zambia Business Awards',
-  caption: 'Company of the Year — ICT Services, with the two other Ballo winners that night.',
+  caption: 'Company of the Year for ICT Services, with the two other Ballo winners that night.',
   accent: 'yellow',
   aspect: 'aspect-[16/10]',
 };
@@ -154,7 +154,7 @@ const experience: {
     current: true,
     points: [
       'Own technical strategy and architecture across company products and client work.',
-      'Lead the engineering team — architecture review, Git workflow, code review, documentation and delivery.',
+      'Lead the engineering team across architecture review, Git workflow, code review, documentation and delivery.',
       'Ship full-stack systems: web, APIs, mobile, CRM, advertising, messaging and AI platforms.',
     ],
   },
@@ -212,7 +212,7 @@ const talkClipItem: MediaItem = {
   alt: 'Presenting a retrieval architecture in front of the team',
   label: 'Watch · 17s',
   caption:
-    'Taking the team through a retrieval architecture — auth boundary, chunking, vector search, the cache in front of it.',
+    'Taking the team through a retrieval architecture: auth boundary, chunking, vector search, and the cache sitting in front of it.',
   accentClass: accentText.pink,
   aspect: 'aspect-9/16',
 };
@@ -450,7 +450,7 @@ export default function AboutPage() {
             index="03"
             eyebrow="In the room"
             title={<span id="in-the-room">Away from the diagram</span>}
-            lead="Architecture is a team sport — most of it happens in front of a screen with other people arguing about it."
+            lead="Architecture is a team sport. Most of it happens in front of a screen with other people arguing about it."
           />
 
           {/*
@@ -480,7 +480,7 @@ export default function AboutPage() {
               index="04"
               eyebrow="Tooling"
               title={<span id="stack">What I work with</span>}
-              lead="Grouped by the layer each tool sits in — says a little more than an alphabetical wall of logos."
+              lead="Grouped by the layer each tool sits in, which says more than an alphabetical wall of logos."
             />
             <ArrowLink href="/work" className="text-on-ink-muted hover:text-on-ink">
               See it in context
@@ -520,8 +520,8 @@ export default function AboutPage() {
                 M&apos;sapenda
               </h2>
               <p className="text-on-ink mt-5 max-w-md text-base leading-relaxed text-pretty">
-                Software engineer &amp; CTO in Lusaka. Reach me by email or the form on the contact
-                page — I read everything and reply.
+                Software engineer &amp; CTO in Lusaka. Reach me by email or through the form on
+                the contact page. I read everything and reply.
               </p>
 
               <dl className="mt-8 flex flex-col gap-3 text-sm">

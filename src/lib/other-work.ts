@@ -20,7 +20,7 @@ export const otherWork: { title: string; note: string; stack: string[] }[] = [
   },
   {
     title: 'E-commerce storefront and API',
-    note: 'A retail storefront and the service behind it — catalogue, cart, checkout and order management. Client work, so not named.',
+    note: 'A retail storefront and the service behind it: catalogue, cart, checkout and order management. Client work, so not named.',
     stack: ['Next.js', 'NestJS', 'TypeScript'],
   },
   {

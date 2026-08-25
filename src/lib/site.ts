@@ -7,7 +7,7 @@ export const site = {
   /** Reads as one role, deliberately: an engineer with an architecture bias.
    *  The homepage headline, the résumé and this string must not disagree. */
   description:
-    'Software engineer in Lusaka, Zambia, building web and mobile systems end to end — payments, offline-first mobile, and the retrieval layer behind AI features. I design the architecture and then build it with the team.',
+    'Software engineer in Lusaka, Zambia, building web and mobile systems end to end: payments, offline-first mobile, and the retrieval layer behind AI features. I design the architecture, then build it with the team.',
   url: 'https://georgemsapenda.me',
   locale: 'en_US',
   location: 'Lusaka, Zambia',

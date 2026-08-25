@@ -16,14 +16,14 @@ summary: >-
 context: >-
   The assistant on this site answers questions about my own architecture writing.
   The corpus is currently ~20k tokens of MDX that changes only when I publish, and
-  traffic is bursty and low — a handful of recruiters and engineers, clustered
-  around whenever a link gets shared. The hard constraint is that it must never
+  traffic is bursty and low, a handful of recruiters and engineers clustered around
+  whenever a link gets shared. The hard constraint is that it must never
   be down or embarrassing when someone opens it during a hiring conversation, and
   it must not carry a standing monthly cost for a personal site.
 constraints:
   - 'Corpus is small (~20k tokens, 120 chunks) and changes only at deploy time, never at runtime.'
   - 'Traffic is bursty and low; a per-hour idle cost is pure waste.'
-  - 'Cold-start latency is user-visible — this is a demo people open once and judge.'
+  - 'Cold-start latency is user-visible, and this is a demo people open once and judge.'
   - 'A stranger can drive the LLM, so per-IP abuse and token spend must be bounded.'
   - 'No standing infrastructure I have to patch, monitor, or renew.'
 options:
@@ -31,8 +31,8 @@ options:
     summary: 'Push embeddings to a hosted index; query it over the network per request.'
     verdict: rejected
     because: >-
-      It solves scale I do not have while adding a network hop to the hot path, a
-      monthly floor cost, and an availability dependency I do not control — on a
+      It solves scale I don't have, while adding a network hop to the hot path, a
+      monthly floor cost and an availability dependency I don't control, all for a
       corpus that fits in memory several times over.
     pros:
       - 'Scales to millions of vectors without any rethinking.'
@@ -66,15 +66,15 @@ options:
     because: >-
       At this size the entire index is smaller than a single hero image. Keeping it
       in process removes the network hop, the idle cost, and the vendor dependency
-      at once, and the corpus is immutable between deploys — the exact condition
-      that makes a build-time index correct rather than lazy.
+      at once, and the corpus is immutable between deploys, which is the exact
+      condition that makes a build-time index correct rather than lazy.
     pros:
       - 'No network hop and no cold-start database on the retrieval path.'
       - 'Zero standing cost; retrieval spend is bounded by the embedding API at build time only.'
       - 'The index is a build artifact, so it is versioned and rolls back with the deploy.'
       - 'No runtime dependency that can be down when it matters.'
     cons:
-      - 'Does not survive corpus growth — brute-force scoring is linear in chunk count.'
+      - 'Does not survive corpus growth, since brute-force scoring is linear in chunk count.'
       - 'Re-embedding requires a deploy, so content and index cannot drift apart, but also cannot update independently.'
       - 'Index ships in the serverless bundle, so bundle size grows with the corpus.'
 tradeoffs:
@@ -108,8 +108,8 @@ tradeoffs:
       'Build-time embeddings, in-process hybrid index': strong
 decision: >-
   Embed the corpus at build time with Voyage, ship the vectors as a static JSON
-  artifact, and run hybrid retrieval — BM25 lexical scoring fused with dense cosine
-  similarity via reciprocal rank fusion — inside the route handler. Generation
+  artifact, and run hybrid retrieval inside the route handler: BM25 lexical scoring
+  fused with dense cosine similarity via reciprocal rank fusion. Generation
   streams over SSE from the first available of an ordered provider chain, so a
   free tier answers by default and a paid one only bills when the free tiers are
   down. Retrieval and generation are separated behind an interface so the index
@@ -118,7 +118,7 @@ reversibility: >-
   I bounded the lock-in on three axes. Retrieval sits behind a
   `Retriever` interface whose only contract is `search(query) -> Chunk[]`, so
   swapping the in-process index for pgvector is one new implementation and a
-  changed import — the route handler does not know which is behind it. The
+  changed import, because the route handler doesn't know which one is behind it. The
   embedding provider sits behind an `embed(texts) -> number[][]` function, so
   moving off Voyage is one file, with a re-index as the only migration. The
   generation call sits behind a `generate()` boundary with no framework wrapper:
@@ -162,7 +162,7 @@ failureModes:
       notice rather than an empty chat box.
     severity: major
   - trigger: A visitor scripts the endpoint to burn tokens
-    blastRadius: 'Token spend, capped. No data exposure — the corpus is public content.'
+    blastRadius: 'Token spend, capped. No data exposure, since the corpus is public content.'
     detection: 'Per-IP request counter in the route handler; spend visible in the console.'
     mitigation: >-
       Fixed-window per-IP rate limit, a hard cap on `max_tokens`, and a rejected
@@ -249,8 +249,8 @@ retune weights every time the corpus changes.
 ## Why generation runs on a chain rather than one model
 
 The first version of this called Claude directly, and the write-up said so. What
-changed is not a quality judgement — it is that the retrieval half is the part
-worth showing, and the retrieval half costs nothing to run. Paying per token so a
+changed isn't a quality judgement. It's that the retrieval half is the part worth
+showing, and the retrieval half costs nothing to run. Paying per token so a
 stranger can watch a demo work was the only standing cost left in the system, and
 it was attached to the least interesting component.
 
@@ -260,12 +260,12 @@ where they only bill if both free tiers are down. The switch is reported in the
 trace rather than hidden, because a demo that quietly degrades is making a claim
 it has not earned.
 
-Two things this cost me, both worth stating. Open-weight models hold citation
-discipline less reliably — one would not stop emitting `【2†L4-L9】` no matter how
-the prompt was worded, so the stream is normalised in code as well as asked for
-in the prompt. And ranking providers by cost rather than quality means the
-default answer is not the best answer available; that is the trade I chose,
-knowing the passages under it are identical either way.
+Two things this cost me, and both are worth stating. Open-weight models hold
+citation discipline less reliably. One would not stop emitting `【2†L4-L9】` no
+matter how the prompt was worded, so the stream gets normalised in code as well
+as asked for in the prompt. And ranking providers by cost rather than quality
+means the default answer isn't the best answer available. That's the trade I
+chose, knowing the passages underneath it are identical either way.
 
 ## What I would do differently at 100× the corpus
 

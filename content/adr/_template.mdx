@@ -1,6 +1,6 @@
 ---
 # ---------------------------------------------------------------------------
-# ADR TEMPLATE — copy this file, rename it, fill it in, then set draft: false.
+# ADR TEMPLATE, copy this file, rename it, fill it in, then set draft: false.
 #
 # While `draft: true` this record is hidden from production listings, excluded
 # from the retrieval index, and labelled "Scaffold" in development. Nothing
@@ -18,39 +18,39 @@ domain: 'Data Platform' # groups records by technical area
 # Slug of the file in content/projects this decision belongs to. Records are
 # surfaced through their project's case study, so one with no project set is
 # reachable only by direct link.
-project: 'TODO — e.g. octo'
-shortTitle: 'TODO — short label for the case study list'
+project: 'TODO, e.g. octo'
+shortTitle: 'TODO, short label for the case study list'
 featured: false
 draft: true
 accent: pink # cyan | pink | yellow | orange | lime
 # diagram: retrieval-pipeline   # optional: a key from src/components/blueprints
 
-# One or two sentences. Lead with the counter-intuitive part — the reason
+# One or two sentences. Lead with the counter-intuitive part, the reason
 # someone should read this rather than the obvious architecture.
 summary: >-
   TODO. What did you do that a competent engineer might not have, and why?
 
 # The business or scale constraint that forced a choice. Not "we needed a
-# database" — what specifically would have broken, and for whom.
+# database", what specifically would have broken, and for whom.
 context: >-
   TODO. What was the pressure? Traffic, cost, a legacy migration, a deadline, a
   compliance boundary? Be concrete about scale and about who felt the pain.
 
 # The things that were genuinely non-negotiable. If everything is a constraint,
-# nothing is — three to five is usually the honest number.
+# nothing is, three to five is usually the honest number.
 constraints:
-  - 'TODO — e.g. "Must run on the existing Postgres; no new datastores."'
-  - 'TODO — e.g. "p95 under 200 ms for the checkout path."'
+  - 'TODO, e.g. "Must run on the existing Postgres; no new datastores."'
+  - 'TODO, e.g. "p95 under 200 ms for the checkout path."'
 
 # At least two options, or it is not a decision record. Include the one you
-# would have picked if the constraints were different — that is the option that
+# would have picked if the constraints were different, that is the option that
 # shows judgement.
 options:
   - name: 'Option A'
-    summary: 'TODO — one line on what this approach actually is.'
+    summary: 'TODO, one line on what this approach actually is.'
     verdict: rejected # chosen | rejected | deferred
     because: >-
-      TODO. The single sentence that justifies the verdict — the one a reviewer
+      TODO. The single sentence that justifies the verdict, the one a reviewer
       would push back on. Not "it was worse", but what specifically it cost.
     pros:
       - 'TODO'
@@ -64,7 +64,7 @@ options:
     pros:
       - 'TODO'
     cons:
-      - 'TODO — the chosen option must have real cons. If it has none, the list is dishonest.'
+      - 'TODO, the chosen option must have real cons. If it has none, the list is dishonest.'
 
 # Scored on the axes that mattered. The `scores` keys must match option names
 # exactly. Leave a row out rather than inventing an axis to pad the table.
@@ -73,7 +73,7 @@ tradeoffs:
     scores:
       'Option A': strong # strong | adequate | weak
       'Option B': adequate
-    note: 'Optional — one line of context for this row.'
+    note: 'Optional, one line of context for this row.'
   - criterion: 'Operational cost'
     scores:
       'Option A': weak
@@ -90,19 +90,19 @@ reversibility: >-
   name the one decision here that is genuinely expensive to reverse.
 
 # Every number needs a `basis`. A figure without a source is a claim, not a
-# measurement — and it is the first thing an interviewer will probe.
+# measurement, and it is the first thing an interviewer will probe.
 metrics:
-  - label: 'TODO — e.g. Cost per 1k requests'
-    value: 'TODO — e.g. $0.42'
-    basis: 'TODO — where the number came from: billing export, load test, dashboard, date.'
+  - label: 'TODO, e.g. Cost per 1k requests'
+    value: 'TODO, e.g. $0.42'
+    basis: 'TODO, where the number came from: billing export, load test, dashboard, date.'
     direction: down-is-good # down-is-good | up-is-good | neutral
 
 # What breaks, how you find out, and what the system does about it.
 failureModes:
-  - trigger: 'TODO — e.g. "Upstream provider returns 429 under burst load."'
-    blastRadius: 'TODO — who and what is affected, and what still works.'
-    detection: 'TODO — the alert, metric, or log that tells you.'
-    mitigation: 'TODO — circuit breaker, fallback, queue, degraded mode.'
+  - trigger: 'TODO, e.g. "Upstream provider returns 429 under burst load."'
+    blastRadius: 'TODO, who and what is affected, and what still works.'
+    detection: 'TODO, the alert, metric, or log that tells you.'
+    mitigation: 'TODO, circuit breaker, fallback, queue, degraded mode.'
     severity: major # critical | major | minor
 
 stack:
@@ -111,12 +111,12 @@ stack:
 
 ## Why this decision was interesting
 
-TODO — the argument that doesn't fit in the structured fields. Good things to
+TODO, the argument that doesn't fit in the structured fields. Good things to
 put here: the calculation you did before writing any code, the assumption you
 had to test first, the thing you got wrong on the first attempt.
 
 ## What I would do differently at 10× the scale
 
-TODO — this section is what makes the record credible. Naming the point at which
+TODO, this section is what makes the record credible. Naming the point at which
 your own decision stops being correct is the strongest possible signal that you
 understood it in the first place.

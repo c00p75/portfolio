@@ -4,9 +4,9 @@ tagline: An advertising and messaging platform that speaks SMPP to a mobile netw
 summary: >-
   A .NET advertising platform for the Zambian market: campaigns, audience
   segmentation, purchase-order balances and company-scoped access, sitting on top
-  of an SMS layer that binds straight to a mobile operator's SMSC. The hard part
-  is not the campaign UI — it is that SMPP is a stateful, long-lived protocol and
-  an HTTP API is neither.
+  of an SMS layer that binds straight to a mobile operator's SMSC. The campaign UI
+  was never the hard part. SMPP is a stateful, long-lived protocol, and an HTTP
+  API is neither of those things.
 client: Ballo Innovations
 role: >-
   Technical strategy and architecture, plus backend implementation across
@@ -33,34 +33,34 @@ stack:
   - SMPP
 highlights:
   - >-
-    SMS routes by destination network: numbers on the operator we hold a direct
-    bind with go over SMPP, everything else goes out over a partner's HTTP
-    gateway. The test endpoint and the campaign sender deliberately share one
-    sender implementation, because the failure I wanted to rule out was a test
-    send behaving differently from a real one.
+    SMS routes by destination network. Numbers on the operator we hold a direct
+    bind with go over SMPP, and everything else goes out through a partner's HTTP
+    gateway. The test endpoint and the campaign sender share one implementation on
+    purpose, because the failure I wanted to rule out was a test send behaving
+    differently from a real one.
   - >-
-    SMPP does not fit inside a request/response API. It is a persistent TCP bind
-    that receives delivery receipts asynchronously, on the same connection, minutes
-    later. So it lives in a separate worker service that owns the sessions, and
-    the API talks to it over the private network and receives receipts back as
-    callbacks.
+    SMPP doesn't fit inside a request/response API. It's a persistent TCP bind that
+    receives delivery receipts asynchronously, on the same connection, minutes
+    later. So it lives in a separate worker service that owns the sessions. The API
+    talks to it over the private network and gets receipts back as callbacks.
   - >-
-    That worker refuses work it cannot do rather than queueing it forever: the
+    That worker refuses work it can't do instead of queueing it forever. The
     inbound queue is bounded and returns 503 when full, and the readiness probe
-    reports not-ready until at least one session is actually bound. A process that
-    is running but has no bind is not ready, and saying otherwise just moves the
-    failure somewhere harder to see.
+    reports not-ready until at least one session is actually bound. A process
+    that's running but holds no bind isn't ready, and pretending otherwise just
+    moves the failure somewhere harder to see.
   - >-
-    Audience segments are evaluated from a filter AST rather than assembled SQL
-    strings, and recomputed on a job rather than at send time, so a campaign's
-    recipient list is a resolved artifact you can inspect before spending money on
-    it.
+    Audience segments get evaluated from a filter AST rather than assembled SQL
+    strings, and recomputed on a job rather than at send time. That makes a
+    campaign's recipient list a resolved artifact you can inspect before you spend
+    money on it.
 metrics:
   - label: Schema migrations
     value: '145'
     basis: >-
-      EF Core migrations in the repository. Not a quality measure — it is evidence
-      the system has been changed repeatedly while running rather than rewritten.
+      EF Core migrations in the repository. Not a quality measure on its own, but
+      evidence the system has been changed repeatedly while running rather than
+      rewritten.
     direction: neutral
   - label: Test files
     value: '164'
@@ -69,7 +69,7 @@ metrics:
   - label: Queue depth before backpressure
     value: '256'
     basis: >-
-      Bounded queue in the SMPP worker; a full queue returns HTTP 503 rather than
+      Bounded queue in the SMPP worker. A full queue returns HTTP 503 rather than
       accepting work it has no capacity to deliver.
     direction: neutral
   - label: Persistent SMSC sessions
@@ -103,7 +103,7 @@ gallery:
     caption: Ad feed
   - image: ../../public/images/projects/balloads-compose.png
     alt: >-
-      First step of campaign creation — naming an SMS campaign and drafting its
+      First step of campaign creation: naming an SMS campaign and drafting its
       message, with a live handset preview alongside
     caption: Campaign compose
   - image: ../../public/images/projects/balloads-template.png
@@ -114,43 +114,43 @@ gallery:
 video:
   src: /videos/projects/balloads-demo-web.mp4
   poster: ../../public/images/projects/balloads-home.png
-  caption: Product walkthrough — campaign flow in the web app
+  caption: 'Product walkthrough: campaign flow in the web app'
 ---
 
 ## The problem
 
 Reaching people in Zambia means SMS, and SMS at any volume means talking to a
 mobile operator's SMSC over SMPP rather than posting JSON at an aggregator. That
-protocol assumes something an HTTP service does not provide: a long-lived,
-authenticated TCP session that stays bound, carries submissions out and receives
-delivery receipts back asynchronously — sometimes minutes after the message that
+protocol assumes something an HTTP service doesn't provide: a long-lived,
+authenticated TCP session that stays bound, carries submissions out, and receives
+delivery receipts back asynchronously, sometimes minutes after the message that
 caused them.
 
-Wrapping that in a request/response handler is the obvious first attempt and it
-does not survive contact with reality. Either you connect per message, which the
+Wrapping that in a request/response handler is the obvious first attempt, and it
+doesn't survive contact with reality. Either you connect per message, which the
 operator will not thank you for, or you hold a connection inside a stateless web
-process that can be recycled underneath it.
+process that can be recycled out from under it.
 
 ## What I built
 
-The platform itself — campaigns, brands, audiences, purchase-order balances,
+The platform itself: campaigns, brands, audiences, purchase-order balances,
 company-scoped roles and invites, an OCR path for brand documents, and an
-integration with our AI service for copy and compliance checks — plus the
-messaging layer underneath it.
+integration with our AI service for copy and compliance checks. Plus the
+messaging layer sitting underneath all of it.
 
-The messaging layer is split deliberately. Outbound SMPP is a small worker service
+The messaging layer is split on purpose. Outbound SMPP is a small worker service
 with one job: own the binds, submit messages, parse delivery receipts, and post
-outcomes back to the API. Everything about it is shaped around the fact that a
-session is expensive to establish and cheap to keep: persistent transceiver binds,
-`registered_delivery` on every submit, bounded queueing with explicit backpressure,
-and a readiness signal that means "a session is bound" rather than "the process
-started".
+outcomes back to the API. Everything about it is shaped by one fact, that a
+session is expensive to establish and cheap to keep. Hence persistent transceiver
+binds, `registered_delivery` on every submit, bounded queueing with explicit
+backpressure, and a readiness signal that means "a session is bound" rather than
+"the process started".
 
 ## What I would do differently
 
 Delivery receipts arrive as a semi-structured text body with a status and error
-code, and the parser accepts both that and the receipted-message-id field because
-operators differ in what they populate. That tolerance is pragmatic, but it means
-the parser is the component most likely to silently mis-classify a delivery, and
-it deserves a conformance test suite built from real captured receipts rather than
-the synthetic ones it has.
+code, and the parser accepts both that and the receipted-message-id field, because
+operators differ in what they actually populate. That tolerance is pragmatic, but
+it makes the parser the component most likely to mis-classify a delivery quietly.
+It deserves a conformance suite built from real captured receipts rather than the
+synthetic ones it has today.

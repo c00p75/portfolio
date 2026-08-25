@@ -66,7 +66,7 @@ export function ContactForm() {
       <div className="rounded-panel border border-current/30 bg-current/5 p-6">
         <h3 className="font-display text-xl uppercase">Message sent</h3>
         <p className="mt-2 text-sm leading-relaxed">
-          Thanks — I&apos;ll come back to you at the address you gave.
+          Thanks. I&apos;ll come back to you at the address you gave.
         </p>
       </div>
     );

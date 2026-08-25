@@ -11,7 +11,7 @@ draft: false
 accent: yellow
 summary: >-
   The chat assistant in Penda can create a transaction, but it cannot edit or delete
-  one. Not because the prompt tells it not to — because the function holding the
+  one. Not because the prompt tells it not to, but because the function holding the
   model has no code that performs an update. Destructive intents are written to a
   staging table and executed by a different function that only runs when the user
   taps confirm.
@@ -55,9 +55,9 @@ options:
     verdict: rejected
     because: >-
       A prompt is a suggestion the model can misread or ignore, and it fails exactly
-      when you need it most — on an unusual phrasing or a long context. A safety
-      property that depends on a language model choosing to honour it is not a safety
-      property.
+      when you need it most, on an unusual phrasing or a long context. A safety
+      property that depends on a language model choosing to honour it isn't a safety
+      property at all.
     pros:
       - 'Almost free to implement; no architectural change at all.'
       - 'Works most of the time, which makes it dangerously reassuring.'
@@ -95,7 +95,7 @@ options:
       - 'Column allowlists per domain mean even an approved update cannot touch a structural field.'
       - 'Trust can be earned for small, reversible operations without ever extending to deletes.'
     cons:
-      - 'The same allowlist now exists in three places — the staging function, the execution function, and the client''s undo logic — and nothing tests that they agree.'
+      - 'The same allowlist now exists in three places, the staging function, the execution function and the client''s undo logic, and nothing tests that they agree.'
       - 'Conversations are less fluent: the assistant has to say it has proposed something rather than done it, and is explicitly instructed not to claim otherwise.'
       - 'A staging table is extra schema, extra migrations, and extra states to reason about.'
       - 'Correctness leans on row-level security rather than on scoping inside every query, so an RLS policy mistake would be the single point of failure.'
@@ -142,7 +142,7 @@ decision: >-
   pending actions, and it does so behind a conditional update on the row still being
   pending, so concurrent confirmations resolve to one winner and the losers are
   handed the winner's terminal status. Editable columns are defined per domain in an
-  allowlist, and anything not listed is dropped rather than rejected — a wallet can
+  allowlist, and anything not listed is dropped rather than rejected. A wallet can
   be renamed but its currency cannot be touched, and a wallet cannot be deleted at
   all. Auto-apply is gated by an earned trust flag, but deletes and high-impact
   changes are refused before trust is even consulted, and one undo resets the trust
@@ -150,7 +150,7 @@ decision: >-
 reversibility: >-
   Loosening this is easy and dangerous, which is worth stating plainly: allowing the
   chat function to execute updates directly would be a small change, so the
-  discipline has to be maintained deliberately. Tightening is also cheap — the
+  discipline has to be maintained on purpose. Tightening is cheap too, because the
   allowlists and the high-impact rule are data, and the staging boundary already
   exists for every mutation kind. What is expensive to reverse is the decision to
   run the assistant under the user's own credentials rather than a service role.
@@ -225,8 +225,8 @@ failureModes:
     blastRadius: 'Would compound one extraction error into every subsequent insight.'
     detection: 'Rows created from receipt scanning are written unconfirmed.'
     mitigation: >-
-      Every proactive job — insights, burn-rate nudges, morning summaries — reads only
-      rows a human has confirmed. Machine-extracted data cannot influence generated
+      Every proactive job, whether insights, burn-rate nudges or morning summaries,
+      reads only rows a human has confirmed. Machine-extracted data cannot influence generated
       advice until someone has looked at it.
     severity: major
   - trigger: Untrusted text in a transaction description attempts to redirect the model
@@ -265,9 +265,10 @@ anticipate. If the requirement is "the assistant must never delete a record with
 the user agreeing", then the only implementation that actually satisfies it is one
 where the code holding the model contains no deletion.
 
-That reframing is what produced the two-function split. Everything else — the
-staging table, the snapshots, the trust flag — follows from wanting the guarantee to
-be a property of the code rather than of the model's behaviour on the day.
+That reframing is what produced the two-function split. Everything else follows
+from it: the staging table, the snapshots, the trust flag. All of it comes from
+wanting the guarantee to be a property of the code rather than of how the model
+behaves on the day.
 
 ## Where the tiering line falls, and why
 

@@ -56,7 +56,7 @@ export default function SandboxPage() {
                   'the retrieval ADR'
                 )}
 {' '}
-                against {meta.chunks} passages indexed from this site — case studies, decision records,
+                against {meta.chunks} passages indexed from this site, covering case studies, decision records
                 and a profile feed (education, certifications, LinkedIn history, public GitHub). Two retrieval paths, combined by
                 rank, with a trace panel beside the answer so you can see which passages it used and how
                 long each step took.

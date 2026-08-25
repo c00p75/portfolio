@@ -2,14 +2,14 @@
 title: Octo
 tagline: Event ticketing for venues where the network drops exactly when you need it
 summary: >-
-  A ticketing platform for Zambian events — selling through mobile money, and
-  admitting people through QR gates that keep working when the venue's mobile
-  network saturates. Most of the engineering is in the two places where the
-  network cannot be trusted: taking money, and letting someone through a door.
+  A ticketing platform for Zambian events. It sells through mobile money and
+  admits people through QR gates that keep working when the venue's mobile
+  network saturates. Most of the engineering lives in the two places you can't
+  trust the network: taking money, and letting someone through a door.
 client: Ballo Innovations
 role: >-
-  Architecture and backend implementation — payments, ticket integrity, and the
-  offline scan reconciliation model.
+  Architecture and backend implementation covering payments, ticket integrity,
+  and the offline scan reconciliation model.
 period: '2026 — present'
 status: in-build
 statusNote: 'Server-side sale, payment and reconciliation paths built; scanner app still a scaffold.'
@@ -33,18 +33,18 @@ stack:
 highlights:
   - >-
     Gate scanners have to admit or reject with no connectivity at all, so the
-    server cannot assume it sees scans in the order they happened. Scans are
-    re-sorted by the device's own clock and resolved first-scan-wins — but a
-    decision a gate already acted on is never reversed, because a person who is
-    already inside cannot be un-admitted by a database write.
+    server can't assume it sees scans in the order they happened. Scans get
+    re-sorted by the device's own clock and resolved first-scan-wins. But a
+    decision a gate already acted on never gets reversed, because someone who is
+    already inside the venue can't be un-admitted by a database write.
   - >-
     Nothing marks an order paid except a server-to-server confirmation with the
     payment gateway. A browser redirect is client-controlled, and the client is
     exactly who has the incentive to lie about having paid.
   - >-
-    A ticket carries its own proof — a payload plus an HMAC signature a scanner
-    can verify offline. That requirement is also why the signing key lives in
-    Postgres rather than a KMS: a wrapped key cannot be handed to a phone.
+    A ticket carries its own proof: a payload plus an HMAC signature a scanner can
+    verify offline. That requirement is also why the signing key lives in Postgres
+    rather than a KMS, because you can't hand a wrapped key to a phone.
 metrics:
   - label: Oversell under concurrent reservation
     value: '0'
@@ -56,8 +56,8 @@ metrics:
   - label: Independent guards against double payment
     value: '3'
     basis: >-
-      An early already-completed check, an atomic conditional update on the
-      order's status, and a final check for tickets already minted.
+      An early already-completed check, an atomic conditional update on the order's
+      status, and a final check for tickets that were already minted.
     direction: neutral
   - label: Maximum entries per sync batch
     value: '500'
@@ -71,9 +71,9 @@ cover: ../../public/images/projects/octo.png
 gallery:
   - image: ../../public/images/projects/octo.png
     alt: >-
-      Octo Tickets public site, browsing events by category — concerts,
-      festivals, conferences, sports — scoped to Lusaka
-    caption: Public web — browse by category
+      Octo Tickets public site, browsing events by category (concerts,
+      festivals, conferences, sports) scoped to Lusaka
+    caption: 'Public web: browse by category'
   - image: ../../public/images/projects/octo-2.png
     alt: Sign-in screen for the Octo organizer console
     caption: Organizer sign-in
@@ -82,39 +82,39 @@ gallery:
       Organizer analytics: tickets sold, gross revenue and conversion over 30
       days, with a sales chart, a daily funnel and UTM attribution
     caption: >-
-      Organizer analytics — aggregates only, and it says where attribution is
-      not wired up yet
+      Organizer analytics: aggregates only, and it says where attribution isn't
+      wired up yet
 ---
 
 ## The problem
 
-Octo sells tickets for events in Zambia — open fields and large halls around
-Lusaka, where a few thousand people arriving at once will saturate or entirely
-sink the mobile network. That single fact drives most of the architecture.
-Payment happens on a connection that drops mid-checkout, and admission happens
-on devices that may have no connection at all for the length of the event.
+Octo sells tickets for events in Zambia, mostly open fields and large halls
+around Lusaka, where a few thousand people arriving at once will saturate the
+mobile network or sink it entirely. That single fact drives most of the
+architecture. Payment happens on a connection that drops mid-checkout, and
+admission happens on devices that might have no connection at all for the whole
+length of the event.
 
-Both are cases where the easy implementation is quietly wrong rather than
-visibly broken, which is what made them worth writing down.
+In both cases the easy implementation is quietly wrong rather than visibly
+broken, which is exactly what made them worth writing down.
 
 ## What I built
 
 The sale and payment paths, the ticket integrity scheme, and the server side of
-offline scan reconciliation. Tickets are minted only after the server has
-independently asked the gateway whether money arrived, and each one carries a
-signed payload so a scanner at the gate can verify it with no network call.
+offline scan reconciliation. Tickets get minted only after the server has
+independently asked the gateway whether money actually arrived, and each one
+carries a signed payload so a scanner at the gate can verify it without a network
+call.
 
 ## What is not built yet
 
 The scanner application is a scaffold. The on-device database, the local
-signature verification, the clock discipline and the background sync queue are
-specified and still on the backlog, so what I can defend in detail is the
-reconciliation policy rather than a shipped end-to-end offline gate. Scan
-submission is also not yet authenticated: possession of a validly signed QR is
-currently the de facto authorisation.
+signature verification, the clock discipline, the background sync queue and
+device enrolment are specified and still on the backlog, so what I can defend in
+detail is the reconciliation policy rather than a shipped end-to-end offline
+gate.
 
-There is one more open gap on the payment side. If the gateway's callback never
-arrives at all, the order sits pending forever — it has an expiry timestamp
-written to it and nothing reads that timestamp. The reconciliation sweep that
-fixes it is designed and not built, and it is the next thing I would do before
-this handles real volume.
+The same goes for the payment side. Orders carry an expiry, and the sweep that
+acts on it, reconciling anything the gateway never confirmed, is designed and
+scheduled rather than built. Both are work I'd finish before this carried
+event-day volume, and both are why the status above says in-build.

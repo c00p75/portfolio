@@ -1,0 +1,135 @@
+---
+title: Miyagi
+tagline: A coding tutor that runs shell commands on your machine, and the confinement that makes installing it a reasonable idea
+summary: >-
+  An MCP server that teaches terminal work by drilling the learner instead of
+  doing it for them. Writing the lessons was never the hard part. A tutor that
+  executes commands is a code-execution surface with a language model holding the
+  keyboard, so the safety argument has to survive that model being confidently
+  wrong about what's safe to run.
+client: Personal project, open source
+role: >-
+  Sole author. Protocol surface, the execution confinement model, the
+  cross-platform speech pipeline, and the packaging that ships it.
+period: '2026'
+status: prototype
+statusNote: 'Source published and installable from the repository. Progress state is in-memory and resets with the client.'
+order: 9
+featured: false
+draft: false
+accent: orange
+disciplines:
+  - architecture
+  - ai
+stack:
+  - TypeScript
+  - Node.js
+  - Model Context Protocol
+  - zod
+  - ESM
+highlights:
+  - >-
+    The danger screen ignores the caller's own `is_dangerous` flag and re-derives
+    the verdict itself. The threat model here isn't a careless user typing
+    `rm -rf`. It's a model deciding, mid-lesson, that a destructive command makes
+    a vivid teaching example. A flag the caller supplies can't be the thing that
+    protects you from the caller.
+  - >-
+    I picked the transport that can't be hosted. A remote MCP server would run the
+    learner's commands on my infrastructure, which is useless as teaching, since
+    they wanted their terminal and not mine, and a liability I'd be running on
+    purpose. Local stdio makes the thing harder to distribute and right to build.
+  - >-
+    A failed command returns a teaching card with a troubleshooting ladder instead
+    of a protocol error. On a tutor, an exception is the one response that teaches
+    nothing. The learner watches a tool break rather than finding out why their
+    command did.
+metrics:
+  - label: Execution paths that skip the danger screen
+    value: '0'
+    basis: >-
+      Structural rather than sampled. `runCommand` is called from exactly one
+      site, and the `dryRun` guard above it is computed from `screenDanger` on the
+      line before. You check it by reading the dispatch, not by testing behaviour.
+    direction: down-is-good
+  - label: Dangerous command classes screened
+    value: '9'
+    basis: >-
+      Entries in the pattern table: recursive delete, raw device write, filesystem
+      format, fork bomb, disk overwrite, host power state, world-writable
+      recursion, piping remote code into a shell, and history-rewriting force
+      push.
+    direction: neutral
+  - label: Runtime dependencies
+    value: '2'
+    basis: >-
+      The MCP SDK and zod, per package.json. 25.7 kB packed and 90.4 kB unpacked,
+      from `npm pack` output. Small enough that reading the whole server before
+      you trust it is a realistic ask.
+    direction: down-is-good
+  - label: Bound on a single command
+    value: 60 s / 4 MB
+    basis: >-
+      Wall-clock timeout and output buffer cap passed to every exec call, so a hung
+      or runaway command degrades into a diagnostic instead of a wedged session.
+    direction: down-is-good
+links:
+  - label: Source
+    href: https://github.com/c00p75/miyagi
+    kind: repo
+---
+
+## The problem
+
+A tutor that only explains commands is documentation with extra steps. One that
+actually runs them is better in a way you feel immediately. The learner sees real
+output from their own machine, and the failures are their failures rather than a
+textbook's. It is also, structurally, an arbitrary code execution service with a
+language model at the keyboard.
+
+That inverts the usual threat model. The user isn't the adversary. They asked for
+a tutor and they benefit from it working. The thing most likely to propose
+`rm -rf` on a live directory is the model itself, mid-explanation, reaching for a
+vivid example. So any protection that depends on the model correctly reporting
+its own intent is protection in name only.
+
+## What I built
+
+Eight tools over stdio: roadmap navigation, command execution wrapped in a
+teaching card, active-recall quizzes, XP and streak tracking, and a markdown
+export of the session.
+
+The execution path is the part worth describing. The tool signature accepts an
+`is_dangerous` flag from the caller, because a well-behaved model marking its own
+destructive commands is useful signal. It just isn't load-bearing. The server
+independently matches the command against nine catastrophe classes, and a hit
+forces dry-run whether or not the caller flagged anything. The two inputs are
+ORed and never substituted, so the caller can add caution but can't remove it.
+
+Everything downstream comes from wanting the failure modes to be boring. Commands
+are bounded at sixty seconds and four megabytes. A non-zero exit becomes a
+diagnostic card rather than a thrown error. The speech layer strips markdown,
+never reads raw stdout aloud, drains through a FIFO queue so lines can't overlap,
+and probes for a working engine before calling one. A missing `spd-say` on a
+Linux box degrades to silence instead of taking the server down mid-lesson.
+
+## Where the boundary actually is
+
+**A denylist is a backstop, not a sandbox.** The nine patterns catch nine named
+catastrophes. They aren't what makes the tool safe. The real boundary is the MCP
+client's own approval prompt, with a human reading the command before it runs.
+The screen exists for the narrower case that prompt handles badly: a model
+proposing something obviously destructive to someone who is clicking through.
+Defence in depth, with the depth stated honestly instead of oversold.
+
+**Isolation is a scope decision, made on purpose.** Commands run with the user's
+own privileges in their own directory. No container, no restricted user, no
+syscall filter. That's right for a local teaching tool driven by its owner, and
+it's the first thing I'd change if this ever accepted untrusted input. Knowing
+which of those two situations you're in is most of the design.
+
+**The numbers above are structural, not operational.** They're properties of the
+source that a reader can check by opening it, which is the kind of claim I'd
+rather make than a usage statistic. The open question is whether XP and streaks
+actually hold someone to a roadmap. That's a product hypothesis, and persisting
+progress across sessions is the change that would let me test it.

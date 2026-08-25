@@ -13,6 +13,7 @@ import {
   lastAssistantContent,
   retrievalQuery,
 } from '@/lib/rag/conversation';
+import { signAssistantTurn, verifyAssistantTurn } from '@/lib/rag/history';
 import type { Retrieved } from '@/lib/rag/types';
 
 export const runtime = 'nodejs';
@@ -82,7 +83,8 @@ type SseEvent =
       fellBackFrom: string[];
     }
   | { type: 'error'; message: string; recoverable: boolean }
-  | { type: 'done' };
+  /** `sig` authenticates this answer if the client replays it as history. */
+  | { type: 'done'; sig?: string };
 
 function sse(event: SseEvent): string {
   return `data: ${JSON.stringify(event)}\n\n`;
@@ -119,7 +121,7 @@ export async function POST(request: Request) {
     question = body.question.trim();
     if (Array.isArray(body.history)) {
       history = body.history
-        .filter((turn): turn is { role: 'user' | 'assistant'; content: string } => {
+        .filter((turn): turn is { role: 'user' | 'assistant'; content: string; sig?: unknown } => {
           if (!turn || typeof turn !== 'object') return false;
           const t = turn as { role?: unknown; content?: unknown };
           return (
@@ -129,7 +131,14 @@ export async function POST(request: Request) {
           );
         })
         .slice(-6)
-        .map((t) => ({ role: t.role, content: t.content.trim().slice(0, 800) }));
+        .map((t) => ({ role: t.role, content: t.content.trim().slice(0, 800), sig: t.sig }))
+        // An assistant turn is only replayed into the prompt if this server
+        // signed it. Unsigned or tampered turns are dropped rather than
+        // rejected, so an ordinary stale tab degrades to a shorter memory
+        // instead of an error — but forged assistant speech never reaches the
+        // model, which is what the safety rules in the system prompt assume.
+        .filter((t) => t.role === 'user' || verifyAssistantTurn(t.content, t.sig))
+        .map((t) => ({ role: t.role, content: t.content }));
     }
   } catch {
     return Response.json({ error: 'Invalid JSON body.' }, { status: 400 });
@@ -219,6 +228,7 @@ export async function POST(request: Request) {
           .join('\n\n---\n\n');
 
         let firstToken = 0;
+        let answer = '';
 
         const earlier =
           history.length > 0
@@ -240,6 +250,7 @@ export async function POST(request: Request) {
           maxTokens: social ? 280 : MAX_TOKENS,
           signal: request.signal,
           onDelta: (text) => {
+            answer += text;
             if (firstToken === 0) {
               firstToken = performance.now();
               send({ type: 'ttft', ms: Math.round(firstToken - started) });
@@ -278,7 +289,7 @@ export async function POST(request: Request) {
           fellBackFrom: result.fellBackFrom,
         });
 
-        send({ type: 'done' });
+        send({ type: 'done', sig: answer.trim() ? signAssistantTurn(answer) : undefined });
       } catch (error) {
         const message =
           error instanceof NoProviderConfiguredError

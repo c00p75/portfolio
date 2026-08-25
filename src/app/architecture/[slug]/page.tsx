@@ -145,7 +145,7 @@ export default async function AdrPage({ params }: Params) {
             </span>
             <StatusPill status={adr.status} />
             <Tag>{adr.domain}</Tag>
-            {adr.draft ? <Tag className="text-yellow border-yellow">Scaffold — draft</Tag> : null}
+            {adr.draft ? <Tag className="text-yellow border-yellow">Scaffold, draft</Tag> : null}
           </div>
 
           <h1 className="font-display mt-7 max-w-5xl text-jumbo text-balance uppercase">
@@ -325,7 +325,7 @@ export default async function AdrPage({ params }: Params) {
         </section>
       ) : null}
 
-      <EdgeRail className="pt-8" left={adr.ref} right={`Status — ${adr.status}`} />
+      <EdgeRail className="pt-8" left={adr.ref} right={`Status: ${adr.status}`} />
     </>
   );
 }

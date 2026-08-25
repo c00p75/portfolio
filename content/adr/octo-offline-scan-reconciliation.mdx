@@ -13,11 +13,11 @@ summary: >-
   Two gates scan the same ticket fifteen seconds apart, neither is online, and both
   let the holder through. When the batches finally reach the server they arrive in
   the wrong order. The server re-sorts by the device's own clock and resolves
-  first-scan-wins — but it will not reverse a decision a gate has already acted on,
-  because a person who is already inside cannot be un-admitted by a database write.
+  first-scan-wins. What it will not do is reverse a decision a gate already acted
+  on, because someone already inside cannot be un-admitted by a database write.
 context: >-
-  Octo sells event tickets in Zambia, and the venues it sells into — open fields
-  and large halls around Lusaka — routinely saturate or lose mobile network
+  Octo sells event tickets in Zambia, and the venues it sells into, mostly open
+  fields and large halls around Lusaka, routinely saturate or lose mobile network
   entirely during entry. Scanners therefore have to work with no connectivity and
   reconcile later, which means the server cannot assume it sees scans in the order
   they happened. The specific race the design exists for is a ticket scanned at
@@ -28,7 +28,7 @@ constraints:
   - 'The order scans arrive at the server carries no information about the order they happened in.'
   - 'A decision a gate has already acted on cannot be retracted; the holder is already through the door.'
   - 'Device clocks are not trustworthy, so a claimed scan time needs a plausibility bound.'
-  - 'A resubmitted batch must return the same decisions rather than creating new ones — the sync client will retry.'
+  - 'A resubmitted batch must return the same decisions rather than creating new ones, because the sync client will retry.'
 options:
   - name: Resolve in server arrival order
     summary: >-
@@ -127,9 +127,10 @@ decision: >-
   minutes in the future are logged and excluded rather than admitted.
 reversibility: >-
   The resolution rules live in one service, and the per-ticket lock is a version
-  column plus a counter, so changing the policy — different ordering, a finer
-  outcome taxonomy, parallel resolution within a batch — is contained. What is not
-  cheap to reverse is the decision that persisted scan outcomes are immutable.
+  column plus a counter, so changing the policy is contained, whether that means
+  different ordering, a finer outcome taxonomy or parallel resolution within a
+  batch. What is not cheap to reverse is the decision that persisted scan outcomes
+  are immutable.
   Every downstream consumer, the audit trail, and the organiser-facing reports all
   assume a scan record is final; making them provisional again would change what a
   scan means everywhere. The response contract is also load-bearing: it separates
@@ -173,8 +174,8 @@ failureModes:
     severity: major
   - trigger: Two offline gates admit the same ticket, then both sync
     blastRadius: >-
-      One holder was admitted twice in the physical world. The system can record it
-      but cannot prevent it — this is the accepted limit of offline operation.
+      One holder was admitted twice in the physical world. The system can record
+      that but cannot prevent it, which is the accepted limit of offline operation.
     detection: 'The guarded conditional update matches zero rows for the second scan.'
     mitigation: >-
       The later-ordered scan is recorded as a duplicate and surfaced to the
@@ -186,8 +187,8 @@ failureModes:
     detection: 'Entries claiming a time more than five minutes ahead are flagged server-side.'
     mitigation: >-
       Implausible-future entries are excluded from admission and logged. The
-      stronger mitigation — blocking a session from starting when the device clock
-      has drifted beyond a strict margin — is specified but not yet built.
+      stronger mitigation, blocking a session from starting when the device clock has
+      drifted beyond a strict margin, is specified but not yet built.
     severity: minor
   - trigger: A scan batch is submitted twice
     blastRadius: 'Would double-count admissions if unguarded.'
@@ -219,9 +220,9 @@ be mechanical at all. It was deciding what the server is *allowed* to conclude.
 A reconciliation algorithm can always compute the chronologically correct answer
 given enough ordering information. What it cannot do is change the fact that a
 steward looked at a green screen and waved someone through. Once that has happened,
-a database row saying otherwise is not a correction — it is a lie that makes the
+a database row saying otherwise isn't a correction. It's a lie, and it makes the
 audit trail useless for the one thing an organiser needs it for, which is working
-out what actually occurred at the gate.
+out what actually happened at the gate.
 
 So the rule is that already-persisted decisions are immutable even when a later
 batch proves they were chronologically second. The system prefers an explainable
@@ -236,8 +237,8 @@ A scan entry arrives with a ticket id and a QR payload. It would be natural to l
 up the ticket by that id and proceed. But the id is client-supplied and the payload
 is signed, so until the signature verifies, the id is just a claim. The
 implementation treats it as a lookup hint only, verifies the signature, and then
-uses the identifiers *inside the verified payload* for the actual decision — and
-rejects the scan if the two disagree.
+uses the identifiers *inside the verified payload* for the actual decision, and
+rejects the scan outright if the two disagree.
 
 The same reasoning is why a failed signature writes nothing at all. Logging the
 attempt sounds obviously correct until you notice that the attacker chooses the
@@ -251,10 +252,11 @@ verification, the clock discipline and the background sync queue are all designe
 in the specification and still on the backlog. So what I can defend in detail is
 the reconciliation policy, not a shipped end-to-end offline gate.
 
-Two further gaps are worth naming rather than discovering in an interview. Scan
-submission is not yet authenticated — possession of a validly signed QR is
-currently the de facto authorisation, and device registration comes later. And the
-outcome taxonomy is deliberately coarser than the specification asked for, because
+Two further gaps are worth naming rather than discovering in an interview. Device
+enrolment and scanner-side authentication are specified and sequenced after the
+reconciliation policy itself, so they land with the scanner build rather than
+before it. And the outcome taxonomy is deliberately coarser than the specification
+asked for, because
 the guarded update genuinely cannot distinguish "already scanned" from "scan limit
 reached": both are the same zero rows updated. Collapsing them was better than
 inventing a distinction the mechanism could not actually make.

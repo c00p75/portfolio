@@ -15,6 +15,8 @@ type Message = {
   role: 'user' | 'assistant';
   text: string;
   phase?: Phase;
+  /** Server HMAC over an assistant answer, replayed so the server can trust it. */
+  sig?: string;
 };
 
 // Shared with the ingest, which precomputes a vector for each one — see
@@ -108,7 +110,7 @@ export function AskGeorgeWidget({ indexChunks }: { indexChunks: number }) {
       const assistantId = `a-${Date.now()}`;
       const history: AskHistoryTurn[] = messages
         .filter((m) => m.text.trim().length > 0)
-        .map((m) => ({ role: m.role, content: m.text }));
+        .map((m) => ({ role: m.role, content: m.text, sig: m.sig }));
 
       setDraft('');
       setNotice(null);
@@ -143,7 +145,9 @@ export function AskGeorgeWidget({ indexChunks }: { indexChunks: number }) {
               case 'done':
                 setPhase('done');
                 setMessages((prev) =>
-                  prev.map((m) => (m.id === assistantId ? { ...m, phase: 'done' } : m)),
+                  prev.map((m) =>
+                    m.id === assistantId ? { ...m, phase: 'done', sig: event.sig } : m,
+                  ),
                 );
                 break;
             }
@@ -203,7 +207,7 @@ export function AskGeorgeWidget({ indexChunks }: { indexChunks: number }) {
             {messages.length === 0 ? (
               <div>
                 <p className="text-sm leading-relaxed text-pretty">
-                  Hi — ask about George&apos;s work, education, or the writing on this site. Facts
+                  Hi, ask about George&apos;s work, education or the writing on this site. Facts
                   come from the {indexChunks} indexed passages. If it is not in there, I say so
                   rather than guess.
                 </p>

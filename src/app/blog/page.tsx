@@ -57,7 +57,7 @@ export default function WritingIndex() {
             <div>
               <h1 className="font-display text-jumbo text-balance uppercase">Writing</h1>
               <p className="text-on-ink mt-8 max-w-2xl text-lg leading-relaxed text-pretty">
-                Playbooks are standards I would bring to a team — currently, how to keep repository
+                Playbooks are standards I would bring to a team. Right now that means keeping repository
                 health, review capacity and architectural coherence intact when code generation gets
                 cheap. Below them, an archive of earlier articles.
               </p>

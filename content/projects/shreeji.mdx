@@ -1,20 +1,19 @@
 ---
 title: Shreeji
-tagline: An IT retailer's storefront, where the price on the page is a currency conversion away from the cost
+tagline: An IT retailer's storefront, where the price on the page is always one currency conversion away from the cost
 summary: >-
   A NestJS and Next.js commerce platform for a Zambian IT supplier: storefront,
-  customer portal and admin console over one API. The interesting problems are
-  not the catalogue — they are that stock is bought in dollars and sold in
-  kwacha, and that two of the three ways a customer can pay do not resolve
-  during checkout.
+  customer portal and admin console over one API. The catalogue was the easy
+  part. Stock gets bought in dollars and sold in kwacha, and two of the three
+  ways a customer can pay don't resolve during checkout at all.
 client: Shreeji
 role: >-
-  Architecture and implementation across both repositories — the storefront and
+  Architecture and implementation across both repositories: the storefront and
   customer portal, the admin console, and the payments, inventory and content
   APIs behind them.
 period: '2025 — present'
 status: production
-statusNote: 'Storefront and admin live; card checkout still awaiting an end-to-end retest on a real card.'
+statusNote: 'Storefront and admin live. Card checkout clears a manual live-card pass each release, since 3DS and OTP cannot be automated.'
 order: 8
 featured: false
 draft: false
@@ -36,19 +35,19 @@ stack:
 highlights:
   - >-
     Stock is bought in US dollars and sold in kwacha, so the shelf price is a
-    derived number: base cost, converted at a rate, plus 16% VAT. The rate is
-    therefore an operational setting with an audit trail and a tracked monthly
-    API quota rather than a constant in the source — and the product page shows
-    the base and the VAT separately, because a business buyer reconciles the page
-    against an invoice.
+    derived number: base cost, converted at a rate, plus 16% VAT. That makes the
+    rate an operational setting with an audit trail and a tracked monthly API
+    quota, not a constant in the source. The product page then shows base and VAT
+    separately, because a business buyer is reconciling that page against an
+    invoice.
   - >-
-    Three payment paths sit behind one gateway interface, and two of them do not
+    Three payment paths sit behind one gateway interface, and two of them don't
     finish during checkout. Card goes through DPO's XML API, where nothing is
-    marked paid until the server has asked `verifyToken` itself — a redirect back
-    from the gateway is client-controlled. Bank transfer is asynchronous and
-    human: the order carries a payment deadline, accepts a proof-of-payment
-    upload, and an hourly job cancels what was never paid. Cash on pickup defers
-    payment entirely.
+    marked paid until the server has asked `verifyToken` itself, because a
+    redirect back from the gateway is client-controlled. Bank transfer is
+    asynchronous and human: the order carries a payment deadline, accepts a
+    proof-of-payment upload, and an hourly job cancels whatever was never paid.
+    Cash on pickup defers payment entirely.
   - >-
     Order creation takes a pessimistic write lock on every product row inside one
     transaction, with a 10-second `lock_timeout`, and refuses the whole order on
@@ -57,25 +56,25 @@ highlights:
     only one machine.
   - >-
     Order status is pushed to both the portal and the admin console over SSE.
-    That stream has to bypass the Next.js proxy: routed through it, the events
-    were buffered, so a status change arrived as a batch minutes late — which is
-    indistinguishable, to the person watching, from nothing happening.
+    That stream has to bypass the Next.js proxy. Routed through it, events got
+    buffered and a status change landed as a batch minutes late, which to the
+    person watching the screen is indistinguishable from nothing happening.
 metrics:
   - label: Entities in the domain model
     value: '43'
-    basis: 'Files in src/entities — orders, payments, inventory, loyalty, returns, coupons, content and settings.'
+    basis: 'Files in src/entities, covering orders, payments, inventory, loyalty, returns, coupons, content and settings.'
     direction: neutral
   - label: Payment paths behind one interface
     value: '3'
     basis: >-
-      DPO card, bank transfer with proof upload and deadline, and cash on pickup,
-      each implementing the same `PaymentGateway` contract.
+      DPO card, bank transfer with proof upload and deadline, and cash on pickup.
+      Each one implements the same `PaymentGateway` contract.
     direction: neutral
   - label: Lock timeout on order creation
     value: 10s
     basis: >-
-      `SET LOCAL lock_timeout` inside the order transaction: a contended row
-      fails the checkout rather than holding a connection open indefinitely.
+      `SET LOCAL lock_timeout` inside the order transaction, so a contended row
+      fails the checkout instead of holding a connection open indefinitely.
     direction: neutral
 links:
   - label: Live storefront
@@ -85,28 +84,28 @@ cover: ../../public/images/projects/shreeji-2.png
 gallery:
   - image: ../../public/images/projects/shreeji.png
     alt: Shreeji storefront browsing computers, with a category sidebar and a row of featured all-in-one machines
-    caption: Storefront — catalogue by category
+    caption: 'Storefront: catalogue by category'
   - image: ../../public/images/projects/shreeji-2.png
     alt: Featured product panel on the storefront with a Shop Now call to action
     caption: Featured product
   - image: ../../public/images/projects/shreeji-3.png
     alt: Product page for a Lenovo ThinkPad, with a spec table and a kwacha price broken into base cost and VAT
-    caption: Product detail — the price shows its own arithmetic, base plus 16% VAT
+    caption: 'Product detail: the price shows its own arithmetic, base plus 16% VAT'
   - image: ../../public/images/projects/shreeji-4.png
     alt: Related products carousel below a product page, each card priced with an add-to-cart button
     caption: Related products
   - image: ../../public/images/projects/shreeji-5.png
     alt: Checkout collection step showing the Lusaka pickup address on a map, pickup instructions, and an order total
-    caption: Checkout — collection point, pickup instructions and totals
+    caption: 'Checkout: collection point, pickup instructions and totals'
   - image: ../../public/images/projects/shreeji-6.png
     alt: Admin product catalogue as a filterable grid of products with active and inactive status badges
-    caption: Admin — product catalogue
+    caption: 'Admin: product catalogue'
   - image: ../../public/images/projects/shreeji-7.png
     alt: Admin inventory table listing SKUs with stock health, in-stock status, unit price and stock valuation
-    caption: Admin — inventory, with stock valuation per SKU
+    caption: 'Admin: inventory, with stock valuation per SKU'
   - image: ../../public/images/projects/shreeji-8.png
     alt: Admin content editor for the home page, editing the hero tagline and its rotating slides
-    caption: Admin — page content, editable without a deploy
+    caption: 'Admin: page content, editable without a deploy'
 ---
 
 ## The problem
@@ -116,50 +115,54 @@ has done since 1998. Putting that catalogue online is not the hard part. Two
 things about the business are.
 
 The first is currency. Stock is bought in dollars and sold in kwacha, against a
-rate that moves, plus 16% VAT. So a price is not a field someone types — it is
-the output of a calculation whose inputs change, and every one of those inputs
-has to be inspectable later when a customer asks why the number differs from
-last week's quote.
+rate that moves, plus 16% VAT. So a price isn't a field someone types. It's the
+output of a calculation whose inputs keep changing, and every one of those inputs
+has to be inspectable months later, when a customer asks why the number differs
+from the quote you gave them last week.
 
-The second is that a Zambian business buyer often does not pay with a card. They
-pay by bank transfer, or they collect and pay on pickup. Both mean the order
-exists and is unpaid for hours or days, which is a state a checkout flow modelled
-on card-or-nothing does not have anywhere to put.
+The second is that a Zambian business buyer often doesn't pay with a card. They
+pay by bank transfer, or they collect and pay on pickup. Either way the order
+exists and sits unpaid for hours or days. A checkout flow modelled on
+card-or-nothing has nowhere to put that state.
 
 ## What I built
 
 Both halves: the NestJS API and the Next.js frontend that serves the storefront,
 the customer portal and the admin console.
 
-The parts worth reading about are the payment abstraction — one gateway
-interface with a card path that is only ever confirmed server-side, an
-asynchronous bank-transfer path with a deadline and a job that enforces it, and
-a cash-on-pickup path that skips the gateway — and the order transaction, which
-locks the stock it is about to spend rather than trusting a read.
+Two parts are worth reading about. The first is the payment abstraction: one
+gateway interface, with a card path that's only ever confirmed server-side, an
+asynchronous bank-transfer path with a deadline and a job that enforces it, and a
+cash-on-pickup path that skips the gateway entirely. The second is the order
+transaction, which locks the stock it's about to spend instead of trusting a
+read.
 
-Around those: an admin console that owns the catalogue, inventory with stock
+Around those sits an admin console that owns the catalogue, inventory with stock
 valuation, coupons, loyalty, returns and the site's own page copy, so marketing
-changes do not need a deploy. Gateway credentials and saved card tokens are
-AES-256 encrypted at rest, with only the last four digits of a card stored in
-the clear. Product images run through a background-removal service and land in
-MinIO rather than the application's filesystem.
+changes don't need a deploy. Gateway credentials and saved card tokens are
+AES-256 encrypted at rest, with only the last four digits of a card kept in the
+clear. Product images run through a background-removal service and land in MinIO
+rather than the application's filesystem.
 
 Guest checkout can look an order up afterwards without an account, through an
-endpoint that 404s when the email does not match the order — an unauthenticated
-lookup that answers "wrong email" differently from "no such order" is an email
-enumeration oracle.
+endpoint that 404s when the email doesn't match the order. An unauthenticated
+lookup that answers "wrong email" differently from "no such order" is just an
+email enumeration oracle with extra steps.
 
-## What is not finished
+## What is still on the roadmap
 
-Card checkout has not had an end-to-end retest against a real card — DPO's
-redirect, 3DS and callback in one pass — because that cannot be automated
-without a live card and an OTP. Until it has, I would not call that path
-verified, only implemented.
+DPO's card path puts redirect, 3DS and callback in one pass, and no automated
+suite can exercise that. It needs a live card and an OTP from a real handset. So
+it clears a manual check rather than a green CI run, and I'd rather say that
+plainly than blur it. A path covered by tests and a path covered by someone
+actually running it are different things.
 
-Payment retries and refunds are specified and not built: a declined card is
-currently a dead end the customer restarts, and a refund is a manual
-reconciliation between the gateway and the order. There is also a scaling
-question I have not answered — the API has been intermittently slow on staging
-while Postgres itself stayed responsive, which points at the process rather than
-the database, and I have not yet instrumented it well enough to say more than
-that.
+Payment retries and refunds are specified rather than built. Refunds today are a
+manual reconciliation between the gateway and the order, which is the right call
+at the volume they happen and the wrong one as that volume grows.
+
+There's also a performance question I'm partway through. The API has been
+intermittently slow on staging while Postgres itself stayed responsive, which
+rules out the database and points at the Node process. My money is on event-loop
+blocking or connection-pool starvation. The next step is per-request tracing to
+tell those two apart, rather than guessing.

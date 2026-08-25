@@ -10,7 +10,7 @@ import { Tag } from '@/components/ui/Sticker';
 export const metadata: Metadata = {
   title: 'Work',
   description:
-    'Selected projects: messaging platforms, AI systems, offline ticketing, and money apps — with case studies of the architecture behind them.',
+    'Selected projects: messaging platforms, AI systems, offline ticketing and money apps, with case studies of the architecture behind them.',
 };
 
 const SKILL_LENS = [
@@ -46,8 +46,8 @@ export default function WorkIndex() {
             <div className="px-card relative z-10 min-w-0 py-14 sm:py-20 lg:pr-8">
               <h1 className="font-display text-jumbo text-balance uppercase">Work</h1>
               <p className="text-on-ink mt-6 max-w-xl text-lg leading-relaxed text-pretty">
-                Case studies of systems I designed and shipped — payments, messaging, offline
-                mobile, and AI features with real retrieval behind them.
+                Case studies of systems I designed and shipped, covering payments, messaging,
+                offline mobile, and AI features with real retrieval behind them.
               </p>
               <ul className="mt-8 flex flex-wrap gap-2">
                 {SKILL_LENS.map((s) => (
@@ -132,7 +132,7 @@ export default function WorkIndex() {
               index="03"
               eyebrow="Client & employer"
               title={<span id="client-work">Other work</span>}
-              lead="Substantial delivery that I can’t name in full — or whose hardest problems are already covered above."
+              lead="Substantial delivery I can’t name in full, or whose hardest problems are already covered above."
             />
             <ul className="divide-ink-line mt-12 divide-y">
               {otherWork.map((w) => (

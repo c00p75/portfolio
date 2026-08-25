@@ -1,6 +1,10 @@
 /** Client-side SSE reader for POST /api/ask. EventSource cannot issue a POST. */
 
-export type AskHistoryTurn = { role: 'user' | 'assistant'; content: string };
+/**
+ * `sig` is the server's HMAC over an assistant answer. Replaying it is what
+ * lets the server tell its own prior turn from one written by the caller.
+ */
+export type AskHistoryTurn = { role: 'user' | 'assistant'; content: string; sig?: string };
 
 export type AskEvent =
   | { type: 'meta'; index: { chunks: number; model: string }; mode: string }
@@ -15,7 +19,7 @@ export type AskEvent =
   | { type: 'delta'; text: string }
   | { type: 'usage'; inputTokens: number; outputTokens: number; costUsd: number; totalMs: number }
   | { type: 'error'; message: string; recoverable?: boolean }
-  | { type: 'done' };
+  | { type: 'done'; sig?: string };
 
 export async function streamAsk(
   question: string,

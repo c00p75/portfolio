@@ -3,14 +3,14 @@ title: Penda
 tagline: A money app whose AI assistant can act on your finances but cannot quietly rewrite them
 summary: >-
   A personal finance app with a chat assistant that reads and acts on a user's
-  own ledger. The interesting risk is not the model saying something wrong — a
-  user can discount that. It is the model being confidently wrong about a number
-  and silently overwriting history, because the entire value of a finance tool is
-  the user believing the balance.
+  own ledger. A model saying something wrong isn't the risk that matters; users
+  discount that easily enough. The risk is a model being confidently wrong about
+  a number and quietly overwriting history, because the whole value of a finance
+  tool is that you believe the balance.
 client: Ballo Innovations
 role: >-
   Architecture and implementation of the assistant's tool layer, the confirmation
-  and staging model, and the row-level security boundary it runs inside.
+  and staging model, and the row-level security boundary it all runs inside.
 period: '2026 — present'
 status: in-build
 order: 4
@@ -31,25 +31,24 @@ stack:
   - TypeScript
 highlights:
   - >-
-    The assistant can create a transaction but cannot edit or delete one — not
+    The assistant can create a transaction but can't edit or delete one. Not
     because the prompt says so, but because the function holding the model
     contains no code that performs an update. A prompt is a suggestion a model
-    can misread; it cannot be a security boundary.
+    can misread. It was never going to be a security boundary.
   - >-
-    Destructive intents are written to a staging table and executed by a
-    different function that only runs when the user taps confirm. Tiering is by
-    blast radius rather than by SQL verb, so a large or multi-field create is
-    staged too.
+    Destructive intents get written to a staging table and executed by a different
+    function that only runs when the user taps confirm. Tiering is by blast radius
+    rather than by SQL verb, so a large or multi-field create gets staged too.
   - >-
-    The assistant runs under the user's own credentials, so database row-level
-    security — not application code — bounds everything it can reach.
+    The assistant runs under the user's own credentials, so what bounds its reach
+    is database row-level security rather than application code.
 metrics:
   - label: Tools that can reach an update or delete
     value: '0'
     basis: >-
-      Structural, and the point of the design: the chat function's tool dispatch
-      has no case that performs an update or a delete. Verifiable by reading the
-      dispatch rather than by sampling behaviour.
+      Structural, and the whole point of the design: the chat function's tool
+      dispatch has no case that performs an update or a delete. You verify it by
+      reading the dispatch, not by sampling behaviour.
     direction: down-is-good
   - label: Independent allowlists a write must satisfy
     value: '2'
@@ -60,9 +59,9 @@ metrics:
   - label: Turn budget
     value: '40 s'
     basis: >-
-      Chosen after working out the unbounded case: a twelve-second model timeout
-      across two providers over four tool iterations stacked to roughly 160
-      seconds. The wall-clock budget bounds it directly.
+      Chosen after working out the unbounded case. A twelve-second model timeout
+      across two providers over four tool iterations stacked up to roughly 160
+      seconds. The wall-clock budget caps that directly.
     direction: down-is-good
 links:
   - label: Related wallet experiments
@@ -71,52 +70,52 @@ links:
 cover: ../../public/images/projects/penda-wallet-4.png
 gallery:
   - image: ../../public/images/projects/penda-wallet.png
-    alt: Penda's launch screen — a wallet mark above the name and the line "AI-first money tracking"
+    alt: Penda's launch screen, a wallet mark above the name and the line "AI-first money tracking"
     caption: Launch
   - image: ../../public/images/projects/penda-wallet-5.png
     alt: Penda home screen with a morning greeting, an install-to-home-screen prompt and a finish-setup card
-    caption: Home — installable, and it works offline
+    caption: 'Home: installable, and it works offline'
   - image: ../../public/images/projects/penda-wallet-4.png
     alt: Chat thread where a spend of K80 on a ride is logged in plain language and the assistant ties it back to a debt goal
     caption: >-
-      The assistant logging a spend from a sentence — a create, which is the only
+      The assistant logging a spend from a sentence. A create, which is the only
       kind of write it can perform unstaged
   - image: ../../public/images/projects/penda-wallet-3.png
     alt: Persona picker for the assistant, offering a hustler, a balanced coach, an analyst, an exasperated parent, a drill sergeant and a comedian
-    caption: Who the assistant is in chat — tone only; it changes no permission
+    caption: 'Who the assistant is in chat: tone only, and it changes no permission'
   - image: ../../public/images/projects/penda-wallet-1.png
     alt: Profile screen with plan tier and a mode selector for individual, couple, family or business wallets
-    caption: Profile — the mode reframes the advice over the same money
+    caption: 'Profile: the mode reframes the advice over the same money'
   - image: ../../public/images/projects/penda-wallet-2.png
     alt: Insights screen with spend by category, a daily spending heatmap for the month, and a weekly AI digest card
-    caption: Insights — spend by category and a daily heatmap
+    caption: 'Insights: spend by category and a daily heatmap'
 ---
 
 ## The problem
 
 An assistant that can only answer questions about your money is a search box. An
-assistant that can act on your money is useful, and is also one bad turn away
-from destroying data the user cannot reconstruct. Creates are recoverable — a
-spurious row is visible in a list and can be removed. Updates and deletes are
-where a confused agent overwrites a number that no longer exists anywhere, and
-the user may not notice for a month.
+assistant that can act on your money is genuinely useful, and also one bad turn
+away from destroying data the user can't reconstruct. Creates are recoverable. A
+spurious row shows up in a list and you delete it. Updates and deletes are where
+a confused agent overwrites a number that now exists nowhere else, and the user
+might not notice for a month.
 
 ## What I built
 
 The confinement model: two functions rather than one, with the model-facing
-function structurally unable to perform a destructive write. Everything else —
-the staging table, the snapshots for undo, the graduated trust flag that lets a
-consistently-correct user stop confirming small creates — follows from wanting
-the guarantee to be a property of the code rather than of the model's behaviour
-on a given day.
+function structurally incapable of a destructive write. Everything else follows
+from that. The staging table, the snapshots for undo, the graduated trust flag
+that lets a consistently-correct user stop confirming small creates. All of it
+comes from wanting the guarantee to be a property of the code, not of how the
+model happens to behave on a given day.
 
 ## What I would not claim
 
-There is no prompt-injection defence here. What exists is capability
-confinement, which is a different and in some ways stronger property, but it is
-not the same claim: nothing tags untrusted text as untrusted. The argument is
-only that the model's reachable actions are too narrow for an injected
-instruction to do much with.
+There's no prompt-injection defence here. What exists is capability confinement,
+which is a different property and in some ways a stronger one, but it isn't the
+same claim. Nothing tags untrusted text as untrusted. The argument is only that
+the model's reachable actions are too narrow for an injected instruction to do
+much with.
 
 The allowlist is also enforced at more than one layer, across two runtimes. Each
 copy is deliberate defence in depth; keeping them in agreement is not free,

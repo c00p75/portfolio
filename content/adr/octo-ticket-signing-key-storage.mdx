@@ -19,10 +19,10 @@ context: >-
   Octo mints QR-coded tickets and needs a scanner to be able to verify one with no
   network available, which rules out a server-side verification call at the gate.
   The payload therefore has to carry its own proof, and a per-event HMAC secret is
-  the mechanism. The question this record is about is not the signing scheme — that
-  part is uncontroversial — it is where the fifty or so bytes of secret key actually
-  live, given that a scanning device will eventually need the raw value, not a
-  reference to it.
+  the mechanism. This record isn't about the signing scheme, which is
+  uncontroversial. It's about where the fifty or so bytes of secret key actually
+  live, given that a scanning device will eventually need the raw value rather than
+  a reference to it.
 constraints:
   - 'A scanner must be able to verify a ticket''s signature without a network call.'
   - 'The same secret that signs a ticket must be provisionable to an authorized scanner device.'
@@ -65,10 +65,10 @@ options:
     verdict: chosen
     because: >-
       This was the only option that could actually satisfy the offline constraint.
-      A scanner needs the raw secret, so somewhere in the system the raw secret has
-      to be readable by something that can hand it to a device — and once that is
-      true, a KMS wrapper adds ceremony without adding protection against the risk
-      that actually matters, which is the key being extracted from an authorized
+      A scanner needs the raw secret, so somewhere in the system that raw secret has
+      to be readable by something able to hand it to a device. Once that is true, a
+      KMS wrapper adds ceremony without adding protection against the risk that
+      actually matters, which is the key being extracted from an authorized
       caller.
     pros:
       - 'Compromise is scoped to one event rather than the whole platform.'
@@ -76,7 +76,7 @@ options:
       - 'A concurrent first-mint race is handled: a losing writer reloads the winner''s key rather than creating two.'
     cons:
       - 'The key sits in the same database as everything else, protected by ordinary access control rather than a hardened secrets boundary.'
-      - 'There is no rotation path — signing a key change would invalidate every ticket already issued for that event.'
+      - 'There is no rotation path, since signing a key change would invalidate every ticket already issued for that event.'
       - 'Provisioning hands an authorized device the raw secret rather than a wrapped one, which is a wider blast radius than a KMS-backed design would allow.'
 tradeoffs:
   - criterion: Compromise blast radius
@@ -107,9 +107,9 @@ decision: >-
   Each event gets a 32-byte random secret, base64-encoded and stored in a dedicated
   table keyed by event id, minted lazily on first use with a reload-on-conflict path
   for the case where two requests race to mint the same event's key. A ticket's QR
-  content is the payload — ticket id, tier id, event id, and the exact issued-at
-  timestamp — followed by the HMAC-SHA256 signature of that payload under the
-  event's secret. Verification uses a constant-time comparison. The issued-at
+  content is the payload, meaning ticket id, tier id, event id and the exact
+  issued-at timestamp, followed by the HMAC-SHA256 signature of that payload under
+  the event's secret. Verification uses a constant-time comparison. The issued-at
   timestamp is stored as its own column specifically so the payload can be
   regenerated later; the row's own creation timestamp is a different clock and is
   never substituted for it. The choice of Postgres over a managed secrets service is
@@ -118,7 +118,7 @@ decision: >-
 reversibility: >-
   Moving the key into a wrapped-export KMS scheme later is possible without
   reissuing tickets, because verification only needs the raw secret at the moment a
-  scanner checks a signature — the storage location can change underneath that
+  scanner checks a signature, so the storage location can change underneath that
   contract. What cannot be recovered after the fact is any ticket signed under a key
   that is later rotated or revoked; there is no versioning in the payload to let two
   keys be valid at once, so a rotation invalidates every unscanned ticket for that

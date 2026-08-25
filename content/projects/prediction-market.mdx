@@ -5,9 +5,9 @@ summary: >-
   A platform where users trade YES/NO positions on real-world events. Prices come
   from an automated market maker rather than a matched order book, every balance
   movement is a double-entry ledger posting, and settlement pays out positions when
-  an event resolves. The engineering is ordinary web work sitting on top of two
-  things that are not: pricing and money.
-client: Employer product — name withheld
+  an event resolves. Most of it is ordinary web work sitting on top of two things
+  that aren't ordinary at all: pricing and money.
+client: Employer product, name withheld
 role: >-
   Full-stack feature development across the trading, wallet, settlement and admin
   surfaces, in a remote engineering team.
@@ -32,19 +32,20 @@ stack:
   - LMSR
 highlights:
   - >-
-    Prices come from a logarithmic market scoring rule, not from matching buyers
-    against sellers. That is the decision that makes a thin market usable at all: a
-    new market with two participants still has a quotable price, where an order book
-    with two participants has a spread nobody will cross.
+    Prices come from a logarithmic market scoring rule rather than from matching
+    buyers against sellers. That single decision is what makes a thin market usable
+    at all. A new market with two participants still has a quotable price, where an
+    order book with two participants has a spread nobody will cross.
   - >-
     Every balance change is a double-entry posting rather than an increment on a
-    user row. Deposits, trades, fees, settlement payouts and withdrawals all have
-    to balance, which means a discrepancy is a detectable condition rather than a
+    user row. Deposits, trades, fees, settlement payouts and withdrawals all have to
+    balance, which turns a discrepancy into a detectable condition instead of a
     number that quietly drifts.
   - >-
-    Withdrawals above a threshold are gated on identity verification, and the fee
-    is charged on profit rather than on volume — both of which are policy decisions
-    that have to be enforced in the ledger rather than described in the interface.
+    Withdrawals above a threshold are gated on identity verification, and the fee is
+    charged on profit rather than on volume. Both are policy decisions, and policy
+    decisions have to be enforced in the ledger rather than described in the
+    interface.
   - >-
     Markets are embeddable in partner media sites as a widget, with affiliate
     attribution carried through so commission can be traced back to the placement
@@ -53,14 +54,14 @@ metrics:
   - label: Pricing mechanism
     value: LMSR
     basis: >-
-      A logarithmic market scoring rule as the automated market maker, rather than
-      a central limit order book.
+      A logarithmic market scoring rule as the automated market maker, rather than a
+      central limit order book.
     direction: neutral
   - label: Accounting model
     value: Double-entry
     basis: >-
-      A ledger module every balance movement posts through — trades, fees,
-      settlement and wallet operations included.
+      A ledger module every balance movement posts through, including trades, fees,
+      settlement and wallet operations.
     direction: neutral
   - label: Fee basis
     value: '3% on profit'
@@ -71,23 +72,23 @@ links: []
 
 ## Why an automated market maker
 
-A prediction market with no liquidity is not a market, it is a form. An order book
+A prediction market with no liquidity isn't a market. It's a form. An order book
 needs traders on both sides before it can quote anything, and a platform launching
 new markets continuously never has that on day one.
 
 A scoring-rule market maker always quotes, and its prices move as a function of
 the positions held rather than of who happens to be online. The cost is that the
-platform itself carries inventory risk, bounded by the liquidity parameter — which
-is the trade being made deliberately in exchange for a market that works from the
+platform itself carries inventory risk, bounded by the liquidity parameter. That's
+a trade you make on purpose, in exchange for a market that works from the very
 first trade.
 
 ## Why the ledger is double-entry
 
-Because the alternative is a balance column, and a balance column cannot tell you
-that it is wrong. In a system taking deposits, charging fees, and paying out
-settlements, the useful property is not that the arithmetic is correct — it is
-that incorrect arithmetic is *detectable*. Double-entry gives you an invariant to
-check rather than a number to trust.
+Because the alternative is a balance column, and a balance column can't tell you
+when it's wrong. In a system taking deposits, charging fees and paying out
+settlements, the property you want isn't that the arithmetic is correct. It's that
+incorrect arithmetic is *detectable*. Double-entry hands you an invariant to check
+instead of a number to trust.
 
 ## A note on this write-up
 

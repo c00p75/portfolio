@@ -136,9 +136,9 @@ metrics:
   - label: Reconciliation sweep for orders with no callback
     value: 'not built'
     basis: >-
-      Specified as a follow-up task — a scheduled re-check of pending orders past a
-      time threshold — but no scheduled function exists in the codebase that
-      performs it.
+      Specified as a follow-up task, meaning a scheduled re-check of pending orders
+      past a time threshold, but no scheduled function performing it exists in the
+      codebase yet.
     direction: neutral
 failureModes:
   - trigger: The gateway retries the same payment callback
@@ -192,16 +192,16 @@ browser.
 
 ## The part that is still open
 
-The honest gap is what happens when the gateway's callback never arrives at all —
-network partition, a dropped queue on their end, whatever the cause. Today that
-order sits in `PENDING` forever. It has an expiry timestamp written to it, and
+The honest gap is what happens when the gateway's callback never arrives at all,
+whether that's a network partition, a dropped queue on their end, or anything
+else. Today that order stays in `PENDING`. It has an expiry timestamp written, and
 nothing reads that timestamp. A customer in that state has been charged and has no
 ticket, and the system does not know it needs to look.
 
-I designed the fix — a scheduled sweep that re-verifies any order past its pending
-threshold and either completes or expires it — and did not build it. I would rather
-say that plainly than let the layered idempotency work imply the integration is
-more finished than it is. The three guards against double-completion are real and
+The fix is designed and scheduled rather than built: a sweep that re-verifies any
+order past its pending threshold and either completes or expires it. I'd rather say
+that plainly than let the layered idempotency work imply the integration is more
+finished than it is. The three guards against double-completion are real and
 they work; they solve a different problem than the one a lost callback creates.
 
 ## What I would build next

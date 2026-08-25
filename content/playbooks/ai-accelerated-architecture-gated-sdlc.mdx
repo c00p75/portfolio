@@ -29,7 +29,7 @@ bottleneck has not gone away. It has moved somewhere nobody is measuring.
 The symptom is a repository that passes CI and that nobody can confidently
 change six months later.
 
-## Gate 1 — Spec before generation
+## Gate 1: Spec before generation
 
 The artefact a human writes first is not the implementation. It is the boundary:
 
@@ -37,17 +37,17 @@ The artefact a human writes first is not the implementation. It is the boundary:
 - The failing test that defines "done"
 - The interface the rest of the system sees
 
-The model fills in the middle. This inverts the usual review problem, because
-reviewing a diff against a spec you wrote is a bounded question — *does this
-satisfy the contract?* — where reviewing an unspecified diff is unbounded.
+The model fills in the middle. That inverts the usual review problem. Reviewing a
+diff against a spec you wrote is a bounded question, *does this satisfy the
+contract?*, where reviewing an unspecified diff is unbounded.
 
-## Gate 2 — Repository rules are checked in, not remembered
+## Gate 2: Repository rules are checked in, not remembered
 
 Conventions communicated in a code review are applied once. Conventions committed
 as a workspace ruleset are applied on every generation, by everyone.
 
-The rules worth writing down are almost never style — formatters already own
-that. They are the things a model has no way to infer: which module owns which
+The rules worth writing down are almost never style, because formatters already
+own that. They're the things a model has no way to infer: which module owns which
 concern, which dependencies are deliberately absent, which patterns were tried
 and rejected, where the transaction boundaries are.
 
@@ -55,7 +55,7 @@ and rejected, where the transaction boundaries are.
 > nothing. The useful entries are the ones recording an approach that was tried
 > and dropped, and why.
 
-## Gate 3 — Tests are the review surface that scales
+## Gate 3: Tests are the review surface that scales
 
 A test suite can absorb a larger diff without getting slower or more careless.
 Human attention cannot. So generating code faster raises the level of automated
@@ -65,15 +65,15 @@ The distribution that has worked for me:
 
 - **Unit tests** on pure logic, written before generation as the spec.
 - **Integration tests** across the seams the model is most likely to get subtly
-  wrong — anything touching transactions, auth, or external APIs.
+  wrong, meaning anything touching transactions, auth or external APIs.
 - **End-to-end** on the two or three flows whose breakage would be a real
   incident, and no more; broad E2E suites rot faster than they catch things.
 
-## Gate 4 — Architectural review stays human, and stays early
+## Gate 4: Architectural review stays human, and stays early
 
 Everything above is about verifying implementations. None of it catches the
 expensive class of mistake, which is a correct implementation of the wrong
-structure — a boundary drawn in the wrong place, a synchronous call that should
+structure: a boundary drawn in the wrong place, a synchronous call that should
 have been an event, a shared database between two services that now cannot deploy
 independently.
 

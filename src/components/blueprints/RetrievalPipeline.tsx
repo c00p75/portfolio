@@ -166,7 +166,7 @@ export function RetrievalPipeline() {
             opacity="0.3"
           />
           <text x="26" y="36" fill="currentColor" className="font-mono" fontSize="9.5" opacity="0.6">
-            BUILD TIME — runs on deploy
+            BUILD TIME: runs on deploy
           </text>
           <Node x={30} y={48} w={80} h={44} title="MDX" sub="corpus" />
           <Node x={126} y={48} w={80} h={44} title="Chunk" sub="~215 tok" />
@@ -192,7 +192,7 @@ export function RetrievalPipeline() {
             opacity="0.3"
           />
           <text x="26" y="196" fill="currentColor" className="font-mono" fontSize="9.5" opacity="0.6">
-            REQUEST PATH — runs per query
+            REQUEST PATH: runs per query
           </text>
 
           {/* The link the diagram was missing: the artefact built on deploy is
@@ -243,8 +243,8 @@ export function RetrievalPipeline() {
         </svg>
       </div>
       <figcaption className="font-mono text-on-ink-muted mt-4 text-[0.6875rem] leading-relaxed tracking-wide uppercase">
-        Fig. 1 — The index is built on deploy and read on every request. Two retrieval paths score
-        against it — teal is dense, yellow is lexical — and are fused by rank rather than score.
+        Fig. 1. The index is built on deploy and read on every request. Two retrieval paths score
+        against it, teal for dense and yellow for lexical, and they are fused by rank rather than score.
         The dashed edge is the degraded mode: the BM25 ranking alone answers if the query embedding
         fails.
       </figcaption>

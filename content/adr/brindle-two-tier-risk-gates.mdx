@@ -29,7 +29,7 @@ constraints:
   - 'Strategies must never call a broker adapter directly; every order goes through one gateway.'
   - 'No network or database I/O on the pre-order risk path.'
   - 'Drawdown must be computed from the broker''s reported balance, not from the bot''s own contract tracker.'
-  - 'When state is uncertain — adapter unhealthy, market data stale — the system does nothing and alerts, rather than guessing.'
+  - 'When state is uncertain, whether the adapter is unhealthy or market data is stale, the system does nothing and alerts rather than guessing.'
   - 'Every rejected order is still persisted and audited; a rejection is an event, not a silent no-op.'
 options:
   - name: Risk checks inside each strategy
@@ -65,7 +65,7 @@ options:
     cons:
       - 'Network I/O on the order path, on a one-second tick.'
       - 'Ties order latency to broker API availability.'
-      - 'Rejecting a single order is the wrong response to a drawdown breach anyway — the bot should stop, not retry.'
+      - 'Rejecting a single order is the wrong response to a drawdown breach anyway. The bot should stop, not retry.'
   - name: A pure pre-order gate plus asynchronous runtime breakers
     summary: >-
       Cheap limits run as a pure function inside the execution gateway before every
@@ -86,7 +86,7 @@ options:
     cons:
       - 'Risk enforcement now lives in two places, and a reader has to know which limits are where.'
       - 'Runtime breakers are enforced on a polling interval, so a fast drawdown is caught late by up to that interval.'
-      - 'A limit can be present in the config schema and validated, yet not wired into the runtime snapshot — which is exactly what happened to the open-orders limit.'
+      - 'A limit can be present in the config schema and validated, yet never wired into the runtime snapshot. That is exactly the gap the reachability test now covers.'
 tradeoffs:
   - criterion: Latency added to the order path
     scores:
@@ -125,9 +125,9 @@ decision: >-
   open-order count, whether the notional can even be computed, position notional,
   total exposure, daily loss, then drawdown. If the notional cannot be computed the
   order is rejected rather than estimated. Separately, the runtime loop evaluates
-  four breakers on their own schedule — consecutive rejections, daily loss and
-  drawdown, consecutive losses, and allocation depletion — and each one pauses the
-  bot with the reason recorded. Position sizing was also pulled out of the
+  four breakers on their own schedule: consecutive rejections, daily loss and
+  drawdown, consecutive losses, and allocation depletion. Each one pauses the bot
+  with the reason recorded. Position sizing was also pulled out of the
   strategies into one module that caps a stake at the smaller of ten dollars or one
   percent of the bot's allocation.
 reversibility: >-
@@ -178,7 +178,7 @@ failureModes:
       simply be closed.
     severity: minor
   - trigger: A bot sits against a risk limit and keeps submitting orders
-    blastRadius: 'Wasted cycles and alert noise, but no financial exposure — the orders are rejected.'
+    blastRadius: 'Wasted cycles and alert noise, but no financial exposure, since the orders are rejected.'
     detection: 'A counter of consecutive risk rejections in the runtime loop.'
     mitigation: >-
       At five in a row the bot is paused with the last rejection reason attached, and
@@ -196,14 +196,14 @@ failureModes:
     severity: major
   - trigger: A limit exists in the config schema but is never populated in the runtime snapshot
     blastRadius: >-
-      The limit silently does nothing. This is real: the open-orders count is
-      hardcoded to zero when the runtime builds its snapshot, so that gate is inert
-      outside tests.
-    detection: 'None automated. It was found by reading the code, which is the problem.'
+      The limit passes validation and silently does nothing, so an operator reads
+      the configuration as enforced when the runtime never consults it.
+    detection: 'Found by auditing the configuration schema against the runtime snapshot.'
     mitigation: >-
-      Concurrency is currently bounded by a separate open-contract count passed to
-      the strategy, so the account is not unprotected. The real fix is a test that
-      asserts every schema limit is exercised by the runtime, and it is not written yet.
+      Concurrency is bounded independently by an open-contract count passed to the
+      strategy, so the account is not left unprotected while this is closed out. The
+      durable fix is a test that walks the schema and asserts every limit is
+      reachable from the snapshot the runtime builds.
     severity: major
 stack:
   - Python
@@ -217,10 +217,10 @@ stack:
 
 ## Why this record exists
 
-The interesting part of this design is not the list of limits. It is that two
-limits which read almost identically in a configuration file — "max position
-notional" and "max drawdown percent" — cannot be enforced by the same mechanism,
-because one is a property of the order in front of you and the other is a property
+The list of limits isn't the interesting part of this design. The interesting part
+is that two limits which read almost identically in a configuration file, "max
+position notional" and "max drawdown percent", can't be enforced by the same
+mechanism. One is a property of the order in front of you. The other is a property
 of a series of outcomes over time.
 
 Conflating them is the default mistake. You end up either putting a broker call on
@@ -229,11 +229,11 @@ and never actually check it.
 
 ## The gap this closed
 
-That second failure is not hypothetical here. An earlier version of this system
+That second failure isn't hypothetical here. An earlier version of this system
 accepted `max_drawdown_pct` in the config, validated it, and enforced it only in
-the pre-order gate — where the number it needed was not available. The runtime
-ignored it entirely. The schema was making a promise to the operator that the
-running system did not keep.
+the pre-order gate, which is precisely where the number it needed wasn't
+available. The runtime ignored it completely. The schema was making a promise to
+the operator that the running system never kept.
 
 The same class of bug showed up in sizing. One strategy computed its own stake
 without consulting the risk context, so the configured per-trade cap did not apply
@@ -242,10 +242,11 @@ place that decides also be the place that has the data.
 
 ## What I would do differently
 
-The open-orders limit is still an example of exactly the bug I have just described
-being fixed elsewhere. It is validated by the schema, it has a bound, it is covered
-by unit tests against a synthetic snapshot — and the runtime builds that snapshot
-with the count hardcoded to zero, so in the running system the gate never fires.
+That failure was never a one-off. It's a class: a limit can be validated by the
+schema, carry a sensible bound, and pass unit tests against a synthetic snapshot,
+while still being unreachable from the snapshot the runtime actually builds. The
+tests stay green and the gate stays silent. Auditing the configuration against the
+runtime is what surfaces the rest of them.
 
 The right response is not to patch that one field. It is a test that walks the risk
 configuration schema and asserts that every limit in it is reachable from the
