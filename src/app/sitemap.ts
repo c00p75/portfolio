@@ -12,6 +12,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: url('/'), priority: 1, changeFrequency: 'monthly' },
     { url: url('/work'), priority: 0.9, changeFrequency: 'monthly' },
     { url: url('/sandbox'), priority: 0.8, changeFrequency: 'monthly' },
+    /* The product page for the MCP server, aimed at developers arriving from
+       npm or the registry rather than at anyone reading the portfolio. */
+    { url: url('/miyagi'), priority: 0.8, changeFrequency: 'monthly' },
     { url: url('/blog'), priority: 0.7, changeFrequency: 'monthly' },
     { url: url('/about'), priority: 0.6, changeFrequency: 'yearly' },
     { url: url('/contact'), priority: 0.5, changeFrequency: 'yearly' },
