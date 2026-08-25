@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Anton, Archivo, JetBrains_Mono } from 'next/font/google';
-import './globals.css';
+import '../globals.css';
 import { site } from '@/lib/site';
 import { NavBar } from '@/components/chrome/NavBar';
 import { Footer } from '@/components/chrome/Footer';
@@ -31,7 +31,7 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: { default: site.title, template: `%s — ${site.name}` },
+  title: { default: site.title, template: `%s · ${site.name}` },
   description: site.description,
   authors: [{ name: site.name, url: site.url }],
   creator: site.name,
@@ -64,7 +64,12 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/**
+ * The portfolio's root layout. `/miyagi` deliberately sits outside this group
+ * with a root layout of its own, so it inherits none of this chrome: no nav, no
+ * footer, no Ask George, and none of these fonts.
+ */
+export default function SiteLayout({ children }: { children: React.ReactNode }) {
   const meta = indexMeta();
 
   return (

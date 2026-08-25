@@ -1,0 +1,270 @@
+/* ---------------------------------------------------------------------------
+   The dojo.
+
+   /miyagi is not the portfolio. It sits outside the site's route group with a
+   root layout of its own, so none of the portfolio chrome, fonts or tones
+   reach it. This file is the whole visual world: sumi ink ground, washi paper
+   panels, a vermilion seal, and belt colours doing the work the portfolio's
+   accents do elsewhere.
+
+   It commits to one look rather than following the OS theme. A dojo at dusk in
+   light mode is not a dojo, and every surface here paints an explicit colour so
+   a light-mode viewer gets the intended thing rather than a washed-out one.
+--------------------------------------------------------------------------- */
+
+.dojo {
+  /* Ground and panels */
+  --sumi: #0a0c11;
+  --sumi-raised: #121721;
+  --sumi-line: #232b3a;
+  --washi: #efe7d7;
+  --washi-dim: #ded3bd;
+
+  /* Ink on those surfaces */
+  --on-sumi: #ece4d5;
+  --on-sumi-quiet: #9aa3b4;
+  --on-washi: #23201b;
+  --on-washi-quiet: #5c554a;
+
+  /* The seal. One accent, used sparingly, the way a hanko is. */
+  /* Three weights of the seal, because one vermilion cannot clear 4.5:1 on
+     both the ink ground and the paper. `--seal` is for fills and rules where
+     it carries no text; `--seal-bright` is for small text on ink (5.7:1);
+     `--seal-deep` is for small text on washi (5.2:1). */
+  --seal: #d1452a;
+  --seal-bright: #ec5b3d;
+  --seal-deep: #ad3419;
+  --brass: #c9a227;
+  --jade: #3f9d7c;
+
+  /* Belts, for the progression ladder */
+  --belt-white: #efe7d7;
+  --belt-yellow: #e3bf3a;
+  --belt-green: #3f8f6b;
+  --belt-brown: #7c4c2b;
+  --belt-black: #0f1218;
+
+  background-color: var(--sumi);
+  color: var(--on-sumi);
+  font-family: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Woven tatami ground: two hairline grids at right angles, plus a vignette so
+   the centre of the page carries the eye. Pure CSS, so there is no asset to
+   load and nothing to go missing. */
+.dojo-ground {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--sumi);
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(209, 69, 42, 0.14), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(201, 162, 39, 0.07), transparent 70%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(236, 228, 213, 0.035) 0px,
+      rgba(236, 228, 213, 0.035) 1px,
+      transparent 1px,
+      transparent 7px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(236, 228, 213, 0.025) 0px,
+      rgba(236, 228, 213, 0.025) 1px,
+      transparent 1px,
+      transparent 7px
+    );
+}
+
+/* Type. The display face is a heavy serif rather than the portfolio's
+   condensed sans, which is most of why this reads as somewhere else. */
+.dojo-display {
+  font-family: var(--font-serif-jp), 'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif;
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+}
+
+.dojo-mono {
+  font-family: var(--font-plex-mono), ui-monospace, 'SFMono-Regular', monospace;
+}
+
+/* A kicker label, set in mono and letterspaced like a stencil. */
+.dojo-kicker {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--on-sumi-quiet);
+}
+
+/* Panels. Square-ish corners and a hairline rule, closer to a shoji frame than
+   to the portfolio's soft cards. */
+.dojo-panel {
+  background-color: var(--sumi-raised);
+  border: 1px solid var(--sumi-line);
+  border-radius: 2px;
+}
+
+.dojo-panel-washi {
+  background-color: var(--washi);
+  color: var(--on-washi);
+  border: 1px solid var(--washi-dim);
+  border-radius: 2px;
+}
+
+/* The seal: a vermilion stamp with the character 道 (dō, "the way"). Used as
+   the mark in the header and again at the foot. */
+.dojo-seal {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 2px solid var(--seal);
+  border-radius: 4px;
+  color: var(--seal-bright);
+  font-family: var(--font-serif-jp), serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+  line-height: 1;
+  background: rgba(209, 69, 42, 0.09);
+  user-select: none;
+}
+
+/* A brush rule: thick at the start, tapering out. Stands in for the site's
+   straight hairlines. */
+.dojo-brush {
+  height: 3px;
+  border: 0;
+  background: linear-gradient(90deg, var(--seal) 0%, rgba(209, 69, 42, 0.5) 45%, transparent 100%);
+}
+
+/* Terminal block. This is a CLI tutor, so commands get a real terminal frame
+   with a prompt glyph rather than a generic code box. */
+.dojo-term {
+  background-color: #06080c;
+  border: 1px solid var(--sumi-line);
+  border-radius: 2px;
+  position: relative;
+  overflow-x: auto;
+}
+
+.dojo-term::before {
+  content: '';
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, var(--seal), var(--brass) 60%, transparent);
+}
+
+.dojo-term code {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  color: #d7f0e4;
+}
+
+.dojo-term .prompt {
+  color: var(--jade);
+  user-select: none;
+}
+
+/* The belt ladder. Each rung is a strip of belt colour with its label. */
+.dojo-belt {
+  height: 0.6rem;
+  border-radius: 1px;
+  border: 1px solid rgba(10, 12, 17, 0.55);
+}
+
+/* Focus ring that suits the world, since the portfolio's cyan does not. */
+.dojo :where(a, button, input, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--seal-bright);
+  outline-offset: 3px;
+}
+
+/* Link underlines in the seal colour. */
+.dojo-link {
+  color: var(--on-sumi);
+  text-decoration: underline;
+  text-decoration-color: var(--seal);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.dojo-link:hover {
+  color: var(--seal-bright);
+}
+
+/* Buttons */
+.dojo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: 2px;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--seal);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.dojo-btn-solid {
+  background-color: var(--seal);
+  color: #fff;
+}
+
+.dojo-btn-solid:hover {
+  background-color: var(--seal-bright);
+}
+
+.dojo-btn-ghost {
+  color: var(--on-sumi);
+  border-color: var(--sumi-line);
+}
+
+.dojo-btn-ghost:hover {
+  border-color: var(--seal);
+  color: var(--seal-bright);
+}
+
+/* Ask Miyagi. A scroll of paper the assistant writes onto, deliberately unlike
+   the portfolio's chat panel. */
+.dojo-scroll {
+  background-color: var(--washi);
+  color: var(--on-washi);
+  border-radius: 2px;
+  border: 1px solid var(--washi-dim);
+  box-shadow: inset 0 0 0 6px rgba(35, 32, 27, 0.05);
+}
+
+.dojo-scroll ::selection {
+  background: rgba(209, 69, 42, 0.25);
+}
+
+/* The blinking cursor while the tutor is thinking. */
+@keyframes dojo-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.dojo-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  translate: 0 0.15em;
+  background: var(--seal);
+  animation: dojo-blink 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dojo-cursor {
+    animation: none;
+  }
+}
