@@ -86,6 +86,24 @@
   border-style: solid;
 }
 
+/* Tail on the trailing edge, for when the speaker is to the right of the
+   bubble. A tail pointing away from whoever is talking is worse than no tail. */
+.mng-bubble-r::before,
+.mng-bubble-r::after {
+  left: auto;
+  right: 2.6rem;
+}
+
+.mng-bubble-r::before {
+  border-width: 1.5rem 0 0 1.1rem;
+  border-color: var(--ink) transparent transparent transparent;
+}
+
+.mng-bubble-r::after {
+  border-width: 1.1rem 0 0 0.75rem;
+  border-color: #fff transparent transparent transparent;
+}
+
 .mng-bubble::before {
   bottom: -1.5rem;
   border-width: 1.5rem 1.1rem 0 0;

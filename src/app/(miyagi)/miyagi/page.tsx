@@ -48,16 +48,18 @@ export default function MangaVariant() {
 
           {/* The sensei sits in his own panel and the bubble's tail points up at
               him, so the two read as one comic beat rather than two widgets. */}
-          <div className="mt-9 grid items-end gap-8 sm:grid-cols-[minmax(0,auto)_minmax(0,1fr)]">
-            <div className="mng-panel mng-tilt-l w-44 p-3 sm:w-56 sm:p-4">
-              <SenseiManga className="w-full" id="hero" />
-            </div>
-
-            <div className="mng-bubble mng-tilt-r mb-8 max-w-xl">
+          {/* Bubble leads, sensei anchors the far right edge. The bubble's tail
+              points down-left, so it reads as his line rather than the page's. */}
+          <div className="mt-9 grid items-center gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,auto)]">
+            <div className="mng-bubble mng-bubble-r mng-tilt-l mb-8 max-w-xl">
               <p className="mng-shout text-2xl sm:text-3xl">Wax on. Wax off.</p>
               <p className="mt-2 text-lg leading-relaxed">
                 You run the commands. I drill you, catch the falls, and keep score.
               </p>
+            </div>
+
+            <div className="mng-panel mng-tilt-r w-44 justify-self-end p-3 sm:w-56 sm:p-4">
+              <SenseiManga className="w-full" id="hero" />
             </div>
           </div>
 
