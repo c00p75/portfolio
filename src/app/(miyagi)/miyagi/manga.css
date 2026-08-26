@@ -197,10 +197,12 @@
   outline-offset: 3px;
 }
 
-/* Impact lines behind the title. */
+/* Impact lines behind the title. Bleeds vertically only; a horizontal bleed
+   would be clipped by the overflow-x rule on body anyway, so it just wasted
+   paint. */
 .mng-impact {
   position: absolute;
-  inset: -12% -8%;
+  inset: -12% 0;
   z-index: -1;
   background: repeating-conic-gradient(
     from 0deg at 50% 50%,

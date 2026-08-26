@@ -36,47 +36,56 @@ export default function MangaVariant() {
       <VariantBar current="/miyagi" />
 
       <main id="main" className="mx-auto max-w-6xl px-5 pb-24 sm:px-8">
-        {/* Splash panel */}
-        <section className="relative pt-14">
+        {/* ------------------------------ Splash ----------------------------- */}
+        {/* One two-column block, not a stack with a figure wedged into the
+            middle of it. The sensei previously sat in his own row between the
+            title and the blurb: his height inflated that row into a void while
+            the whole right-hand side below him stayed empty. He now runs the
+            full height of the hero and everything textual is one column. */}
+        <section className="relative pt-14 sm:pt-16">
           <div className="mng-impact" aria-hidden="true" />
-          <p className="font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--ink-soft)' }}>
-            Chapter one · {MIYAGI.pkg} · {MIYAGI.license}
-          </p>
-          <h1 className="mng-shout mt-4 text-[clamp(3.4rem,15vw,10rem)]">
-            Miya<span style={{ color: 'var(--red)' }}>gi</span>
-          </h1>
 
-          {/* The sensei sits in his own panel and the bubble's tail points up at
-              him, so the two read as one comic beat rather than two widgets. */}
-          {/* Bubble leads, sensei anchors the far right edge. The bubble's tail
-              points down-left, so it reads as his line rather than the page's. */}
-          <div className="mt-9 grid items-center gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,auto)]">
-            <div className="mng-bubble mng-bubble-r mng-tilt-l mb-8 max-w-xl">
-              <p className="mng-shout text-2xl sm:text-3xl">Wax on. Wax off.</p>
-              <p className="mt-2 text-lg leading-relaxed">
-                You run the commands. I drill you, catch the falls, and keep score.
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,auto)] lg:items-center lg:gap-16">
+            <div className="min-w-0">
+              <p className="font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--ink-soft)' }}>
+                Chapter one · {MIYAGI.pkg} · {MIYAGI.license}
               </p>
+
+              <h1 className="mng-shout mt-4 text-[clamp(3.2rem,11vw,7.5rem)]">
+                Miya<span style={{ color: 'var(--red)' }}>gi</span>
+              </h1>
+
+              {/* Tail on the trailing edge, pointing at the speaker. Capped
+                  narrow so it reads as speech rather than a banner. */}
+              <div className="mng-bubble mng-bubble-r mng-tilt-l mt-7 max-w-lg">
+                <p className="mng-shout text-2xl sm:text-3xl">Wax on. Wax off.</p>
+                <p className="mt-2 text-lg leading-relaxed">
+                  You run the commands. I drill you, catch the falls, and keep score.
+                </p>
+              </div>
+
+              <p className="mt-10 max-w-xl text-lg leading-relaxed">{MIYAGI.blurb}</p>
+
+              <div className="mt-8 flex flex-wrap gap-4">
+                <a href={MIYAGI.npm} target="_blank" rel="noreferrer" className="mng-btn mng-btn-red">
+                  Install it
+                </a>
+                <a href={MIYAGI.repo} target="_blank" rel="noreferrer" className="mng-btn mng-btn-ink">
+                  Read the source
+                </a>
+              </div>
+
+              <pre className="mng-code mng-tilt-r mt-8 max-w-md">
+                <code>$ {MIYAGI.install}</code>
+              </pre>
             </div>
 
-            <div className="mng-panel mng-tilt-r w-44 justify-self-end p-3 sm:w-56 sm:p-4">
+            {/* No frame: the figure stands on the page. Given real presence
+                here, since he is the only illustration on the page. */}
+            <div className="w-52 justify-self-center sm:w-64 lg:w-[21rem] lg:justify-self-end">
               <SenseiManga className="w-full" id="hero" />
             </div>
           </div>
-
-          <p className="mt-12 max-w-2xl text-lg leading-relaxed">{MIYAGI.blurb}</p>
-
-          <div className="mt-8 flex flex-wrap gap-5">
-            <a href={MIYAGI.npm} target="_blank" rel="noreferrer" className="mng-btn mng-btn-red">
-              Install it
-            </a>
-            <a href={MIYAGI.repo} target="_blank" rel="noreferrer" className="mng-btn mng-btn-ink">
-              Read the source
-            </a>
-          </div>
-
-          <pre className="mng-code mng-tilt-r mt-8 max-w-lg">
-            <code>$ {MIYAGI.install}</code>
-          </pre>
         </section>
 
         {/* Stats strip */}

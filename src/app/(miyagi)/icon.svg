@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    The sensei as a tab mark. Not the hero drawing scaled down: at 16px the
+    screentone, the gi and the belt collapse into grey mud, so this keeps only
+    what survives, which is the silhouette, the red headband and two hard eyes.
+    The head fills the frame deliberately. A first version left it at the hero's
+    proportions and the face came out a quarter of the canvas, reading as a
+    smudge in the middle of a beige tile.
+  -->
+  <rect width="64" height="64" rx="13" fill="#f6f1e6"/>
+
+  <!-- head, filling the tile -->
+  <path d="M32 7c14 0 23 9 23 25s-9 26-23 26-23-10-23-26S18 7 32 7Z"
+        fill="#f6dcb8" stroke="#14100e" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- hair wedges at the temples -->
+  <path d="M11 24c-3 9-1 16 2 21-5-7-6-16-2-21Z" fill="#14100e"/>
+  <path d="M53 24c3 9 1 16-2 21 5-7 6-16 2-21Z" fill="#14100e"/>
+
+  <!-- brows and eyes: the only facial detail that holds at 16px -->
+  <path d="M18 33l11 4M46 33l-11 4" stroke="#14100e" stroke-width="5.5" stroke-linecap="round"/>
+  <path d="M19 43q6-4 11 0q-6 3-11 0Z" fill="#14100e"/>
+  <path d="M45 43q-6-4-11 0q6 3 11 0Z" fill="#14100e"/>
+
+  <!-- moustache -->
+  <path d="M23 51q9 5 18 0" stroke="#14100e" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+  <!-- headband and sun disc -->
+  <path d="M9 23q23-11 46 0" stroke="#d81f26" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <circle cx="32" cy="17" r="5.5" fill="#d81f26" stroke="#14100e" stroke-width="3"/>
+</svg>

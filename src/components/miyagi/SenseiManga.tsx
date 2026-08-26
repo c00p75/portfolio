@@ -79,7 +79,7 @@ export function SenseiManga({
 
       {/* ---- Belt: solid black, ends flicking out ---- */}
       <rect x="52" y="206" width="116" height="22" rx="2" fill="#14100e" />
-      <path d="M98 228 l-8 26 M126 228 l9 25" stroke="#14100e" strokeWidth="9" strokeLinecap="round" />
+      <path d="M98 228 l-7 18 M126 228 l8 17" stroke="#14100e" strokeWidth="9" strokeLinecap="round" />
 
       {/* ---- Head ---- */}
       <path
@@ -115,8 +115,6 @@ export function SenseiManga({
       <path d="M68 62 q-8 22 2 40 q-12 -16 -6 -42 Z" fill="#14100e" />
       <path d="M152 62 q8 22 -2 40 q12 -16 6 -42 Z" fill="#14100e" />
 
-      {/* Ground shadow, toned rather than soft */}
-      <ellipse cx="110" cy="252" rx="62" ry="7" fill={`url(#${toneDark})`} />
     </svg>
   );
 }
