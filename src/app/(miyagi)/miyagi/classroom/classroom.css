@@ -1,0 +1,239 @@
+/* ---------------------------------------------------------------------------
+   Classroom. The friendly one: warm paper, rounded everything, soft shadows,
+   a mascot, and progress you can see. Aimed at a beginner deciding whether
+   learning the terminal is going to be miserable.
+
+   Light by commitment rather than by theme, so it paints its own background.
+--------------------------------------------------------------------------- */
+
+.cls {
+  min-height: 100vh;
+  --paper: #fffdf7;
+  --paper-2: #fff6e6;
+  --card: #ffffff;
+  --ink: #1d2733;
+  --ink-soft: #55636f;
+  --line: #ecdfc9;
+
+  /* Accents. Text-safe values checked against --card and --paper. */
+  /* --teal is for fills that carry no text (rings, tints). Anything with text
+     on it uses --teal-ink, which clears 6.2:1 against white. */
+  --teal: #0f8f6b;
+  --teal-ink: #0b6e52;
+  --teal-shadow: #075640;
+  --coral: #e0503c;
+  --grape: #6a54e0;
+  --sun: #f5b700;
+  --sun-deep: #8a6400;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Soft blobs behind the page, the friendly counterpart to the dojo's tatami. */
+.cls-sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38rem 28rem at 82% -6%, rgba(106, 84, 224, 0.11), transparent 70%),
+    radial-gradient(34rem 26rem at 4% 12%, rgba(15, 143, 107, 0.1), transparent 70%),
+    radial-gradient(30rem 24rem at 60% 100%, rgba(245, 183, 0, 0.14), transparent 70%),
+    var(--paper);
+}
+
+.cls-round {
+  font-family: var(--font-baloo), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+}
+
+.cls-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 0 rgba(29, 39, 51, 0.03), 0 12px 28px -18px rgba(29, 39, 51, 0.22);
+}
+
+.cls-card-warm {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+}
+
+.cls-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  background: rgba(15, 143, 107, 0.1);
+  color: var(--teal-ink);
+}
+
+.cls-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.5rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 1rem;
+  transition: transform 130ms ease, box-shadow 130ms ease;
+}
+
+.cls-btn:hover {
+  transform: translateY(-2px);
+}
+
+.cls-btn-primary {
+  background: var(--teal-ink);
+  color: #fff;
+  box-shadow: 0 6px 0 var(--teal-shadow);
+}
+
+.cls-btn-primary:hover {
+  box-shadow: 0 8px 0 var(--teal-shadow);
+}
+
+.cls-btn-primary:active {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 var(--teal-shadow);
+}
+
+.cls-btn-ghost {
+  background: var(--card);
+  color: var(--ink);
+  border: 2px solid var(--line);
+}
+
+.cls-btn-ghost:hover {
+  border-color: var(--teal);
+  color: var(--teal-ink);
+}
+
+.cls-step {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 800;
+  background: var(--sun);
+  color: #3b2c00;
+  flex: none;
+}
+
+.cls-code {
+  background: #14202b;
+  color: #e8f5ee;
+  border-radius: 1rem;
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.cls-code .tok {
+  color: #6fe3ad;
+}
+
+.cls-link {
+  color: var(--teal-ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.cls-link:hover {
+  color: var(--coral);
+}
+
+.cls :where(a, button, input):focus-visible {
+  outline: 3px solid var(--grape);
+  outline-offset: 3px;
+}
+
+/* Mascot: a gentle float, because a static mascot looks like a sticker. */
+@keyframes cls-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.cls-bob {
+  animation: cls-bob 4.5s ease-in-out infinite;
+}
+
+/* The ring's stroke animates from empty on first paint. */
+@keyframes cls-ring {
+  from {
+    stroke-dashoffset: var(--circ);
+  }
+}
+
+.cls-ring-fill {
+  animation: cls-ring 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cls-bob,
+  .cls-ring-fill {
+    animation: none;
+  }
+}
+
+/* --- Shared components, toned for the classroom -------------------------- */
+.cls .mr-frame {
+  --mr-bg: #14202b;
+  --mr-bar: #1c2b38;
+  --mr-line: #2f4453;
+  --mr-fg: #eaf5ef;
+  --mr-dim: #9fb6c4;
+  --mr-prompt: #57d3a3;
+  --mr-accent: #ff8a6b;
+  --mr-good: #57d3a3;
+  --mr-warn: #ffcd4d;
+  --mr-radius: 0.9rem;
+}
+
+.cls .am {
+  --am-bg: #ffffff;
+  --am-fg: #1d2733;
+  --am-quiet: #55636f;
+  --am-line: #ecdfc9;
+  --am-accent: #0b6e52;
+  --am-radius: 1.25rem;
+  --am-font: var(--font-nunito), sans-serif;
+  box-shadow: 0 12px 28px -18px rgba(29, 39, 51, 0.22);
+}
+
+.cls .am-title {
+  font-family: var(--font-baloo), sans-serif;
+  font-size: 1.9rem;
+}
+
+.cls .am-send,
+.cls .am-kata button {
+  border-radius: 999px;
+}
+
+.cls .am-send {
+  font-family: var(--font-nunito), sans-serif;
+  font-weight: 800;
+  text-transform: none;
+  letter-spacing: 0;
+  background: var(--teal-ink);
+}

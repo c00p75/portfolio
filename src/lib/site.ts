@@ -8,7 +8,12 @@ export const site = {
    *  The homepage headline, the résumé and this string must not disagree. */
   description:
     'Software engineer in Lusaka, Zambia, building web and mobile systems end to end: payments, offline-first mobile, and the retrieval layer behind AI features. I design the architecture, then build it with the team.',
-  url: 'https://georgemsapenda.me',
+  /* The live origin, and the one every canonical, OG image URL and sitemap
+     entry is built from. It must match what the site actually serves from:
+     georgemsapenda.me does not resolve, and pointing metadataBase at a dead
+     host tells crawlers the canonical version of every page is a URL that
+     does not exist. The apex .dev redirects to www, so www is canonical. */
+  url: 'https://www.georgemsapenda.dev',
   locale: 'en_US',
   location: 'Lusaka, Zambia',
   email: 'georgecoopmsapenda@gmail.com',

@@ -1,0 +1,265 @@
+/* ---------------------------------------------------------------------------
+   Arcade cabinet. Synthwave horizon, CRT scanlines, neon glow.
+   Leans all the way into the fact that this thing hands out XP.
+--------------------------------------------------------------------------- */
+
+.arc {
+  min-height: 100vh;
+  --void: #0a0518;
+  --void-2: #140a2a;
+  --panel: rgba(255, 255, 255, 0.045);
+  --line: rgba(255, 255, 255, 0.14);
+  --mag: #ff3d9a;
+  --cyan: #2ae7ff;
+  --gold: #ffd84d;
+  --lime: #7dff7a;
+  --fg: #f4f0ff;
+  --dim: #b9aee0;
+
+  background: var(--void);
+  color: var(--fg);
+  font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Horizon: a perspective grid running to a vanishing point, with a sun. */
+.arc-sky {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 62%, rgba(255, 61, 154, 0.34), transparent 46%),
+    radial-gradient(ellipse 120% 70% at 50% 0%, rgba(42, 231, 255, 0.14), transparent 65%),
+    linear-gradient(180deg, var(--void) 0%, var(--void-2) 58%, #2b0f3f 100%);
+}
+
+.arc-grid {
+  position: fixed;
+  inset: 46% 0 0 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(42, 231, 255, 0.3) 0 1px, transparent 1px 5%),
+    repeating-linear-gradient(0deg, rgba(255, 61, 154, 0.26) 0 1px, transparent 1px 12%);
+  transform: perspective(28rem) rotateX(62deg);
+  transform-origin: top center;
+  mask-image: linear-gradient(180deg, #000 0%, transparent 78%);
+}
+
+/* Scanlines over everything, faint enough to keep text legible. */
+.arc::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.16) 0 1px,
+    transparent 1px 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+.arc-pixel {
+  font-family: var(--font-press), ui-monospace, monospace;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+.arc-glow-mag {
+  color: var(--mag);
+  text-shadow: 0 0 6px rgba(255, 61, 154, 0.75), 0 0 22px rgba(255, 61, 154, 0.4);
+}
+
+.arc-glow-cyan {
+  color: var(--cyan);
+  text-shadow: 0 0 6px rgba(42, 231, 255, 0.7), 0 0 22px rgba(42, 231, 255, 0.35);
+}
+
+.arc-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  backdrop-filter: blur(6px);
+}
+
+.arc-kicker {
+  font-family: var(--font-press), monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+/* XP meter, chunky and segmented like a health bar. */
+.arc-xp {
+  height: 1.1rem;
+  border: 2px solid var(--line);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.arc-xp span {
+  display: block;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--mag) 0 0.5rem,
+    rgba(255, 61, 154, 0.55) 0.5rem 0.65rem
+  );
+  animation: arc-fill 2.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@keyframes arc-fill {
+  from {
+    width: 0%;
+  }
+}
+
+/* Shimmer button, the one pattern 21st.dev leans on hardest. */
+.arc-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: 0.5rem;
+  font-family: var(--font-press), monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 140ms ease;
+}
+
+.arc-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.arc-btn-solid {
+  background: linear-gradient(100deg, var(--mag), #ff7ac2);
+  color: #14061f;
+  box-shadow: 0 0 22px rgba(255, 61, 154, 0.5);
+}
+
+.arc-btn-solid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.75), transparent 80%);
+  translate: -120% 0;
+  animation: arc-shimmer 2.6s ease-in-out infinite;
+}
+
+@keyframes arc-shimmer {
+  0%,
+  55% {
+    translate: -120% 0;
+  }
+  100% {
+    translate: 120% 0;
+  }
+}
+
+.arc-btn-ghost {
+  border: 2px solid var(--cyan);
+  color: var(--cyan);
+}
+
+.arc-btn-ghost:hover {
+  background: rgba(42, 231, 255, 0.12);
+}
+
+/* Badge marquee. */
+.arc-marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.arc-track {
+  display: flex;
+  gap: 0.75rem;
+  width: max-content;
+  animation: arc-scroll 26s linear infinite;
+}
+
+@keyframes arc-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.arc-chip {
+  white-space: nowrap;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-family: var(--font-press), monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.arc-link {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.arc-link:hover {
+  color: var(--fg);
+}
+
+.arc :where(a, button, input):focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arc-track,
+  .arc-btn-solid::before,
+  .arc-xp span {
+    animation: none;
+  }
+  .arc-xp span {
+    width: var(--w, 40%);
+  }
+}
+
+/* --- Shared components, toned for the cabinet ---------------------------- */
+.arc .mr-frame {
+  --mr-bg: rgba(6, 2, 16, 0.92);
+  --mr-bar: rgba(255, 255, 255, 0.05);
+  --mr-line: rgba(255, 255, 255, 0.16);
+  --mr-fg: #f4f0ff;
+  --mr-dim: #b9aee0;
+  --mr-prompt: #7dff7a;
+  --mr-accent: #ff3d9a;
+  --mr-good: #7dff7a;
+  --mr-warn: #ffd84d;
+  --mr-radius: 0.75rem;
+  --mr-font: var(--font-plex-mono), monospace;
+  box-shadow: 0 0 34px -12px rgba(255, 61, 154, 0.55);
+}
+
+.arc .am {
+  --am-bg: rgba(255, 255, 255, 0.05);
+  --am-fg: #f4f0ff;
+  --am-quiet: #b9aee0;
+  --am-line: rgba(255, 255, 255, 0.16);
+  --am-accent: #ff3d9a;
+  --am-radius: 0.75rem;
+  --am-font: var(--font-outfit), sans-serif;
+  backdrop-filter: blur(6px);
+}
+
+.arc .am-title {
+  font-family: var(--font-press), monospace;
+  font-size: 0.95rem;
+}

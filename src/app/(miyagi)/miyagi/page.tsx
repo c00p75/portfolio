@@ -1,10 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Bangers, Barlow, Space_Mono } from 'next/font/google';
+import './manga.css';
+import { VariantBar } from '@/components/miyagi/VariantBar';
+import { TerminalReplay } from '@/components/miyagi/TerminalReplay';
 import { AskMiyagi } from '@/components/miyagi/AskMiyagi';
-import { projectBySlug } from '@/lib/content';
+import { SenseiManga } from '@/components/miyagi/SenseiManga';
+import { MIYAGI, CONFIG_JSON, CLIENTS, CARD_PARTS, TOOLS, SAFETY, TITLES, FACTS } from '@/lib/miyagi';
 
-const NPM_URL = 'https://www.npmjs.com/package/miyagi-mcp';
-const REPO_URL = 'https://github.com/c00p75/miyagi';
+const bangers = Bangers({ subsets: ['latin'], weight: '400', variable: '--font-bangers', display: 'swap' });
+const barlow = Barlow({ subsets: ['latin'], weight: ['400', '600', '700'], variable: '--font-barlow', display: 'swap' });
+const spaceMono = Space_Mono({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-space-mono', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Miyagi · a gamified, voice-enabled MCP coding tutor',
@@ -13,232 +19,124 @@ export const metadata: Metadata = {
   alternates: { canonical: '/miyagi' },
   openGraph: {
     title: 'Miyagi · a gamified, voice-enabled MCP coding tutor',
-    description:
-      'You run the commands. It drills, corrects, catches the falls, and keeps score. An open-source MCP server, installable with npx.',
+    description: MIYAGI.tagline,
     url: '/miyagi',
     type: 'website',
   },
 };
 
-/* ------------------------------------------------------------------ *
- * Small local pieces. These live here rather than in the shared UI
- * library on purpose: nothing on this page should be reusable by the
- * portfolio, or the two worlds start converging again.
- * ------------------------------------------------------------------ */
-
-function Term({ children, prompt = true }: { children: string; prompt?: boolean }) {
-  return (
-    <div className="dojo-term mt-6 p-5">
-      <pre className="text-sm leading-relaxed">
-        <code>
-          {prompt ? <span className="prompt">$ </span> : null}
-          {children}
-        </code>
-      </pre>
-    </div>
-  );
+function Sfx({ children }: { children: string }) {
+  return <span className="mng-sfx text-lg sm:text-xl">{children}</span>;
 }
 
-function Kicker({ children }: { children: string }) {
-  return <p className="dojo-kicker">{children}</p>;
-}
-
-function Section({
-  index,
-  kicker,
-  title,
-  lead,
-  children,
-}: {
-  index: string;
-  kicker: string;
-  title: string;
-  lead?: string;
-  children?: React.ReactNode;
-}) {
+export default function MangaVariant() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-      <div className="flex items-center gap-4">
-        <span className="dojo-mono text-sm" style={{ color: 'var(--seal-bright)' }}>
-          {index}
-        </span>
-        <Kicker>{kicker}</Kicker>
-      </div>
-      <h2 className="dojo-display mt-5 text-3xl sm:text-5xl">{title}</h2>
-      {lead ? (
-        <p className="mt-6 max-w-3xl text-lg leading-relaxed" style={{ color: 'var(--on-sumi)' }}>
-          {lead}
-        </p>
-      ) : null}
-      {children}
-    </section>
-  );
-}
+    <div className={`mng ${bangers.variable} ${barlow.variable} ${spaceMono.variable}`}>
+      <div className="mng-tone" aria-hidden="true" />
+      <VariantBar current="/miyagi" />
 
-const BELTS = [
-  { name: 'Terminal Novice', at: 'Level 1', color: 'var(--belt-white)' },
-  { name: 'Shell Apprentice', at: 'Level 3', color: 'var(--belt-yellow)' },
-  { name: 'CLI Artisan', at: 'Level 6', color: 'var(--belt-green)' },
-  { name: 'Terminal Wizard', at: 'Level 10', color: 'var(--belt-brown)' },
-];
-
-const CONFIG = `{
-  "mcpServers": {
-    "miyagi": {
-      "command": "npx",
-      "args": ["-y", "miyagi-mcp"]
-    }
-  }
-}`;
-
-const CLIENTS = [
-  { client: 'Claude Desktop (macOS)', where: '~/Library/Application Support/Claude/claude_desktop_config.json' },
-  { client: 'Claude Desktop (Windows)', where: '%APPDATA%\\Claude\\claude_desktop_config.json' },
-  { client: 'Cursor', where: '.cursor/mcp.json, or ~/.cursor/mcp.json' },
-  { client: 'AntiGravity / Windsurf', where: '~/.codeium/windsurf/mcp_config.json' },
-  { client: 'Claude Code', where: 'claude mcp add miyagi -- npx -y miyagi-mcp' },
-];
-
-const CARD = [
-  ['Roadmap alignment', 'Where the command sits on your track, and which step you are on.'],
-  ['What / How / Trade-offs', 'The same command explained three ways, pitched at Junior, Mid or Senior.'],
-  ['Mental model', 'A Mermaid flowchart of what the shell actually does with it.'],
-  ['Pitfalls', 'The mistakes this command specifically invites, not generic advice.'],
-  ['Curated docs', 'A short set including the man page, rather than a search link.'],
-  ['Active recall quiz', 'One question you answer back, which is where the XP comes from.'],
-];
-
-const TOOLS = [
-  ['run_teaching_command', 'Execute or dry-run a command and return the full teaching card.'],
-  ['verify_quiz_answer', 'Grade the quiz, update your streak and XP, speak the feedback.'],
-  ['get_next_roadmap_command', 'The next copy-pasteable command for where you are.'],
-  ['set_active_roadmap', 'Set category, roadmap, topic and step counters.'],
-  ['quick_config', 'Switch skill level, track or voice in one call. Also resets progress.'],
-  ['configure_voice', 'Toggle audio and set words per minute.'],
-  ['get_user_stats', 'XP, level, title, streaks, badges and the title ladder.'],
-  ['export_roadmap_notes', 'Write a ROADMAP_PROGRESS.md summary of the session.'],
-];
-
-const SAFETY = [
-  [
-    'Nothing catastrophic executes',
-    'Nine classes are pattern-matched and forced into dry-run: recursive delete, raw device writes, filesystem formats, fork bombs, disk overwrites, host power state, world-writable recursion, piping remote code into a shell, and history-rewriting force pushes.',
-  ],
-  [
-    'The screen does not trust its caller',
-    'The tool accepts an is_dangerous flag but re-derives the verdict itself, then ORs the two. The threat model is a model reaching for a vivid example mid-lesson, not a careless human, so a flag the caller supplies cannot be the thing protecting you from the caller.',
-  ],
-  [
-    'A denylist is a backstop, not a sandbox',
-    'The real boundary is your client’s own approval prompt, with you reading the command first. Commands run with your privileges in your directory: no container, no restricted user, no syscall filter.',
-  ],
-  [
-    'Failures teach instead of crashing',
-    'A non-zero exit returns a diagnostic with a troubleshooting ladder rather than a thrown error. Commands cap at 60 seconds and 4 MB. No network calls, no telemetry, no keys.',
-  ],
-];
-
-export default function MiyagiPage() {
-  const caseStudy = projectBySlug('miyagi');
-
-  return (
-    <>
-      {/* ------------------------------ Header ------------------------------ */}
-      <header className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 pt-8 sm:px-8">
-        <div className="flex items-center gap-4">
-          <span className="dojo-seal" aria-hidden="true">
-            道
-          </span>
-          <span className="dojo-mono text-xs tracking-[0.22em] uppercase">miyagi</span>
-        </div>
-        <nav className="dojo-mono flex items-center gap-5 text-xs uppercase">
-          <a href={NPM_URL} target="_blank" rel="noreferrer" className="dojo-link">
-            npm
-          </a>
-          <a href={REPO_URL} target="_blank" rel="noreferrer" className="dojo-link">
-            GitHub
-          </a>
-          <Link href="/" className="dojo-link">
-            Portfolio
-          </Link>
-        </nav>
-      </header>
-
-      <main id="main">
-        {/* ------------------------------- Hero ------------------------------ */}
-        <section className="mx-auto max-w-6xl px-5 pt-16 pb-8 sm:px-8 sm:pt-24">
-          <Kicker>Model Context Protocol server · MIT</Kicker>
-          <h1 className="dojo-display mt-6 text-[clamp(3.5rem,14vw,10rem)]">Miyagi</h1>
-          <p
-            className="dojo-mono mt-4 text-sm tracking-[0.14em] uppercase"
-            style={{ color: 'var(--seal-bright)' }}
-          >
-            Wax on. Wax off.
+      <main id="main" className="mx-auto max-w-6xl px-5 pb-24 sm:px-8">
+        {/* Splash panel */}
+        <section className="relative pt-14">
+          <div className="mng-impact" aria-hidden="true" />
+          <p className="font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--ink-soft)' }}>
+            Chapter one · {MIYAGI.pkg} · {MIYAGI.license}
           </p>
+          <h1 className="mng-shout mt-4 text-[clamp(3.4rem,15vw,10rem)]">
+            Miya<span style={{ color: 'var(--red)' }}>gi</span>
+          </h1>
 
-          <p className="mt-9 max-w-2xl text-xl leading-relaxed">
-            A coding tutor that lives in your editor and refuses to do the work for you. It
-            hands you the next command, explains it at your level, and turns every result into
-            a lesson, narrated aloud by your own machine.
-          </p>
+          {/* The sensei sits in his own panel and the bubble's tail points up at
+              him, so the two read as one comic beat rather than two widgets. */}
+          <div className="mt-9 grid items-end gap-8 sm:grid-cols-[minmax(0,auto)_minmax(0,1fr)]">
+            <div className="mng-panel mng-tilt-l w-44 p-3 sm:w-56 sm:p-4">
+              <SenseiManga className="w-full" id="hero" />
+            </div>
 
-          <Term>npx -y miyagi-mcp</Term>
+            <div className="mng-bubble mng-tilt-r mb-8 max-w-xl">
+              <p className="mng-shout text-2xl sm:text-3xl">Wax on. Wax off.</p>
+              <p className="mt-2 text-lg leading-relaxed">
+                You run the commands. I drill you, catch the falls, and keep score.
+              </p>
+            </div>
+          </div>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href={NPM_URL} target="_blank" rel="noreferrer" className="dojo-btn dojo-btn-solid">
-              Install from npm
+          <p className="mt-12 max-w-2xl text-lg leading-relaxed">{MIYAGI.blurb}</p>
+
+          <div className="mt-8 flex flex-wrap gap-5">
+            <a href={MIYAGI.npm} target="_blank" rel="noreferrer" className="mng-btn mng-btn-red">
+              Install it
             </a>
-            <a href={REPO_URL} target="_blank" rel="noreferrer" className="dojo-btn dojo-btn-ghost">
+            <a href={MIYAGI.repo} target="_blank" rel="noreferrer" className="mng-btn mng-btn-ink">
               Read the source
             </a>
           </div>
+
+          <pre className="mng-code mng-tilt-r mt-8 max-w-lg">
+            <code>$ {MIYAGI.install}</code>
+          </pre>
         </section>
 
-        {/* ------------------------------- Belts ----------------------------- */}
-        <section className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
-          <div className="dojo-panel p-6 sm:p-8">
-            <Kicker>The ladder</Kicker>
-            <p className="mt-4 max-w-2xl leading-relaxed" style={{ color: 'var(--on-sumi)' }}>
-              Commands earn 15 XP, correct quiz answers 25 with a streak multiplier, and level
-              is simply XP over 100. Titles unlock on the way up. Progress is saved, so a
-              restart costs nothing.
-            </p>
-            <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {BELTS.map((b) => (
-                <li key={b.name}>
-                  <div className="dojo-belt" style={{ background: b.color }} />
-                  <p className="dojo-display mt-3 text-lg">{b.name}</p>
-                  <p className="dojo-mono mt-1 text-xs" style={{ color: 'var(--on-sumi-quiet)' }}>
-                    {b.at}
-                  </p>
-                </li>
-              ))}
-            </ul>
+        {/* Stats strip */}
+        <section className="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {FACTS.map((f, i) => (
+            <div key={f.label} className={`mng-panel p-6 ${i % 2 ? 'mng-tilt-r' : 'mng-tilt-l'}`}>
+              <p className="mng-num text-5xl">{f.value}</p>
+              <p className="mt-2 font-bold uppercase" style={{ color: 'var(--ink-soft)' }}>
+                {f.label}
+              </p>
+            </div>
+          ))}
+        </section>
+
+        {/* Demo */}
+        <section className="mt-20">
+          <Sfx>Watch</Sfx>
+          <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">A real training round</h2>
+          <p className="mt-4 max-w-2xl text-lg">
+            Captured output, replayed. It runs a command, marks a quiz, then flatly refuses to
+            delete anything.
+          </p>
+          <div className="mng-panel mt-8 p-3 sm:p-5">
+            <TerminalReplay />
           </div>
         </section>
 
-        {/* ------------------------------- Setup ----------------------------- */}
-        <Section
-          index="01"
-          kicker="Setup"
-          title="Three lines, any client"
-          lead="No API keys, no account, no sign-up. It runs entirely on your machine, so the only thing your client needs is permission to start it."
-        >
-          <Term prompt={false}>{CONFIG}</Term>
+        {/* Ranks */}
+        <section className="mt-20">
+          <Sfx>Ranks</Sfx>
+          <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">Earn your belt</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {TITLES.map((t, i) => (
+              <div key={t.name} className={`mng-panel p-6 ${i % 2 ? 'mng-tilt-l' : 'mng-tilt-r'}`}>
+                <p className="mng-num text-3xl">{String(i + 1).padStart(2, '0')}</p>
+                <p className="mng-shout mt-3 text-2xl">{t.name}</p>
+                <p className="font-bold uppercase" style={{ color: 'var(--ink-soft)' }}>
+                  {t.at}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-6 max-w-2xl text-lg">
+            15 XP a command, 25 for a correct quiz with a streak multiplier, level is XP over 100.
+            Saved to disk, so a restart costs you nothing.
+          </p>
+        </section>
 
-          <div className="dojo-panel mt-8 overflow-x-auto">
-            <table className="w-full min-w-[34rem] border-collapse text-left text-sm">
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--sumi-line)' }}>
-                  <th className="dojo-kicker p-4">Client</th>
-                  <th className="dojo-kicker p-4">Where it goes</th>
-                </tr>
-              </thead>
+        {/* Setup */}
+        <section className="mt-20">
+          <Sfx>Setup</Sfx>
+          <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">Three lines, any client</h2>
+          <pre className="mng-code mt-7">
+            <code>{CONFIG_JSON}</code>
+          </pre>
+          <div className="mng-panel mt-7 overflow-x-auto">
+            <table className="w-full min-w-[32rem] text-left">
               <tbody>
                 {CLIENTS.map((c) => (
-                  <tr key={c.client} style={{ borderBottom: '1px solid var(--sumi-line)' }}>
-                    <td className="p-4 align-top leading-relaxed">{c.client}</td>
-                    <td className="dojo-mono p-4 align-top text-xs leading-relaxed break-all" style={{ color: 'var(--on-sumi-quiet)' }}>
+                  <tr key={c.client} style={{ borderTop: '2px solid var(--ink)' }}>
+                    <td className="p-4 align-top font-bold">{c.client}</td>
+                    <td className="p-4 align-top font-mono text-xs break-all" style={{ color: 'var(--ink-soft)' }}>
                       {c.where}
                     </td>
                   </tr>
@@ -246,157 +144,97 @@ export default function MiyagiPage() {
               </tbody>
             </table>
           </div>
+        </section>
 
-          <p className="mt-8 max-w-3xl leading-relaxed" style={{ color: 'var(--on-sumi)' }}>
-            Restart the client, then ask it something like{' '}
-            <em>&ldquo;set my roadmap to Backend Developer and teach me docker compose
-            config&rdquo;</em>.
-          </p>
-        </Section>
-
-        {/* --------------------------- Teaching card ------------------------- */}
-        <Section
-          index="02"
-          kicker="What you get"
-          title="Every command comes back as a lesson"
-          lead="Running the command is the cheap part. The card around it is the point: the same command at the depth you asked for, with the failure modes it actually invites."
-        >
-          <ol className="mt-12 grid gap-px sm:grid-cols-2" style={{ background: 'var(--sumi-line)' }}>
-            {CARD.map(([part, detail], i) => (
-              <li key={part} className="p-6 sm:p-8" style={{ background: 'var(--sumi-raised)' }}>
-                <span className="dojo-display text-3xl" style={{ color: 'var(--seal-bright)' }}>
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <h3 className="dojo-display mt-3 text-xl">{part}</h3>
-                <p className="mt-2 leading-relaxed" style={{ color: 'var(--on-sumi-quiet)' }}>
-                  {detail}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </Section>
-
-        {/* ------------------------------ Safety ----------------------------- */}
-        <Section
-          index="03"
-          kicker="Before you install it"
-          title="It runs shell commands. Here is the honest version."
-          lead="Anything that executes commands on your machine should be read before it is trusted, so this says what the protection is and, more usefully, where it stops."
-        >
-          <div className="mt-12 grid gap-px sm:grid-cols-2" style={{ background: 'var(--sumi-line)' }}>
-            {SAFETY.map(([h, p]) => (
-              <div key={h} className="p-6 sm:p-8" style={{ background: 'var(--sumi-raised)' }}>
-                <h3 className="dojo-display text-xl">{h}</h3>
-                <p className="mt-3 leading-relaxed" style={{ color: 'var(--on-sumi-quiet)' }}>
-                  {p}
+        {/* Card parts */}
+        <section className="mt-20">
+          <Sfx>Every round</Sfx>
+          <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">What lands on the page</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {CARD_PARTS.map((c, i) => (
+              <div key={c.part} className={`mng-panel p-6 ${i % 3 === 1 ? 'mng-tilt-r' : 'mng-tilt-l'}`}>
+                <p className="mng-num text-3xl">{String(i + 1).padStart(2, '0')}</p>
+                <h3 className="mng-shout mt-3 text-2xl">{c.part}</h3>
+                <p className="mt-2 leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
+                  {c.detail}
                 </p>
               </div>
             ))}
           </div>
-          <p className="mt-8 max-w-3xl leading-relaxed" style={{ color: 'var(--on-sumi)' }}>
-            Two runtime dependencies, the MCP SDK and zod, in one source file you can read in a
-            sitting. Sixteen tests cover the danger screen and the saved-profile parser, and CI
-            drives a real handshake on Node 18, 20 and 22.
-          </p>
-        </Section>
+        </section>
 
-        {/* ------------------------------- Tools ----------------------------- */}
-        <Section
-          index="04"
-          kicker="Surface"
-          title="Eight tools"
-          lead="Progress lives in ~/.miyagi/profile.json, so XP, streaks, badges and your position on a track survive a client restart."
-        >
-          <ul className="mt-12">
-            {TOOLS.map(([name, detail]) => (
-              <li
-                key={name}
-                className="py-6 sm:flex sm:gap-10"
-                style={{ borderBottom: '1px solid var(--sumi-line)' }}
-              >
-                <span
-                  className="dojo-mono block shrink-0 text-sm sm:w-72"
-                  style={{ color: 'var(--seal-bright)' }}
-                >
-                  {name}
-                </span>
-                <p className="mt-2 max-w-2xl leading-relaxed sm:mt-0" style={{ color: 'var(--on-sumi-quiet)' }}>
-                  {detail}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        {/* ----------------------------- Ask Miyagi -------------------------- */}
-        <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-          <div className="flex items-center gap-4">
-            <span className="dojo-mono text-sm" style={{ color: 'var(--seal-bright)' }}>
-              05
-            </span>
-            <Kicker>Ask it yourself</Kicker>
+        {/* Safety */}
+        <section className="mt-20">
+          <Sfx>Warning</Sfx>
+          <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">It runs shell commands</h2>
+          <div className="mng-panel-red mt-8 p-6 sm:p-8">
+            <p className="text-lg leading-relaxed">
+              The art is loud. This part is not. Here is what the protection is, and more usefully,
+              where it stops.
+            </p>
           </div>
-          <h2 className="dojo-display mt-5 mb-10 text-3xl sm:text-5xl">
-            Questions before you install
-          </h2>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+            {SAFETY.map((s, i) => (
+              <div key={s.head} className={`mng-panel p-6 ${i % 2 ? 'mng-tilt-r' : 'mng-tilt-l'}`}>
+                <h3 className="mng-shout text-2xl">{s.head}</h3>
+                <p className="mt-3 leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
+                  {s.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Tools */}
+        <section className="mt-20">
+          <Sfx>Moves</Sfx>
+          <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">Eight tools</h2>
+          <div className="mng-panel mt-8">
+            {TOOLS.map((t, i) => (
+              <div
+                key={t.name}
+                className="p-5 sm:flex sm:gap-8"
+                style={{ borderTop: i === 0 ? 'none' : '2px solid var(--ink)' }}
+              >
+                <code className="block shrink-0 font-mono text-sm font-bold sm:w-72" style={{ color: 'var(--red-deep)' }}>
+                  {t.name}
+                </code>
+                <p className="mt-2 sm:mt-0" style={{ color: 'var(--ink-soft)' }}>
+                  {t.detail}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Ask */}
+        <section className="mt-20">
+          <Sfx>Ask</Sfx>
+          <h2 className="mng-shout mt-4 mb-8 text-4xl sm:text-6xl">Questions before you install</h2>
           <AskMiyagi />
         </section>
-      </main>
 
-      {/* ------------------------------- Footer ----------------------------- */}
-      <footer className="mx-auto max-w-6xl px-5 pb-16 sm:px-8">
-        <hr className="dojo-brush" />
-        <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-center gap-4">
-            <span className="dojo-seal" aria-hidden="true">
-              道
-            </span>
+        <footer className="mt-20 border-t-4 pt-8" style={{ borderColor: 'var(--ink)' }}>
+          <div className="flex flex-wrap items-center gap-5">
+            <SenseiManga className="w-16 shrink-0" id="foot" />
             <div>
-              <p className="dojo-display text-xl">Miyagi</p>
-              <p className="dojo-mono text-xs" style={{ color: 'var(--on-sumi-quiet)' }}>
-                MIT licensed · miyagi-mcp on npm
+              <p className="mng-shout text-3xl">
+                Miya<span style={{ color: 'var(--red)' }}>gi</span>
+              </p>
+              <p className="font-bold uppercase" style={{ color: 'var(--ink-soft)' }}>
+                {MIYAGI.pkg} · {MIYAGI.license}
               </p>
             </div>
           </div>
-
-          <nav className="dojo-mono flex flex-wrap gap-x-6 gap-y-2 text-xs uppercase">
-            <a href={NPM_URL} target="_blank" rel="noreferrer" className="dojo-link">
-              npm
-            </a>
-            <a href={REPO_URL} target="_blank" rel="noreferrer" className="dojo-link">
-              Source
-            </a>
-            <a href={`${REPO_URL}/issues`} target="_blank" rel="noreferrer" className="dojo-link">
-              Issues
-            </a>
-            {caseStudy ? (
-              <Link href={caseStudy.url} className="dojo-link">
-                How it was built
-              </Link>
-            ) : null}
-            <Link href="/" className="dojo-link">
-              George M&apos;sapenda
-            </Link>
+          <nav className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
+            <a href={MIYAGI.npm} target="_blank" rel="noreferrer" className="mng-link">npm</a>
+            <a href={MIYAGI.repo} target="_blank" rel="noreferrer" className="mng-link">Source</a>
+            <a href={MIYAGI.issues} target="_blank" rel="noreferrer" className="mng-link">Issues</a>
+            <Link href="/work/miyagi" className="mng-link">How it was built</Link>
+            <Link href="/" className="mng-link">George M&apos;sapenda</Link>
           </nav>
-        </div>
-
-        <p className="mt-10 max-w-2xl text-sm leading-relaxed" style={{ color: 'var(--on-sumi-quiet)' }}>
-          Built by{' '}
-          <Link href="/about" className="dojo-link">
-            George M&apos;sapenda
-          </Link>
-          . The design reasoning, including why it uses a transport that cannot be hosted, is
-          written up as a{' '}
-          {caseStudy ? (
-            <Link href={caseStudy.url} className="dojo-link">
-              case study
-            </Link>
-          ) : (
-            'case study'
-          )}
-          .
-        </p>
-      </footer>
-    </>
+        </footer>
+      </main>
+    </div>
   );
 }

@@ -1,0 +1,195 @@
+/* ---------------------------------------------------------------------------
+   Ask Miyagi, themed by custom properties so all five variants share one
+   component. Defaults are a warm paper panel; each skin overrides --am-* on an
+   ancestor. Without its own defaults this inherited the dojo's variables and
+   rendered as invisible text on the other four.
+--------------------------------------------------------------------------- */
+
+.am {
+  --am-bg: #efe7d7;
+  --am-fg: #23201b;
+  --am-quiet: #5c554a;
+  --am-line: #ded3bd;
+  --am-accent: #ad3419;
+  --am-radius: 2px;
+  --am-font: var(--font-plex-sans, ui-sans-serif, system-ui, sans-serif);
+  --am-mono: var(--font-plex-mono, ui-monospace, monospace);
+
+  background: var(--am-bg);
+  color: var(--am-fg);
+  border: 1px solid var(--am-line);
+  border-radius: var(--am-radius);
+  font-family: var(--am-font);
+  padding: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .am {
+    padding: 2.25rem;
+  }
+}
+
+.am-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.am-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--am-fg);
+}
+
+.am-note {
+  font-family: var(--am-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--am-quiet);
+}
+
+.am-rule {
+  height: 2px;
+  border: 0;
+  margin: 1.25rem 0 1.5rem;
+  background: linear-gradient(90deg, var(--am-accent), transparent 85%);
+}
+
+.am-intro {
+  max-width: 42rem;
+  line-height: 1.7;
+  color: var(--am-quiet);
+}
+
+.am-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.am-q {
+  font-family: var(--am-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--am-accent);
+  white-space: pre-wrap;
+}
+
+.am-a {
+  max-width: 42rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  color: var(--am-fg);
+}
+
+.am-caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  translate: 0 0.15em;
+  margin-left: 0.15rem;
+  background: var(--am-accent);
+  animation: am-blink 1s steps(1) infinite;
+}
+
+@keyframes am-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.am-notice {
+  font-family: var(--am-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  margin-top: 1.25rem;
+  color: var(--am-accent);
+}
+
+.am-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+  .am-form {
+    flex-direction: row;
+  }
+}
+
+.am-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.8rem 1rem;
+  font-family: var(--am-mono);
+  font-size: 0.875rem;
+  color: var(--am-fg);
+  background: color-mix(in srgb, var(--am-fg) 5%, transparent);
+  border: 1px solid var(--am-line);
+  border-radius: var(--am-radius);
+}
+
+.am-input::placeholder {
+  color: var(--am-quiet);
+}
+
+.am-send {
+  padding: 0.8rem 1.5rem;
+  font-family: var(--am-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--am-accent);
+  border-radius: var(--am-radius);
+  transition: opacity 120ms ease;
+}
+
+.am-send:hover {
+  opacity: 0.88;
+}
+
+.am-send:disabled {
+  opacity: 0.55;
+}
+
+.am-kata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.am-kata button {
+  padding: 0.5rem 0.8rem;
+  font-family: var(--am-mono);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  text-align: left;
+  color: var(--am-quiet);
+  border: 1px solid var(--am-line);
+  border-radius: var(--am-radius);
+  transition: color 120ms ease, border-color 120ms ease;
+}
+
+.am-kata button:hover {
+  color: var(--am-fg);
+  border-color: var(--am-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .am-caret {
+    animation: none;
+  }
+}

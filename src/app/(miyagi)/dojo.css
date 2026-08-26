@@ -13,6 +13,7 @@
 --------------------------------------------------------------------------- */
 
 .dojo {
+  min-height: 100vh;
   /* Ground and panels */
   --sumi: #0a0c11;
   --sumi-raised: #121721;
@@ -267,4 +268,27 @@
   .dojo-cursor {
     animation: none;
   }
+}
+
+/* --- Shared components, toned for the dojo ------------------------------- */
+.dojo .mr-frame {
+  --mr-bg: #06080c;
+  --mr-bar: #0f141c;
+  --mr-line: #232b3a;
+  --mr-fg: #ece4d5;
+  --mr-dim: #9aa3b4;
+  --mr-prompt: #3f9d7c;
+  --mr-accent: #ec5b3d;
+  --mr-good: #3f9d7c;
+  --mr-warn: #c9a227;
+  --mr-radius: 2px;
+}
+
+.dojo .am {
+  --am-bg: var(--washi);
+  --am-fg: var(--on-washi);
+  --am-quiet: var(--on-washi-quiet);
+  --am-line: var(--washi-dim);
+  --am-accent: var(--seal-deep);
+  --am-radius: 2px;
 }

@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { streamAsk, type AskHistoryTurn } from '@/lib/rag/ask-stream';
+import './ask.css';
 
 /**
  * Ask Miyagi.
@@ -94,47 +95,35 @@ export function AskMiyagi() {
   const started = turns.length > 0;
 
   return (
-    <div className="dojo-scroll p-6 sm:p-9">
-      <div className="flex items-baseline justify-between gap-4">
-        <h3
-          className="dojo-display text-2xl sm:text-3xl"
-          style={{ color: 'var(--on-washi)' }}
-        >
-          Ask Miyagi
-        </h3>
-        <span className="dojo-mono text-[0.6875rem] tracking-[0.18em] uppercase" style={{ color: 'var(--on-washi-quiet)' }}>
-          Answers from the written record
-        </span>
+    <div className="am">
+      <div className="am-head">
+        <h3 className="am-title">Ask Miyagi</h3>
+        <span className="am-note">Answers from the written record</span>
       </div>
 
-      <hr className="dojo-brush mt-5 mb-6" />
+      <hr className="am-rule" />
 
       {!started ? (
-        <p className="max-w-2xl leading-relaxed" style={{ color: 'var(--on-washi-quiet)' }}>
-          It answers from what is actually written about this server and the rest of the
-          site. If something is not in the record it says so rather than inventing it, which
-          is the part worth testing.
+        <p className="am-intro">
+          It answers from what is actually written about this server and the rest of the site. If
+          something is not in the record it says so rather than inventing it, which is the part
+          worth testing.
         </p>
       ) : null}
 
-      {/* Transcript */}
       {started ? (
-        <div className="flex flex-col gap-6">
+        <div className="am-thread">
           {turns.map((t, i) =>
             t.role === 'user' ? (
-              <p
-                key={i}
-                className="dojo-mono text-sm leading-relaxed"
-                style={{ color: 'var(--seal-deep)' }}
-              >
+              <p key={i} className="am-q">
                 <span aria-hidden="true">&gt; </span>
                 {t.text}
               </p>
             ) : (
-              <div key={i} className="max-w-2xl leading-relaxed whitespace-pre-wrap">
+              <div key={i} className="am-a">
                 {t.text}
                 {busy && i === turns.length - 1 ? (
-                  <span className="dojo-cursor ml-1" aria-label="thinking" />
+                  <span className="am-caret" aria-label="thinking" />
                 ) : null}
               </div>
             ),
@@ -143,18 +132,13 @@ export function AskMiyagi() {
       ) : null}
 
       {notice ? (
-        <p
-          className="dojo-mono mt-5 text-xs leading-relaxed"
-          style={{ color: 'var(--seal-deep)' }}
-          role="status"
-        >
+        <p className="am-notice" role="status">
           {notice}
         </p>
       ) : null}
 
-      {/* Composer */}
       <form
-        className="mt-8 flex flex-col gap-3 sm:flex-row"
+        className="am-form"
         onSubmit={(e) => {
           e.preventDefault();
           void send(draft);
@@ -165,37 +149,23 @@ export function AskMiyagi() {
         </label>
         <input
           id="ask-miyagi"
+          className="am-input"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Ask about the safety model, the roadmaps, anything…"
+          placeholder="Ask about the safety model, the roadmaps, anything\u2026"
           maxLength={400}
           autoComplete="off"
-          className="dojo-mono min-w-0 flex-1 rounded-sm px-4 py-3 text-sm"
-          style={{
-            background: 'rgba(35,32,27,0.05)',
-            border: '1px solid var(--washi-dim)',
-            color: 'var(--on-washi)',
-          }}
         />
-        <button type="submit" className="dojo-btn dojo-btn-solid justify-center" disabled={busy}>
+        <button type="submit" className="am-send" disabled={busy}>
           {busy ? 'Thinking' : 'Ask'}
         </button>
       </form>
 
-      {/* Kata: the openers */}
       {!started ? (
-        <ul className="mt-6 flex flex-wrap gap-2">
+        <ul className="am-kata">
           {KATA.map((k) => (
             <li key={k}>
-              <button
-                type="button"
-                onClick={() => void send(k)}
-                className="dojo-mono rounded-sm px-3 py-2 text-xs leading-snug transition-colors"
-                style={{
-                  border: '1px solid var(--washi-dim)',
-                  color: 'var(--on-washi-quiet)',
-                }}
-              >
+              <button type="button" onClick={() => void send(k)}>
                 {k}
               </button>
             </li>

@@ -1,0 +1,201 @@
+/* ---------------------------------------------------------------------------
+   A TUI. The whole page pretends to be a terminal application: box-drawn
+   frames, phosphor green on near-black, one amber accent, nothing rounded.
+   Monospace everywhere, because a CLI tutor may as well look like one.
+--------------------------------------------------------------------------- */
+
+.tui {
+  min-height: 100vh;
+  --bg: #04070a;
+  --bg-2: #080d11;
+  --grid: rgba(51, 255, 133, 0.055);
+  --green: #3dff8a;
+  --green-dim: #7fd8a6;
+  /* Borders only. Too dark for text, which is what --green-quiet is for. */
+  --green-faint: #2f6b4a;
+  --green-quiet: #42956c;
+  --amber: #ffb84d;
+  --red: #ff5f56;
+  --fg: #d6f5e3;
+
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* Phosphor bloom plus a faint raster, so the text sits in a tube. */
+.tui-crt {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 40%, rgba(61, 255, 138, 0.07), transparent 70%),
+    repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 3px),
+    var(--bg);
+}
+
+.tui-display {
+  font-family: var(--font-vt), var(--font-plex-mono), monospace;
+  letter-spacing: 0.04em;
+  color: var(--green);
+  text-shadow: 0 0 8px rgba(61, 255, 138, 0.5);
+}
+
+/* An ASCII frame. The border characters live in CSS content so the markup
+   stays readable and screen readers do not have to wade through box art. */
+.tui-box {
+  border: 1px solid var(--green-faint);
+  position: relative;
+  background: var(--bg-2);
+}
+
+.tui-box > figcaption,
+.tui-legend {
+  position: absolute;
+  top: -0.72rem;
+  left: 0.9rem;
+  padding: 0 0.5rem;
+  background: var(--bg);
+  color: var(--amber);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.tui-prompt::before {
+  content: '▸ ';
+  color: var(--green);
+}
+
+.tui-dim {
+  color: var(--green-dim);
+}
+
+.tui-faint {
+  /* 5.5:1 on the ground. --green-faint sits at 3.2 and is border-only. */
+  color: var(--green-quiet);
+}
+
+.tui-amber {
+  color: var(--amber);
+}
+
+.tui-key {
+  border: 1px solid var(--green-faint);
+  padding: 0.05rem 0.4rem;
+  color: var(--amber);
+  font-size: 0.8rem;
+}
+
+.tui-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.2rem;
+  border: 1px solid var(--green);
+  color: var(--green);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.tui-btn:hover {
+  background: var(--green);
+  color: var(--bg);
+}
+
+.tui-btn-amber {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.tui-btn-amber:hover {
+  background: var(--amber);
+  color: var(--bg);
+}
+
+.tui-link {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tui-link:hover {
+  color: var(--amber);
+}
+
+/* A blinking block, used after headings so the page feels alive. */
+.tui-caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  translate: 0 0.12em;
+  background: var(--green);
+  animation: tui-blink 1.05s steps(1) infinite;
+}
+
+@keyframes tui-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Progress rendered in characters rather than pixels. */
+.tui-meter {
+  color: var(--green);
+  letter-spacing: 0.06em;
+}
+
+.tui :where(a, button, input):focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tui-caret {
+    animation: none;
+  }
+}
+
+/* --- Shared components, toned for the TUI -------------------------------- */
+.tui .mr-frame {
+  --mr-bg: #04070a;
+  --mr-bar: #080d11;
+  --mr-line: #2f6b4a;
+  --mr-fg: #d6f5e3;
+  --mr-dim: #7fd8a6;
+  --mr-prompt: #3dff8a;
+  --mr-accent: #ffb84d;
+  --mr-good: #3dff8a;
+  --mr-warn: #ffb84d;
+  --mr-radius: 0;
+}
+
+.tui .am {
+  --am-bg: #080d11;
+  --am-fg: #d6f5e3;
+  --am-quiet: #7fd8a6;
+  --am-line: #2f6b4a;
+  --am-accent: #ffb84d;
+  --am-radius: 0;
+  --am-font: var(--font-plex-mono), monospace;
+}
+
+.tui .am-title {
+  font-family: var(--font-vt), monospace;
+  color: #3dff8a;
+  letter-spacing: 0.04em;
+}
+
+.tui .am-send {
+  color: #04070a;
+}

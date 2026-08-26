@@ -1,0 +1,235 @@
+/* ---------------------------------------------------------------------------
+   Manga. Newsprint paper, halftone screentone, hard black panel borders, one
+   red spot colour, speech bubbles with real tails. High contrast by nature,
+   which makes it the most legible of the five at a glance.
+--------------------------------------------------------------------------- */
+
+.mng {
+  min-height: 100vh;
+  --paper: #f6f1e6;
+  --paper-2: #ede6d6;
+  --ink: #14100e;
+  --ink-soft: #4a423b;
+  --red: #d81f26;
+  --red-deep: #a8161c;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Screentone: a dot grid over newsprint, plus speed lines raking in from the
+   top right the way a panel border would. */
+.mng-tone {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(rgba(20, 16, 14, 0.16) 1px, transparent 1.4px),
+    repeating-conic-gradient(
+      from 200deg at 108% -8%,
+      rgba(20, 16, 14, 0.05) 0deg 0.35deg,
+      transparent 0.35deg 2.4deg
+    );
+  background-size: 6px 6px, auto;
+}
+
+.mng-shout {
+  font-family: var(--font-bangers), Impact, sans-serif;
+  letter-spacing: 0.02em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+/* The panel. Hard border, hard offset shadow, no radius, slight tilt so a grid
+   of them reads as a comic page rather than a dashboard. */
+.mng-panel {
+  background: #fff;
+  border: 3px solid var(--ink);
+  box-shadow: 7px 7px 0 var(--ink);
+  position: relative;
+}
+
+.mng-tilt-l {
+  rotate: -0.7deg;
+}
+
+.mng-tilt-r {
+  rotate: 0.6deg;
+}
+
+.mng-panel-red {
+  background: var(--red);
+  color: #fff;
+  border: 3px solid var(--ink);
+  box-shadow: 7px 7px 0 var(--ink);
+}
+
+/* Speech bubble with a drawn tail. */
+.mng-bubble {
+  position: relative;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 1.6rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.mng-bubble::after,
+.mng-bubble::before {
+  content: '';
+  position: absolute;
+  left: 2.6rem;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.mng-bubble::before {
+  bottom: -1.5rem;
+  border-width: 1.5rem 1.1rem 0 0;
+  border-color: var(--ink) transparent transparent transparent;
+}
+
+.mng-bubble::after {
+  bottom: -1.05rem;
+  border-width: 1.1rem 0.75rem 0 0;
+  border-color: #fff transparent transparent transparent;
+}
+
+/* An SFX slab, the section marker. */
+.mng-sfx {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.2rem 0.7rem;
+  font-family: var(--font-bangers), Impact, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  rotate: -1.5deg;
+}
+
+.mng-num {
+  font-family: var(--font-bangers), Impact, sans-serif;
+  color: var(--red);
+  -webkit-text-stroke: 1.5px var(--ink);
+  line-height: 1;
+}
+
+.mng-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border: 3px solid var(--ink);
+  font-family: var(--font-bangers), Impact, sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 5px 5px 0 var(--ink);
+  transition: translate 110ms ease, box-shadow 110ms ease;
+}
+
+.mng-btn:hover {
+  translate: -2px -2px;
+  box-shadow: 7px 7px 0 var(--ink);
+}
+
+.mng-btn:active {
+  translate: 3px 3px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.mng-btn-red {
+  background: var(--red);
+  color: #fff;
+}
+
+.mng-btn-ink {
+  background: #fff;
+  color: var(--ink);
+}
+
+.mng-code {
+  background: var(--ink);
+  color: #f2ede2;
+  border: 3px solid var(--ink);
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  font-family: var(--font-space-mono), ui-monospace, monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.mng-link {
+  color: var(--red-deep);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.mng-link:hover {
+  color: var(--ink);
+}
+
+.mng :where(a, button, input):focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* Impact lines behind the title. */
+.mng-impact {
+  position: absolute;
+  inset: -12% -8%;
+  z-index: -1;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(20, 16, 14, 0.13) 0deg 1.1deg,
+    transparent 1.1deg 6deg
+  );
+  mask-image: radial-gradient(closest-side, #000 30%, transparent 78%);
+  pointer-events: none;
+}
+
+/* --- Shared components, toned for the page ------------------------------- */
+.mng .mr-frame {
+  --mr-bg: #14100e;
+  --mr-bar: #1e1815;
+  --mr-line: #3a2f2a;
+  --mr-fg: #f6f1e6;
+  --mr-dim: #c3b4a5;
+  --mr-prompt: #7ad6a0;
+  --mr-accent: #d81f26;
+  --mr-good: #7ad6a0;
+  --mr-warn: #f0b429;
+  --mr-radius: 0;
+  --mr-font: var(--font-space-mono), monospace;
+  border: 3px solid var(--ink);
+}
+
+.mng .am {
+  --am-bg: #ffffff;
+  --am-fg: #14100e;
+  --am-quiet: #4a423b;
+  --am-line: #14100e;
+  --am-accent: #a8161c;
+  --am-radius: 0;
+  --am-font: var(--font-barlow), sans-serif;
+  --am-mono: var(--font-space-mono), monospace;
+  border: 3px solid var(--ink);
+  box-shadow: 7px 7px 0 var(--ink);
+}
+
+.mng .am-title {
+  font-family: var(--font-bangers), Impact, sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.mng .am-input,
+.mng .am-kata button {
+  border-width: 2px;
+}
