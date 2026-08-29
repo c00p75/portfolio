@@ -5,13 +5,23 @@ import { AskMiyagi } from '@/components/miyagi/AskMiyagi';
 import { VariantBar } from '@/components/miyagi/VariantBar';
 import { TerminalReplay } from '@/components/miyagi/TerminalReplay';
 import { projectBySlug } from '@/lib/content';
+import {
+  MIYAGI,
+  CONFIG_JSON,
+  CLIENTS,
+  CARD_PARTS,
+  TOOLS,
+  SAFETY,
+  XP_LINE,
+  AUDIT_LINE,
+} from '@/lib/miyagi';
 
 const serifJp = Noto_Serif_JP({ subsets: ['latin'], weight: ['400', '700', '900'], variable: '--font-serif-jp', display: 'swap' });
 const plexSans = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-plex-sans', display: 'swap' });
 const plexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-plex-mono', display: 'swap' });
 
-const NPM_URL = 'https://www.npmjs.com/package/miyagi-mcp';
-const REPO_URL = 'https://github.com/c00p75/miyagi';
+const NPM_URL = MIYAGI.npm;
+const REPO_URL = MIYAGI.repo;
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -90,62 +100,6 @@ const BELTS = [
   { name: 'Terminal Wizard', at: 'Level 10', color: 'var(--belt-brown)' },
 ];
 
-const CONFIG = `{
-  "mcpServers": {
-    "miyagi": {
-      "command": "npx",
-      "args": ["-y", "miyagi-mcp"]
-    }
-  }
-}`;
-
-const CLIENTS = [
-  { client: 'Claude Desktop (macOS)', where: '~/Library/Application Support/Claude/claude_desktop_config.json' },
-  { client: 'Claude Desktop (Windows)', where: '%APPDATA%\\Claude\\claude_desktop_config.json' },
-  { client: 'Cursor', where: '.cursor/mcp.json, or ~/.cursor/mcp.json' },
-  { client: 'AntiGravity / Windsurf', where: '~/.codeium/windsurf/mcp_config.json' },
-  { client: 'Claude Code', where: 'claude mcp add miyagi -- npx -y miyagi-mcp' },
-];
-
-const CARD = [
-  ['Roadmap alignment', 'Where the command sits on your track, and which step you are on.'],
-  ['What / How / Trade-offs', 'The same command explained three ways, pitched at Junior, Mid or Senior.'],
-  ['Mental model', 'A Mermaid flowchart of what the shell actually does with it.'],
-  ['Pitfalls', 'The mistakes this command specifically invites, not generic advice.'],
-  ['Curated docs', 'A short set including the man page, rather than a search link.'],
-  ['Active recall quiz', 'One question you answer back, which is where the XP comes from.'],
-];
-
-const TOOLS = [
-  ['run_teaching_command', 'Execute or dry-run a command and return the full teaching card.'],
-  ['verify_quiz_answer', 'Grade the quiz, update your streak and XP, speak the feedback.'],
-  ['get_next_roadmap_command', 'The next copy-pasteable command for where you are.'],
-  ['set_active_roadmap', 'Set category, roadmap, topic and step counters.'],
-  ['quick_config', 'Switch skill level, track or voice in one call. Also resets progress.'],
-  ['configure_voice', 'Toggle audio and set words per minute.'],
-  ['get_user_stats', 'XP, level, title, streaks, badges and the title ladder.'],
-  ['export_roadmap_notes', 'Write a ROADMAP_PROGRESS.md summary of the session.'],
-];
-
-const SAFETY = [
-  [
-    'Nothing catastrophic executes',
-    'Nine classes are pattern-matched and forced into dry-run: recursive delete, raw device writes, filesystem formats, fork bombs, disk overwrites, host power state, world-writable recursion, piping remote code into a shell, and history-rewriting force pushes.',
-  ],
-  [
-    'The screen does not trust its caller',
-    'The tool accepts an is_dangerous flag but re-derives the verdict itself, then ORs the two. The threat model is a model reaching for a vivid example mid-lesson, not a careless human, so a flag the caller supplies cannot be the thing protecting you from the caller.',
-  ],
-  [
-    'A denylist is a backstop, not a sandbox',
-    'The real boundary is your client’s own approval prompt, with you reading the command first. Commands run with your privileges in your directory: no container, no restricted user, no syscall filter.',
-  ],
-  [
-    'Failures teach instead of crashing',
-    'A non-zero exit returns a diagnostic with a troubleshooting ladder rather than a thrown error. Commands cap at 60 seconds and 4 MB. No network calls, no telemetry, no keys.',
-  ],
-];
-
 export default function MiyagiPage() {
   const caseStudy = projectBySlug('miyagi');
 
@@ -187,13 +141,9 @@ export default function MiyagiPage() {
             Wax on. Wax off.
           </p>
 
-          <p className="mt-9 max-w-2xl text-xl leading-relaxed">
-            A coding tutor that lives in your editor and refuses to do the work for you. It
-            hands you the next command, explains it at your level, and turns every result into
-            a lesson, narrated aloud by your own machine.
-          </p>
+          <p className="mt-9 max-w-2xl text-xl leading-relaxed">{MIYAGI.blurb}</p>
 
-          <Term>npx -y miyagi-mcp</Term>
+          <Term>{MIYAGI.install}</Term>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a href={NPM_URL} target="_blank" rel="noreferrer" className="dojo-btn dojo-btn-solid">
@@ -210,9 +160,7 @@ export default function MiyagiPage() {
           <div className="dojo-panel p-6 sm:p-8">
             <Kicker>The ladder</Kicker>
             <p className="mt-4 max-w-2xl leading-relaxed" style={{ color: 'var(--on-sumi)' }}>
-              Commands earn 15 XP, correct quiz answers 25 with a streak multiplier, and level
-              is simply XP over 100. Titles unlock on the way up. Progress is saved, so a
-              restart costs nothing.
+              {XP_LINE}
             </p>
             <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {BELTS.map((b) => (
@@ -246,7 +194,7 @@ export default function MiyagiPage() {
           title="Three lines, any client"
           lead="No API keys, no account, no sign-up. It runs entirely on your machine, so the only thing your client needs is permission to start it."
         >
-          <Term prompt={false}>{CONFIG}</Term>
+          <Term prompt={false}>{CONFIG_JSON}</Term>
 
           <div className="dojo-panel mt-8 overflow-x-auto">
             <table className="w-full min-w-[34rem] border-collapse text-left text-sm">
@@ -284,14 +232,14 @@ export default function MiyagiPage() {
           lead="Running the command is the cheap part. The card around it is the point: the same command at the depth you asked for, with the failure modes it actually invites."
         >
           <ol className="mt-12 grid gap-px sm:grid-cols-2" style={{ background: 'var(--sumi-line)' }}>
-            {CARD.map(([part, detail], i) => (
-              <li key={part} className="p-6 sm:p-8" style={{ background: 'var(--sumi-raised)' }}>
+            {CARD_PARTS.map((c, i) => (
+              <li key={c.part} className="p-6 sm:p-8" style={{ background: 'var(--sumi-raised)' }}>
                 <span className="dojo-display text-3xl" style={{ color: 'var(--seal-bright)' }}>
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <h3 className="dojo-display mt-3 text-xl">{part}</h3>
+                <h3 className="dojo-display mt-3 text-xl">{c.part}</h3>
                 <p className="mt-2 leading-relaxed" style={{ color: 'var(--on-sumi-quiet)' }}>
-                  {detail}
+                  {c.detail}
                 </p>
               </li>
             ))}
@@ -306,19 +254,17 @@ export default function MiyagiPage() {
           lead="Anything that executes commands on your machine should be read before it is trusted, so this says what the protection is and, more usefully, where it stops."
         >
           <div className="mt-12 grid gap-px sm:grid-cols-2" style={{ background: 'var(--sumi-line)' }}>
-            {SAFETY.map(([h, p]) => (
-              <div key={h} className="p-6 sm:p-8" style={{ background: 'var(--sumi-raised)' }}>
-                <h3 className="dojo-display text-xl">{h}</h3>
+            {SAFETY.map((s) => (
+              <div key={s.head} className="p-6 sm:p-8" style={{ background: 'var(--sumi-raised)' }}>
+                <h3 className="dojo-display text-xl">{s.head}</h3>
                 <p className="mt-3 leading-relaxed" style={{ color: 'var(--on-sumi-quiet)' }}>
-                  {p}
+                  {s.body}
                 </p>
               </div>
             ))}
           </div>
           <p className="mt-8 max-w-3xl leading-relaxed" style={{ color: 'var(--on-sumi)' }}>
-            Two runtime dependencies, the MCP SDK and zod, in one source file you can read in a
-            sitting. Sixteen tests cover the danger screen and the saved-profile parser, and CI
-            drives a real handshake on Node 18, 20 and 22.
+            {AUDIT_LINE}
           </p>
         </Section>
 
@@ -326,13 +272,13 @@ export default function MiyagiPage() {
         <Section
           index="04"
           kicker="Surface"
-          title="Eight tools"
+          title={`${TOOLS.length} tools`}
           lead="Progress lives in ~/.miyagi/profile.json, so XP, streaks, badges and your position on a track survive a client restart."
         >
           <ul className="mt-12">
-            {TOOLS.map(([name, detail]) => (
+            {TOOLS.map((t) => (
               <li
-                key={name}
+                key={t.name}
                 className="py-6 sm:flex sm:gap-10"
                 style={{ borderBottom: '1px solid var(--sumi-line)' }}
               >
@@ -340,10 +286,10 @@ export default function MiyagiPage() {
                   className="dojo-mono block shrink-0 text-sm sm:w-72"
                   style={{ color: 'var(--seal-bright)' }}
                 >
-                  {name}
+                  {t.name}
                 </span>
                 <p className="mt-2 max-w-2xl leading-relaxed sm:mt-0" style={{ color: 'var(--on-sumi-quiet)' }}>
-                  {detail}
+                  {t.detail}
                 </p>
               </li>
             ))}

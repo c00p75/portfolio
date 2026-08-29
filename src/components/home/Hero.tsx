@@ -223,9 +223,7 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Portrait, anchored bottom-centre like the reference. Greyscale keeps
-            the sticker colours as the only chroma on the page until the
-            centre of the figure is hovered, when the photo comes back in colour.
+        {/* Portrait, anchored bottom-centre like the reference.
 
             Rendered here — outside the cream panel — for the same reason as the
             sticker wall: the panel clips its own overflow for the grid-paper
@@ -234,20 +232,14 @@ export function Hero() {
             the black band. The wrapper's own paddings are repeated so the
             overlay lines up with the panel box rather than the padded wrapper. */}
         <div className="pointer-events-none absolute inset-0 z-10 flex items-end justify-center pr-6 pb-6 sm:pr-8 sm:pb-7 lg:pr-10 lg:pb-8">
-          <div className="group/photo relative h-[21rem] w-[15.5rem] sm:h-[26rem] sm:w-[19rem] lg:h-[41rem] lg:w-[32rem]">
+          <div className="relative h-[21rem] w-[15.5rem] sm:h-[26rem] sm:w-[19rem] lg:h-[41rem] lg:w-[32rem]">
             <Image
               src={portrait}
               alt=""
               fill
               priority
               sizes="(max-width: 640px) 550px, (max-width: 1024px) 304px, 392px"
-              className="ml-10 object-cover object-top grayscale contrast-[1.08] transition-[filter] duration-300 ease-out group-hover/photo:grayscale-0"
-            />
-            {/* Only the middle of the figure accepts hover — the rest of the
-                portrait box stays greyscale and lets clicks pass through. */}
-            <div
-              aria-hidden
-              className="pointer-events-auto absolute top-[46%] left-[calc(60%+1.25rem)] h-[90%] w-[34%] -translate-x-1/2 -translate-y-1/2"
+              className="ml-10 object-cover object-top contrast-[1.08]"
             />
           </div>
         </div>

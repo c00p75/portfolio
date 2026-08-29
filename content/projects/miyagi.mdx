@@ -53,18 +53,18 @@ metrics:
       line before. You check it by reading the dispatch, not by testing behaviour.
     direction: down-is-good
   - label: Dangerous command classes screened
-    value: '9'
+    value: '2 tiers'
     basis: >-
-      Entries in the pattern table: recursive delete, raw device write, filesystem
-      format, fork bomb, disk overwrite, host power state, world-writable
-      recursion, piping remote code into a shell, and history-rewriting force
-      push.
+      Catastrophic shapes never execute. Destructive ones dry-run until a human
+      types RUN (or, on clients that cannot prompt, until confirm_dangerous is
+      set). The pattern table covers recursive delete, raw device write,
+      filesystem format, fork bombs, piping remote code into a shell, force
+      push, terraform apply, and the rest of the denylist.
     direction: neutral
   - label: Runtime dependencies
     value: '2'
     basis: >-
-      The MCP SDK and zod, per package.json. 31.7 kB packed and 110.7 kB unpacked,
-      from the published `npm pack` output. Small enough that reading the whole
+      The MCP SDK and zod, per package.json. Small enough that reading the whole
       server before you trust it is a realistic ask.
     direction: down-is-good
   - label: Bound on a single command
@@ -73,12 +73,12 @@ metrics:
       Wall-clock timeout and output buffer cap passed to every exec call, so a hung
       or runaway command degrades into a diagnostic instead of a wedged session.
     direction: down-is-good
-  - label: Tests guarding the danger screen
-    value: '16'
+  - label: Tests
+    value: '249'
     basis: >-
-      Cases on node:test with no framework added, over the pattern screen, the
-      speech sanitiser, the title ladder and every way the saved profile can be
-      malformed. CI also drives a real stdio handshake on Node 18, 20 and 22.
+      Cases on node:test with no framework added, covering the danger screen,
+      checkpoints, session modes, persistence, and a real stdio handshake. CI
+      runs the suite on Node 18, 20 and 22.
     direction: up-is-good
 links:
   - label: Install from npm
@@ -105,16 +105,20 @@ its own intent is protection in name only.
 
 ## What I built
 
-Eight tools over stdio: roadmap navigation, command execution wrapped in a
-teaching card, active-recall quizzes, XP and streak tracking, and a markdown
-export of the session.
+Ten tools over stdio: roadmap navigation, command execution wrapped in a
+teaching card, outcome checkpoints, active-recall quizzes, spaced repetition,
+XP and streak tracking, session modes (drill / ride-along / focus), and a
+markdown export of the session. Voice settings live on `quick_config`; a
+separate `configure_voice` tool used to exist and drifted.
 
 The execution path is the part worth describing. The tool signature accepts an
 `is_dangerous` flag from the caller, because a well-behaved model marking its own
 destructive commands is useful signal. It just isn't load-bearing. The server
-independently matches the command against nine catastrophe classes, and a hit
-forces dry-run whether or not the caller flagged anything. The two inputs are
-ORed and never substituted, so the caller can add caution but can't remove it.
+independently matches the command against a two-tier denylist. Catastrophic
+shapes never run. Destructive ones are explained and dry-run until a human types
+`RUN` into an elicitation prompt — the flag is only the fallback for clients
+that cannot ask. The two inputs are ORed and never substituted, so the caller
+can add caution but can't remove it.
 
 Everything downstream comes from wanting the failure modes to be boring. Commands
 are bounded at sixty seconds and four megabytes. A non-zero exit becomes a
@@ -134,12 +138,14 @@ an interrupted write costs the last change and not the profile.
 
 ## Where the boundary actually is
 
-**A denylist is a backstop, not a sandbox.** The nine patterns catch nine named
-catastrophes. They aren't what makes the tool safe. The real boundary is the MCP
-client's own approval prompt, with a human reading the command before it runs.
-The screen exists for the narrower case that prompt handles badly: a model
-proposing something obviously destructive to someone who is clicking through.
-Defence in depth, with the depth stated honestly instead of oversold.
+**A denylist is a backstop, not a sandbox.** The pattern table catches named
+catastrophes and a longer list of merely destructive shapes. They aren't what
+makes the tool safe. The real boundary is the MCP client's own approval prompt,
+with a human reading the command before it runs — and, for the destructive tier,
+an elicitation that requires typing `RUN`. The screen exists for the narrower
+case that prompt handles badly: a model proposing something obviously
+destructive to someone who is clicking through. Defence in depth, with the depth
+stated honestly instead of oversold.
 
 **Isolation is a scope decision, made on purpose.** Commands run with the user's
 own privileges in their own directory. No container, no restricted user, no

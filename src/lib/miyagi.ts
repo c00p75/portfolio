@@ -4,11 +4,12 @@
  * The variants differ only in presentation. Facts live here so a restyle cannot
  * quietly invent a feature, and so a change to the product is a change in one
  * file rather than five. Everything below describes the published
- * miyagi-mcp@1.0.0, not work in progress.
+ * miyagi-mcp@3.0.0.
  */
 
 export const MIYAGI = {
   pkg: 'miyagi-mcp',
+  version: '3.0.0',
   install: 'npx -y miyagi-mcp',
   npm: 'https://www.npmjs.com/package/miyagi-mcp',
   repo: 'https://github.com/c00p75/miyagi',
@@ -16,7 +17,7 @@ export const MIYAGI = {
   license: 'MIT',
   tagline: 'You run the commands. It drills, corrects, catches the falls, and keeps score.',
   blurb:
-    'A coding tutor that lives in your editor and refuses to do the work for you. It hands you the next command, explains it at your level, and turns every result into a lesson, narrated aloud by your own machine.',
+    'A coding tutor that lives in your editor and refuses to do the work for you. Default mode is ride-along: a short card, no inline quiz, no voice. Switch to drill when you want the full lesson, a quiz, and narration from your own machine.',
 } as const;
 
 export const CONFIG_JSON = `{
@@ -36,42 +37,68 @@ export const CLIENTS: readonly { client: string; where: string }[] = [
   { client: 'Claude Code', where: 'claude mcp add miyagi -- npx -y miyagi-mcp' },
 ];
 
+export const MODES: readonly { name: string; xp: string; detail: string }[] = [
+  {
+    name: 'Ride-along',
+    xp: '3 XP',
+    detail: 'The default. A short card, no inline quiz, no voice. Recall is queued for later, not dropped.',
+  },
+  {
+    name: 'Drill',
+    xp: '10 XP',
+    detail: 'The full card: What/How/Trade-offs, a diagram, pitfalls, docs, a quiz, and speech. Intensity you opt into.',
+  },
+  {
+    name: 'Focus',
+    xp: '0 XP',
+    detail: 'The command runs. Nothing else surfaces unless it is dangerous — refusals still report in every mode.',
+  },
+];
+
+export const XP_LINE =
+  'Attempt XP follows the mode: 10 in drill, 3 in ride-along, nothing in focus. A verified outcome is 30, once. A correct quiz is 25 (30 for a review). Level is XP over 100, saved to disk.';
+
+export const AUDIT_LINE =
+  'Two runtime dependencies, the MCP SDK and zod. 249 tests, and CI drives a real stdio handshake on Node 18, 20 and 22.';
+
 export const CARD_PARTS: readonly { part: string; detail: string; icon: string }[] = [
   { part: 'Roadmap alignment', detail: 'Where the command sits on your track, and which step you are on.', icon: 'map' },
   { part: 'What / How / Trade-offs', detail: 'The same command explained three ways, pitched at Junior, Mid or Senior.', icon: 'layers' },
-  { part: 'Mental model', detail: 'A Mermaid flowchart of what the shell actually does with it.', icon: 'flow' },
+  { part: 'Mental model', detail: 'A Mermaid flowchart of what the shell actually does with it. Drill shows it; quieter modes skip it.', icon: 'flow' },
   { part: 'Common pitfalls', detail: 'The mistakes this command specifically invites, not generic advice.', icon: 'warn' },
   { part: 'Curated docs', detail: 'A short set including the man page, rather than a search link.', icon: 'book' },
-  { part: 'Active recall quiz', detail: 'One question you answer back, which is where the XP comes from.', icon: 'quiz' },
+  { part: 'Active recall quiz', detail: 'Asked inline in drill. Quieter modes queue it for review instead of dropping it.', icon: 'quiz' },
 ];
 
 export const TOOLS: readonly { name: string; detail: string }[] = [
-  { name: 'run_teaching_command', detail: 'Execute or dry-run a command and return the full teaching card.' },
-  { name: 'verify_quiz_answer', detail: 'Grade the quiz, update your streak and XP, speak the feedback.' },
-  { name: 'get_next_roadmap_command', detail: 'The next copy-pasteable command for where you are.' },
-  { name: 'set_active_roadmap', detail: 'Set category, roadmap, topic and step counters.' },
-  { name: 'quick_config', detail: 'Switch skill level, track or voice in one call. Also resets progress.' },
-  { name: 'configure_voice', detail: 'Toggle audio and set words per minute.' },
-  { name: 'get_user_stats', detail: 'XP, level, title, streaks, badges and the title ladder.' },
-  { name: 'export_roadmap_notes', detail: 'Write a ROADMAP_PROGRESS.md summary of the session.' },
+  { name: 'quick_config', detail: 'Skill level, track, voice, and session mode (drill / ride-along / focus) in one call. Also resets progress.' },
+  { name: 'list_roadmaps', detail: 'Every track, built-in and yours, with the JSON shape for authoring your own.' },
+  { name: 'set_active_roadmap', detail: 'Set category, track, topic and step. An unknown name is reported, not silently swapped.' },
+  { name: 'get_next_roadmap_command', detail: 'The next copy-pasteable command for where you are, with its checkpoint criterion.' },
+  { name: 'run_teaching_command', detail: 'Execute or dry-run a command and return a teaching card. Depth follows the session mode.' },
+  { name: 'verify_step', detail: 'A read-only probe confirms the outcome exists on your machine. This is where most of the XP is.' },
+  { name: 'verify_quiz_answer', detail: 'Grade the quiz, update streaks, XP, mastery and the review schedule.' },
+  { name: 'review_due_items', detail: 'The spaced-repetition session — everything whose interval has elapsed, most overdue first.' },
+  { name: 'get_user_stats', detail: 'XP, level, title, both streaks, badges, per-command mastery and lifetime totals.' },
+  { name: 'export_roadmap_notes', detail: 'Write a ROADMAP_PROGRESS.md of the session, or of everything you have practised.' },
 ];
 
 export const SAFETY: readonly { head: string; body: string }[] = [
   {
     head: 'Nothing catastrophic executes',
-    body: 'Nine classes are pattern-matched and forced into dry-run: recursive delete, raw device writes, filesystem formats, fork bombs, disk overwrites, host power state, world-writable recursion, piping remote code into a shell, and history-rewriting force pushes.',
+    body: 'Shapes like rm -rf /, mkfs, curl | sh, fork bombs and wiping shell history are refused outright, with or without confirmation, and regardless of what the calling model claims.',
+  },
+  {
+    head: 'A human confirms the rest',
+    body: 'Merely destructive commands (rm -rf build, git push --force, terraform destroy) are explained and dry-run until you type RUN. The model’s confirm_dangerous flag is only the fallback for clients that cannot prompt you.',
   },
   {
     head: 'The screen does not trust its caller',
-    body: 'The tool accepts an is_dangerous flag but re-derives the verdict itself, then ORs the two. The threat model is a model reaching for a vivid example mid-lesson, not a careless human, so a flag the caller supplies cannot be the thing protecting you from the caller.',
+    body: 'The tool accepts an is_dangerous flag but re-derives the verdict itself. The threat model is a model reaching for a vivid example mid-lesson, not a careless human, so a flag the caller supplies cannot be the thing protecting you from the caller.',
   },
   {
     head: 'A denylist is a backstop, not a sandbox',
-    body: 'The real boundary is your client’s own approval prompt, with you reading the command first. Commands run with your privileges in your directory: no container, no restricted user, no syscall filter.',
-  },
-  {
-    head: 'Failures teach instead of crashing',
-    body: 'A non-zero exit returns a diagnostic with a troubleshooting ladder rather than a thrown error. Commands cap at 60 seconds and 4 MB. No network calls, no telemetry, no keys.',
+    body: 'The real boundary is your client’s own approval prompt, with you reading the command first. Commands run with your privileges in your directory: no container, no restricted user, no syscall filter. Failures return a diagnostic rather than a thrown error. 60-second cap, 4 MB, no network, no telemetry, no keys.',
   },
 ];
 
@@ -83,16 +110,17 @@ export const TITLES: readonly { name: string; at: string; level: number }[] = [
 ];
 
 export const FACTS: readonly { value: string; label: string }[] = [
-  { value: '8', label: 'tools over stdio' },
-  { value: '9', label: 'danger classes screened' },
+  { value: String(TOOLS.length), label: 'tools over stdio' },
+  { value: String(MODES.length), label: 'session modes' },
   { value: '2', label: 'runtime dependencies' },
-  { value: '16', label: 'tests, on Node 18/20/22' },
+  { value: '249', label: 'tests, on Node 18/20/22' },
 ];
 
 /**
  * A real transcript, trimmed. Taken from an actual session rather than written
  * for the page, because a made-up demo of a teaching tool is the one thing a
- * developer will check.
+ * developer will check. Numbers match drill mode: 10 for the attempt, 25 for
+ * the quiz.
  */
 export const DEMO_STEPS: readonly { cmd: string; out: readonly string[] }[] = [
   {
@@ -124,8 +152,8 @@ export const DEMO_STEPS: readonly { cmd: string; out: readonly string[] }[] = [
       'recently completed foreground command.',
       '',
       '+25 XP  ·  streak 1 🔥',
-      'Terminal Novice · Level 1 · 40 XP',
-      '[████░░░░░░] 40/100',
+      'Terminal Novice · Level 1 · 35 XP',
+      '[███░░░░░░░] 35/100',
     ],
   },
   {
@@ -135,7 +163,8 @@ export const DEMO_STEPS: readonly { cmd: string; out: readonly string[] }[] = [
       '',
       '## ⚠️ Safety screen',
       'Flagged: recursive/forced delete',
-      'Executed as a dry run. Nothing changed.',
+      'Explained but not executed. Type RUN',
+      'when you mean it.',
       '',
       'The screen re-derives this itself. It does',
       'not matter what the caller claimed.',

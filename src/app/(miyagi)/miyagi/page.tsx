@@ -6,7 +6,7 @@ import { VariantBar } from '@/components/miyagi/VariantBar';
 import { TerminalReplay } from '@/components/miyagi/TerminalReplay';
 import { AskMiyagi } from '@/components/miyagi/AskMiyagi';
 import { SenseiManga } from '@/components/miyagi/SenseiManga';
-import { MIYAGI, CONFIG_JSON, CLIENTS, CARD_PARTS, TOOLS, SAFETY, TITLES, FACTS } from '@/lib/miyagi';
+import { MIYAGI, CONFIG_JSON, CLIENTS, CARD_PARTS, TOOLS, SAFETY, TITLES, FACTS, MODES, XP_LINE } from '@/lib/miyagi';
 
 const bangers = Bangers({ subsets: ['latin'], weight: '400', variable: '--font-bangers', display: 'swap' });
 const barlow = Barlow({ subsets: ['latin'], weight: ['400', '600', '700'], variable: '--font-barlow', display: 'swap' });
@@ -48,7 +48,7 @@ export default function MangaVariant() {
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,auto)] lg:items-center lg:gap-16">
             <div className="min-w-0">
               <p className="font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--ink-soft)' }}>
-                Chapter one · {MIYAGI.pkg} · {MIYAGI.license}
+                Chapter one · {MIYAGI.pkg} {MIYAGI.version} · {MIYAGI.license}
               </p>
 
               <h1 className="mng-shout mt-4 text-[clamp(3.2rem,11vw,7.5rem)]">
@@ -105,8 +105,8 @@ export default function MangaVariant() {
           <Sfx>Watch</Sfx>
           <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">A real training round</h2>
           <p className="mt-4 max-w-2xl text-lg">
-            Captured output, replayed. It runs a command, marks a quiz, then flatly refuses to
-            delete anything.
+            Captured output, replayed. A drill round: it runs a command, marks a quiz, then
+            asks you to type RUN before anything destructive.
           </p>
           <div className="mng-panel mt-8 p-3 sm:p-5">
             <TerminalReplay />
@@ -128,10 +128,7 @@ export default function MangaVariant() {
               </div>
             ))}
           </div>
-          <p className="mt-6 max-w-2xl text-lg">
-            15 XP a command, 25 for a correct quiz with a streak multiplier, level is XP over 100.
-            Saved to disk, so a restart costs you nothing.
-          </p>
+          <p className="mt-6 max-w-2xl text-lg">{XP_LINE}</p>
         </section>
 
         {/* Setup */}
@@ -154,6 +151,27 @@ export default function MangaVariant() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </section>
+
+        {/* Modes */}
+        <section className="mt-20">
+          <Sfx>Volume</Sfx>
+          <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">Three ways to train</h2>
+          <p className="mt-4 max-w-2xl text-lg">
+            Ride-along is the default. Too loud costs an uninstall; too quiet costs mild
+            disappointment. Intensity is opted into.
+          </p>
+          <div className="mt-8 grid gap-6 sm:grid-cols-3">
+            {MODES.map((m, i) => (
+              <div key={m.name} className={`mng-panel p-6 ${i === 1 ? 'mng-tilt-r' : 'mng-tilt-l'}`}>
+                <p className="mng-num text-3xl">{m.xp}</p>
+                <h3 className="mng-shout mt-3 text-2xl">{m.name}</h3>
+                <p className="mt-2 leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
+                  {m.detail}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -199,7 +217,7 @@ export default function MangaVariant() {
         {/* Tools */}
         <section className="mt-20">
           <Sfx>Moves</Sfx>
-          <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">Eight tools</h2>
+          <h2 className="mng-shout mt-4 text-4xl sm:text-6xl">{TOOLS.length} tools</h2>
           <div className="mng-panel mt-8">
             {TOOLS.map((t, i) => (
               <div

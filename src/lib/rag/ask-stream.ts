@@ -26,6 +26,8 @@ export async function streamAsk(
   opts: {
     signal?: AbortSignal;
     history?: AskHistoryTurn[];
+    /** Omit for Ask George. The Miyagi page sends `miyagi` so retrieval and the prompt stay on-product. */
+    scope?: 'site' | 'miyagi';
     onEvent: (event: AskEvent) => void;
   },
 ): Promise<void> {
@@ -35,6 +37,7 @@ export async function streamAsk(
     body: JSON.stringify({
       question,
       history: opts.history?.slice(-6),
+      ...(opts.scope ? { scope: opts.scope } : {}),
     }),
     signal: opts.signal,
   });

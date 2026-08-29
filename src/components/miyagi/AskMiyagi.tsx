@@ -7,9 +7,10 @@ import './ask.css';
 /**
  * Ask Miyagi.
  *
- * Same retrieval endpoint as the portfolio's assistant, deliberately nothing
- * else in common: this one is a sheet of paper the tutor writes onto, sits
- * inline in the page rather than in a floating widget, and asks the questions a
+ * Same retrieval endpoint as the portfolio's assistant, with `scope: miyagi`
+ * so the index and the prompt stay on this product. Deliberately nothing else
+ * in common: this one is a sheet of paper the tutor writes onto, sits inline
+ * in the page rather than in a floating widget, and asks the questions a
  * developer evaluating an MCP server would ask.
  *
  * Assistant turns carry the server's signature and replay it, which is what
@@ -27,7 +28,7 @@ type Turn = {
 const KATA = [
   'What makes it safe to run shell commands?',
   'How does it stop a model running something destructive?',
-  'Why stdio instead of a hosted server?',
+  'What is the difference between drill and ride-along?',
   'What does a teaching card contain?',
 ];
 
@@ -67,6 +68,7 @@ export function AskMiyagi() {
         await streamAsk(trimmed, {
           signal: controller.signal,
           history,
+          scope: 'miyagi',
           onEvent: (event) => {
             switch (event.type) {
               case 'delta':
@@ -98,16 +100,16 @@ export function AskMiyagi() {
     <div className="am">
       <div className="am-head">
         <h3 className="am-title">Ask Miyagi</h3>
-        <span className="am-note">Answers from the written record</span>
+        <span className="am-note">Answers from the Miyagi record</span>
       </div>
 
       <hr className="am-rule" />
 
       {!started ? (
         <p className="am-intro">
-          It answers from what is actually written about this server and the rest of the site. If
-          something is not in the record it says so rather than inventing it, which is the part
-          worth testing.
+          It answers from what is written about Miyagi — install, tools, modes, XP, safety,
+          roadmaps. Other projects and biography are out of scope. If something is not in the
+          record it says so rather than inventing it.
         </p>
       ) : null}
 
@@ -152,7 +154,7 @@ export function AskMiyagi() {
           className="am-input"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Ask about the safety model, the roadmaps, anything\u2026"
+          placeholder="Ask about Miyagi — safety, modes, roadmaps…"
           maxLength={400}
           autoComplete="off"
         />

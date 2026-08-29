@@ -111,8 +111,8 @@ export default function ClassroomVariant() {
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
               Miyagi sits inside your editor and teaches by handing you one command at a time. You
-              type it. It explains what happened, warns you about the traps, then asks you a
-              question to make it stick.
+              type it. By default it rides along quietly. Switch to drill when you want the full
+              lesson and a quiz to make it stick.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -140,7 +140,7 @@ export default function ClassroomVariant() {
             closing your editor does not wipe the week you just put in.
           </p>
           <div className="mt-9 grid gap-8 sm:grid-cols-3">
-            <Ring pct={40} value="40" label="XP toward level 2" color="var(--teal)" />
+            <Ring pct={35} value="35" label="XP toward level 2" color="var(--teal)" />
             <Ring pct={25} value="1" label="Quiz streak" color="var(--coral)" />
             <Ring pct={10} value="1" label="Level" color="var(--grape)" />
           </div>

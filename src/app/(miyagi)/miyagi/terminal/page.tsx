@@ -5,7 +5,7 @@ import './terminal.css';
 import { VariantBar } from '@/components/miyagi/VariantBar';
 import { TerminalReplay } from '@/components/miyagi/TerminalReplay';
 import { AskMiyagi } from '@/components/miyagi/AskMiyagi';
-import { MIYAGI, CONFIG_JSON, CLIENTS, CARD_PARTS, TOOLS, SAFETY, TITLES, FACTS } from '@/lib/miyagi';
+import { MIYAGI, CONFIG_JSON, CLIENTS, CARD_PARTS, TOOLS, SAFETY, TITLES, FACTS, XP_LINE } from '@/lib/miyagi';
 
 const vt = VT323({ subsets: ['latin'], weight: '400', variable: '--font-vt', display: 'swap' });
 const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-plex-mono', display: 'swap' });
@@ -58,8 +58,8 @@ export default function TerminalVariant() {
           </pre>
 
           <p className="tui-dim mt-6">
-            <span className="tui-amber">miyagi</span> {MIYAGI.pkg} · {MIYAGI.license} · 8 tools over
-            stdio
+            <span className="tui-amber">miyagi</span> {MIYAGI.pkg} {MIYAGI.version} · {MIYAGI.license} ·{' '}
+            {TOOLS.length} tools over stdio
           </p>
 
           <p className="mt-6 max-w-2xl">{MIYAGI.blurb}</p>
@@ -110,10 +110,7 @@ export default function TerminalVariant() {
               </li>
             ))}
           </ul>
-          <p className="tui-dim mt-5 text-sm">
-            15 XP a command, 25 for a correct quiz with a streak multiplier, level is XP over 100.
-            Written to ~/.miyagi/profile.json, so a restart costs nothing.
-          </p>
+          <p className="tui-dim mt-5 text-sm">{XP_LINE}</p>
         </Box>
 
         <Box legend="01 · setup">

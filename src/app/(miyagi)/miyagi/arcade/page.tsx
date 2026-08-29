@@ -5,7 +5,7 @@ import './arcade.css';
 import { VariantBar } from '@/components/miyagi/VariantBar';
 import { TerminalReplay } from '@/components/miyagi/TerminalReplay';
 import { AskMiyagi } from '@/components/miyagi/AskMiyagi';
-import { MIYAGI, CONFIG_JSON, CLIENTS, CARD_PARTS, TOOLS, SAFETY, TITLES, FACTS } from '@/lib/miyagi';
+import { MIYAGI, CONFIG_JSON, CLIENTS, CARD_PARTS, TOOLS, SAFETY, TITLES, FACTS, XP_LINE } from '@/lib/miyagi';
 
 const press = Press_Start_2P({ subsets: ['latin'], weight: '400', variable: '--font-press', display: 'swap' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', display: 'swap' });
@@ -44,14 +44,13 @@ export default function ArcadeVariant() {
                 <p className="arc-kicker">Player</p>
                 <p className="arc-pixel mt-3 text-sm sm:text-base">TERMINAL NOVICE</p>
               </div>
-              <p className="arc-pixel arc-glow-cyan text-xs sm:text-sm">LV 1 · 40 XP</p>
+              <p className="arc-pixel arc-glow-cyan text-xs sm:text-sm">LV 1 · 35 XP</p>
             </div>
-            <div className="arc-xp mt-5" role="img" aria-label="40 of 100 XP toward level 2">
-              <span style={{ width: '40%', ['--w' as string]: '40%' }} />
+            <div className="arc-xp mt-5" role="img" aria-label="35 of 100 XP toward level 2">
+              <span style={{ width: '35%', ['--w' as string]: '35%' }} />
             </div>
             <p className="mt-3 text-sm" style={{ color: 'var(--dim)' }}>
-              15 XP a command, 25 for a correct quiz answer with a streak multiplier, level is XP
-              over 100. Saved to disk, so a restart costs you nothing.
+              {XP_LINE}
             </p>
           </div>
 
@@ -185,7 +184,7 @@ export default function ArcadeVariant() {
         {/* Tools */}
         <section className="pt-20">
           <p className="arc-kicker">Level 04 · Moves</p>
-          <h2 className="arc-pixel mt-5 text-[clamp(0.9rem,2.6vw,1.6rem)]">EIGHT TOOLS</h2>
+          <h2 className="arc-pixel mt-5 text-[clamp(0.9rem,2.6vw,1.6rem)]">{TOOLS.length} TOOLS</h2>
           <div className="arc-panel mt-8 divide-y" style={{ borderColor: 'var(--line)' }}>
             {TOOLS.map((t) => (
               <div key={t.name} className="p-5 sm:flex sm:gap-8" style={{ borderColor: 'var(--line)' }}>
