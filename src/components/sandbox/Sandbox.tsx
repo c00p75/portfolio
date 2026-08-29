@@ -1,6 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
+} from 'react';
 import { cn } from '@/lib/cn';
 import { Tag } from '@/components/ui/Sticker';
 import { SANDBOX_SUGGESTIONS } from '@/lib/rag/suggestions';
@@ -69,6 +77,137 @@ const kindTones: Record<Passage['kind'], string> = {
 
 function kindTone(kind: Passage['kind']) {
   return kindTones[kind] ?? 'text-yellow';
+}
+
+const SPLIT_MIN = 0.2;
+const SPLIT_MAX = 0.8;
+
+function clampSplit(ratio: number) {
+  return Math.min(SPLIT_MAX, Math.max(SPLIT_MIN, ratio));
+}
+
+/** Vertical split: timings above, passages below. Starts 50/50; the handle
+ *  is both a pointer drag and a keyboard control (WCAG dragging alternative). */
+function TraceSplit({
+  top,
+  bottom,
+}: {
+  top: ReactNode;
+  bottom: ReactNode;
+}) {
+  const [topRatio, setTopRatio] = useState(0.5);
+  const [dragging, setDragging] = useState(false);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const draggingRef = useRef(false);
+
+  const setFromClientY = useCallback((clientY: number) => {
+    const el = shellRef.current;
+    if (!el) return;
+    const box = el.getBoundingClientRect();
+    if (box.height <= 0) return;
+    setTopRatio(clampSplit((clientY - box.top) / box.height));
+  }, []);
+
+  const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    draggingRef.current = true;
+    setDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setFromClientY(e.clientY);
+  };
+
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return;
+    setFromClientY(e.clientY);
+  };
+
+  const endDrag = (e: PointerEvent<HTMLDivElement>) => {
+    draggingRef.current = false;
+    setDragging(false);
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const step = e.shiftKey ? 0.1 : 0.05;
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setTopRatio((r) => clampSplit(r - step));
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setTopRatio((r) => clampSplit(r + step));
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setTopRatio(SPLIT_MIN);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setTopRatio(SPLIT_MAX);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setTopRatio(0.5);
+    }
+  };
+
+  const topPct = Math.round(topRatio * 100);
+
+  return (
+    <div ref={shellRef} className="mt-5 flex min-h-0 flex-1 flex-col">
+      <div className="min-h-0 overflow-y-auto overscroll-contain pr-1" style={{ flex: `${topRatio} 1 0` }}>
+        {top}
+      </div>
+
+      <div
+        role="separator"
+        aria-orientation="horizontal"
+        aria-valuemin={Math.round(SPLIT_MIN * 100)}
+        aria-valuemax={Math.round(SPLIT_MAX * 100)}
+        aria-valuenow={topPct}
+        aria-label="Resize live-trace panes. Arrow keys move the split; Enter resets to half."
+        aria-valuetext={`${topPct} percent timings, ${100 - topPct} percent passages`}
+        tabIndex={0}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onDoubleClick={() => setTopRatio(0.5)}
+        onKeyDown={onKeyDown}
+        className={cn(
+          'group relative flex h-11 shrink-0 cursor-row-resize touch-none items-center justify-center outline-none select-none',
+          dragging && 'cursor-grabbing',
+        )}
+      >
+        <span
+          aria-hidden="true"
+          className={cn(
+            'absolute inset-x-0 h-0.5 transition-colors duration-150 motion-reduce:transition-none',
+            dragging
+              ? 'bg-lime'
+              : 'bg-cyan group-hover:bg-lime group-focus-visible:bg-lime',
+          )}
+        />
+        <span
+          aria-hidden="true"
+          className={cn(
+            'border-ink-line bg-ink relative z-10 flex items-center gap-2 rounded-full border px-2.5 py-1',
+            'group-hover:border-lime group-focus-visible:border-lime',
+            dragging && 'border-lime',
+          )}
+        >
+          <svg viewBox="0 0 16 10" className="text-cyan h-2.5 w-4" fill="currentColor">
+            <rect x="1" y="1" width="14" height="2" rx="1" />
+            <rect x="1" y="7" width="14" height="2" rx="1" />
+          </svg>
+          <span className="font-mono text-cyan text-[0.5625rem] font-bold tracking-wider uppercase">
+            Drag
+          </span>
+        </span>
+      </div>
+
+      <div className="min-h-0 overflow-y-auto overscroll-contain pr-1" style={{ flex: `${1 - topRatio} 1 0` }}>
+        {bottom}
+      </div>
+    </div>
+  );
 }
 
 /** Citation markers ([1], [2]) become superscript chips inside the answer. */
@@ -229,7 +368,7 @@ export function Sandbox({
       {/* ------------------------------- Chat ------------------------------ */}
       <section
         aria-label="Ask a question"
-        className="border-ink-line flex h-[26rem] flex-col overflow-hidden rounded-panel border lg:h-auto lg:min-h-[26rem]"
+        className="border-ink-line flex h-[26rem] flex-col overflow-hidden rounded-panel border lg:h-[min(40rem,70dvh)]"
       >
         <header className="border-ink-line flex items-center justify-between gap-3 border-b px-6 py-4">
           <h2 className="font-display text-lg uppercase">Ask the site</h2>
@@ -370,9 +509,9 @@ export function Sandbox({
       {/* ----------------------------- Telemetry --------------------------- */}
       <section
         aria-label="Pipeline telemetry"
-        className="border-ink-line bg-ink-soft flex flex-col rounded-panel border p-6 sm:p-7"
+        className="border-ink-line bg-ink-soft flex h-[26rem] flex-col overflow-hidden rounded-panel border p-6 sm:p-7 lg:h-[min(40rem,70dvh)]"
       >
-        <header className="flex items-center justify-between gap-3">
+        <header className="flex shrink-0 items-center justify-between gap-3">
           <h2 className="font-display text-lg uppercase">Live trace</h2>
           <span
             className={cn(
@@ -388,79 +527,93 @@ export function Sandbox({
           </span>
         </header>
 
-        <div className="border-ink-line mt-5 divide-y divide-current/10 border-t">
-          <div className="py-3">
-            <Stat label="Index" value={`${indexChunks} chunks`} hint={indexModel} />
-            {timings ? (
-              <>
-                <Stat label="1 · Query embed" value={`${timings.embedMs.toFixed(1)} ms`} />
-                <Stat label="2 · BM25 lexical" value={`${timings.lexicalMs.toFixed(2)} ms`} />
-                <Stat label="3 · Dense cosine" value={`${timings.denseMs.toFixed(2)} ms`} />
-                <Stat label="4 · RRF fusion" value={`${timings.fuseMs.toFixed(2)} ms`} />
-                <Stat label="Retrieval total" value={`${timings.totalMs.toFixed(1)} ms`} />
-              </>
-            ) : null}
-            {ttft !== null ? <Stat label="Time to first token" value={`${ttft} ms`} /> : null}
-            {usage ? (
-              <>
-                <Stat
-                  label="Tokens in / out"
-                  value={`${usage.inputTokens} / ${usage.outputTokens}`}
-                />
-                <Stat label="Cost this query" value={`$${usage.costUsd.toFixed(5)}`} />
-                <Stat label="End to end" value={`${usage.totalMs} ms`} />
-              </>
-            ) : null}
-          </div>
-        </div>
-
         {passages.length > 0 ? (
-          <div className="mt-5">
-            <h3 className="font-mono text-on-ink-muted mb-3 text-[0.625rem] tracking-wider uppercase">
-              Retrieved passages · fused rank
-            </h3>
-            <ol className="flex flex-col gap-2.5">
-              {passages.map((p) => (
-                <li key={p.id} className="border-ink-line rounded-panel border p-3.5">
-                  <div className="flex items-start justify-between gap-3">
-                    <a href={p.url} className="hover:text-cyan text-xs font-semibold">
-                      <sup className="text-cyan font-mono mr-1">[{p.n}]</sup>
-                      {p.section}
-                    </a>
-                    <span
-                      className={cn(
-                        'font-mono shrink-0 text-[0.5625rem] uppercase',
-                        kindTone(p.kind),
-                      )}
-                    >
-                      {p.kind}
-                    </span>
-                  </div>
-                  <p className="text-on-ink mt-1.5 line-clamp-2 text-[0.6875rem] leading-relaxed">
-                    {p.excerpt}
-                  </p>
-                  <div className="font-mono text-on-ink-muted mt-2.5 flex flex-wrap gap-x-3 gap-y-1 text-[0.5625rem] uppercase">
-                    <span>RRF {p.score.toFixed(4)}</span>
-                    <span className={p.denseRank ? 'text-cyan' : undefined}>
-                      dense {p.denseRank ? `#${p.denseRank}` : '—'}
-                    </span>
-                    <span className={p.lexicalRank ? 'text-yellow' : undefined}>
-                      bm25 {p.lexicalRank ? `#${p.lexicalRank}` : '—'}
-                    </span>
-                    <span>{p.tokens} tok</span>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
+          <TraceSplit
+            top={
+              <div className="border-ink-line divide-y divide-current/10 border-t">
+                <div className="py-3">
+                  <Stat label="Index" value={`${indexChunks} chunks`} hint={indexModel} />
+                  {timings ? (
+                    <>
+                      <Stat label="1 · Query embed" value={`${timings.embedMs.toFixed(1)} ms`} />
+                      <Stat label="2 · BM25 lexical" value={`${timings.lexicalMs.toFixed(2)} ms`} />
+                      <Stat label="3 · Dense cosine" value={`${timings.denseMs.toFixed(2)} ms`} />
+                      <Stat label="4 · RRF fusion" value={`${timings.fuseMs.toFixed(2)} ms`} />
+                      <Stat label="Retrieval total" value={`${timings.totalMs.toFixed(1)} ms`} />
+                    </>
+                  ) : null}
+                  {ttft !== null ? (
+                    <Stat label="Time to first token" value={`${ttft} ms`} />
+                  ) : null}
+                  {usage ? (
+                    <>
+                      <Stat
+                        label="Tokens in / out"
+                        value={`${usage.inputTokens} / ${usage.outputTokens}`}
+                      />
+                      <Stat label="Cost this query" value={`$${usage.costUsd.toFixed(5)}`} />
+                      <Stat label="End to end" value={`${usage.totalMs} ms`} />
+                    </>
+                  ) : null}
+                </div>
+              </div>
+            }
+            bottom={
+              <>
+                <h3 className="font-mono text-on-ink-muted mb-3 text-[0.625rem] tracking-wider uppercase">
+                  Retrieved passages · fused rank
+                </h3>
+                <ol className="flex flex-col gap-2.5">
+                  {passages.map((p) => (
+                    <li key={p.id} className="border-ink-line rounded-panel border p-3.5">
+                      <div className="flex items-start justify-between gap-3">
+                        <a href={p.url} className="hover:text-cyan text-xs font-semibold">
+                          <sup className="text-cyan font-mono mr-1">[{p.n}]</sup>
+                          {p.section}
+                        </a>
+                        <span
+                          className={cn(
+                            'font-mono shrink-0 text-[0.5625rem] uppercase',
+                            kindTone(p.kind),
+                          )}
+                        >
+                          {p.kind}
+                        </span>
+                      </div>
+                      <p className="text-on-ink mt-1.5 line-clamp-2 text-[0.6875rem] leading-relaxed">
+                        {p.excerpt}
+                      </p>
+                      <div className="font-mono text-on-ink-muted mt-2.5 flex flex-wrap gap-x-3 gap-y-1 text-[0.5625rem] uppercase">
+                        <span>RRF {p.score.toFixed(4)}</span>
+                        <span className={p.denseRank ? 'text-cyan' : undefined}>
+                          dense {p.denseRank ? `#${p.denseRank}` : '—'}
+                        </span>
+                        <span className={p.lexicalRank ? 'text-yellow' : undefined}>
+                          bm25 {p.lexicalRank ? `#${p.lexicalRank}` : '—'}
+                        </span>
+                        <span>{p.tokens} tok</span>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            }
+          />
         ) : (
-          <p className="text-on-ink mt-5 text-xs leading-relaxed">
-            Ask something to see the retrieval trace: per-stage timings, which path found each
-            passage, and the fused ranking that decided what the model was shown.
-          </p>
+          <div className="mt-5 min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            <div className="border-ink-line divide-y divide-current/10 border-t">
+              <div className="py-3">
+                <Stat label="Index" value={`${indexChunks} chunks`} hint={indexModel} />
+              </div>
+            </div>
+            <p className="text-on-ink mt-5 text-xs leading-relaxed">
+              Ask something to see the retrieval trace: per-stage timings, which path found each
+              passage, and the fused ranking that decided what the model was shown.
+            </p>
+          </div>
         )}
 
-        <div className="border-ink-line mt-auto flex flex-wrap gap-2 border-t pt-5">
+        <div className="border-ink-line mt-auto flex shrink-0 flex-wrap gap-2 border-t pt-5">
           <Tag>Hybrid BM25 + dense</Tag>
           <Tag>RRF k=60</Tag>
           <Tag>SSE</Tag>

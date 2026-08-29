@@ -11,11 +11,17 @@
 
 
 :root {
-  /* The grey surround the content card floats on. Darker than the reference
-     artwork on purpose: at #8e8e8e the edge captions came out at 2.4:1, which
-     fails WCAG AA. This is the lightest grey that keeps both text tones above
-     4.5:1 while preserving the mid-grey character. */
-  --tone-page: #626264;
+  /* The surround the content cards float on. Mid-grey (#626264) is the dead
+     zone: no hue relationship to the cream, no room to light it without
+     dropping edge captions under 4.5:1. A warm charcoal gives the wash
+     somewhere to go; muted text stays ~4.5:1 at the brightest point of the
+     wash (~8.7:1 on the unlit stone). */
+  --tone-page: #3d3933;
+  /* Soft studio light and a floor shadow, painted once and fixed so a long
+     page does not darken as you scroll. Used by the page atmosphere layers. */
+  --page-wash: color-mix(in srgb, var(--tone-cream) 22%, transparent);
+  --page-shade: color-mix(in srgb, var(--tone-ink) 28%, transparent);
+  --page-grain: 0.16;
   /* The black card. */
   --tone-ink: #0b0b0b;
   --tone-ink-soft: #1a1a1a;
@@ -44,7 +50,10 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --tone-page: #121212;
+    --tone-page: #14120f;
+    --page-wash: color-mix(in srgb, var(--tone-cream) 14%, transparent);
+    --page-shade: color-mix(in srgb, black 45%, transparent);
+    --page-grain: 0.1;
     --tone-cream: #16150f;
     --tone-cream-dim: #1e1d16;
     --tone-cream-line: #333127;
@@ -57,7 +66,10 @@
 }
 
 :root[data-theme='dark'] {
-  --tone-page: #121212;
+  --tone-page: #14120f;
+  --page-wash: color-mix(in srgb, var(--tone-cream) 14%, transparent);
+  --page-shade: color-mix(in srgb, black 45%, transparent);
+  --page-grain: 0.1;
   --tone-cream: #16150f;
   --tone-cream-dim: #1e1d16;
   --tone-cream-line: #333127;
@@ -167,6 +179,14 @@
     scroll-behavior: smooth;
     scroll-padding-top: 6rem;
     -webkit-text-size-adjust: 100%;
+    /* The solid stone, plus a fixed wash and a far-corner shade. Fixed so a
+       long page stays lit like a room rather than a gradient that runs out. */
+    background-color: var(--color-page);
+    background-image:
+      radial-gradient(ellipse 130% 75% at 50% -12%, var(--page-wash), transparent 58%),
+      radial-gradient(ellipse 70% 55% at 0% 42%, color-mix(in srgb, var(--tone-cream) 16%, transparent), transparent 52%),
+      radial-gradient(ellipse 80% 50% at 100% 118%, var(--page-shade), transparent 55%);
+    background-attachment: fixed;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -183,7 +203,12 @@
   }
 
   body {
-    background-color: var(--color-page);
+    /* Transparent so the html wash shows through. `z-index: 0` keeps the
+       grain layer behind the content without trapping `position: fixed`
+       descendants. */
+    position: relative;
+    z-index: 0;
+    background-color: transparent;
     color: var(--color-on-page);
     font-family: var(--font-sans);
     font-synthesis-weight: none;
@@ -191,6 +216,20 @@
     -webkit-font-smoothing: antialiased;
     /* The page must never scroll sideways — wide children scroll themselves. */
     overflow-x: hidden;
+  }
+
+  /* Film grain. Soft-light keeps it as tooth, not TV static. Opacity is themed
+     because the same tile reads much louder on near-black. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: var(--page-grain);
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
   }
 
   ::selection {

@@ -50,20 +50,25 @@ const ROUTE: Waypoint[] = [
   { x: 0.36, y: 0.5 },
   { x: 0.9, y: 0.6 },
   { x: 0.4, y: 0.7 },
-  { x: 0.92, y: 0.8 },
   /*
-   * The last two waypoints break the tacking, because the outro is growing the
-   * boat back to hero size across exactly this stretch. At 4.3× it is no longer
-   * a small craft that can pass anywhere: it is 30rem wide, and out at the
-   * right margin it covers the Contact link in the closing rail, while out at
-   * the left it would cover the rail's label.
+   * Coming into the berth. The last wide tack used to run out to 0.92 and then
+   * drop almost straight down onto 0.74 — a hook, then a vertical slide. The
+   * hull only mirrors left or right, so a steep finish looks like the boat is
+   * being dragged sideways.
    *
-   * So the run finishes in the open span between the two — pushed as far right
-   * as that span allows. At 30rem wide the hull reaches roughly 8% of the page
-   * either side of its centre, so 0.74 brings its bow up close to the Contact
-   * link without crossing it, rather than parking mid-page with an obvious gap.
+   * Last come-about, then a run to the quay. The page is much taller than it
+   * is wide, so a short last hop in x over the remaining y is still a steep
+   * slide on screen. The final tack therefore stays full-width (0.86 → 0.38)
+   * and the dock is one shallow rightward glide (0.38 → 0.56 → 0.74), three
+   * colinear points, no hook.
+   *
+   * 0.74 is still the park: at the outro scale the hull is ~8% of the page
+   * either side of centre, which brings the bow up to the Contact link without
+   * covering it.
    */
-  { x: 0.7, y: 0.9 },
+  { x: 0.86, y: 0.82 },
+  { x: 0.38, y: 0.934 },
+  { x: 0.56, y: 0.967 },
   { x: 0.74, y: 1 },
 ];
 
@@ -84,18 +89,16 @@ export function SailPath() {
          * with some presence rather than a thumbnail drifting off the bottom of
          * the page.
          *
-         * Deliberately the last 3% of the route and not a fifth of it: over a
-         * long window the growth is visible for most of the descent and reads as
-         * the boat coming towards the reader the whole way down. Confined to the
-         * end, it is an arrival — but 1% was too abrupt to read as a movement at
-         * all, so this is the shortest window the eye still follows.
+         * Over the last 8% — the coast into the berth — so the growth and the
+         * slowing glide are one arrival. The old 3% window fired after the
+         * boat had already stopped moving sideways, which read as a pop.
          *
          * To 70% of the opening size, not all of it: arriving at exactly the
          * hero size invites the comparison with the top of the page and reads as
          * a reset rather than an ending — and at full size the boat needs more
          * clearance than the closing rail leaves it.
          */
-        outro: { from: 0.97, scale: 4.3 * 0.7 },
+        outro: { from: 0.92, scale: 4.3 * 0.7 },
         /*
          * The hero size, not the travelling size — see `intro` below. At
          * 4.3× this lays out at 30rem and the boat travels at 1/4.3 of it,
