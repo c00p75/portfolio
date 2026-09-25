@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import '../globals.css';
-import './dojo.css';
 import { site } from '@/lib/site';
 
 export const metadata: Metadata = {

@@ -58,9 +58,6 @@ export const MODES: readonly { name: string; xp: string; detail: string }[] = [
 export const XP_LINE =
   'Attempt XP follows the mode: 10 in drill, 3 in ride-along, nothing in focus. A verified outcome is 30, once. A correct quiz is 25 (30 for a review). Level is XP over 100, saved to disk.';
 
-export const AUDIT_LINE =
-  'Two runtime dependencies, the MCP SDK and zod. 249 tests, and CI drives a real stdio handshake on Node 18, 20 and 22.';
-
 export const CARD_PARTS: readonly { part: string; detail: string; icon: string }[] = [
   { part: 'Roadmap alignment', detail: 'Where the command sits on your track, and which step you are on.', icon: 'map' },
   { part: 'What / How / Trade-offs', detail: 'The same command explained three ways, pitched at Junior, Mid or Senior.', icon: 'layers' },
@@ -170,12 +167,4 @@ export const DEMO_STEPS: readonly { cmd: string; out: readonly string[] }[] = [
       'not matter what the caller claimed.',
     ],
   },
-];
-
-export const VARIANTS: readonly { slug: string; name: string; note: string }[] = [
-  { slug: '/miyagi', name: 'Manga', note: 'Chosen: halftone panels, speech bubbles, hard ink' },
-  { slug: '/miyagi/classroom', name: 'Classroom', note: 'Bright, rounded, friendliest of the five' },
-  { slug: '/miyagi/dojo', name: 'Dojo', note: 'Sumi ink, washi paper, one vermilion seal' },
-  { slug: '/miyagi/arcade', name: 'Arcade', note: 'Cabinet glow, XP bars, unapologetically a game' },
-  { slug: '/miyagi/terminal', name: 'Terminal', note: 'Phosphor green, box-drawn, developer-native' },
 ];

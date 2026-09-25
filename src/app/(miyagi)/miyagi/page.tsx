@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Bangers, Barlow, Space_Mono } from 'next/font/google';
 import './manga.css';
-import { VariantBar } from '@/components/miyagi/VariantBar';
 import { TerminalReplay } from '@/components/miyagi/TerminalReplay';
 import { AskMiyagi } from '@/components/miyagi/AskMiyagi';
 import { SenseiManga } from '@/components/miyagi/SenseiManga';
@@ -33,7 +32,6 @@ export default function MangaVariant() {
   return (
     <div className={`mng ${bangers.variable} ${barlow.variable} ${spaceMono.variable}`}>
       <div className="mng-tone" aria-hidden="true" />
-      <VariantBar current="/miyagi" />
 
       <main id="main" className="mx-auto max-w-6xl px-5 pb-24 sm:px-8">
         {/* ------------------------------ Splash ----------------------------- */}
