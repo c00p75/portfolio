@@ -1,5 +1,7 @@
 /** Client-side SSE reader for POST /api/ask. EventSource cannot issue a POST. */
 
+import type { ChatMedia } from './media';
+
 /**
  * `sig` is the server's HMAC over an assistant answer. Replaying it is what
  * lets the server tell its own prior turn from one written by the caller.
@@ -19,6 +21,7 @@ export type AskEvent =
   | { type: 'delta'; text: string }
   | { type: 'usage'; inputTokens: number; outputTokens: number; costUsd: number; totalMs: number }
   | { type: 'error'; message: string; recoverable?: boolean }
+  | { type: 'media'; items: ChatMedia[] }
   | { type: 'done'; sig?: string };
 
 export async function streamAsk(
@@ -28,6 +31,8 @@ export async function streamAsk(
     history?: AskHistoryTurn[];
     /** Omit for Ask George. The Miyagi page sends `miyagi` so retrieval and the prompt stay on-product. */
     scope?: 'site' | 'miyagi';
+    /** Ids of photos already shown in this thread, so the server does not repeat them. */
+    seenMedia?: string[];
     onEvent: (event: AskEvent) => void;
   },
 ): Promise<void> {
@@ -38,6 +43,7 @@ export async function streamAsk(
       question,
       history: opts.history?.slice(-6),
       ...(opts.scope ? { scope: opts.scope } : {}),
+      ...(opts.seenMedia?.length ? { seenMedia: opts.seenMedia } : {}),
     }),
     signal: opts.signal,
   });

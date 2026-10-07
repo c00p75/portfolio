@@ -14,6 +14,7 @@ import {
   retrievalQuery,
 } from '@/lib/rag/conversation';
 import { signAssistantTurn, verifyAssistantTurn } from '@/lib/rag/history';
+import { mediaForAnswer, type ChatMedia } from '@/lib/rag/media';
 import { MIYAGI_SYSTEM_PROMPT, SITE_SYSTEM_PROMPT } from '@/lib/rag/prompts';
 import { isAskScope, type AskScope } from '@/lib/rag/scope';
 import type { Retrieved } from '@/lib/rag/types';
@@ -49,6 +50,8 @@ type SseEvent =
       fellBackFrom: string[];
     }
   | { type: 'error'; message: string; recoverable: boolean }
+  /** Pictures grounded in the passages the answer cited, shown under it. */
+  | { type: 'media'; items: ChatMedia[] }
   /** `sig` authenticates this answer if the client replays it as history. */
   | { type: 'done'; sig?: string };
 
@@ -80,13 +83,25 @@ export async function POST(request: Request) {
   let question: string;
   let history: { role: 'user' | 'assistant'; content: string }[] = [];
   let scope: AskScope = 'site';
+  /** Photo ids this thread already showed; each picture appears once per conversation. */
+  let seenMedia = new Set<string>();
   try {
-    const body = (await request.json()) as { question?: unknown; history?: unknown; scope?: unknown };
+    const body = (await request.json()) as {
+      question?: unknown;
+      history?: unknown;
+      scope?: unknown;
+      seenMedia?: unknown;
+    };
     if (typeof body.question !== 'string') {
       return Response.json({ error: 'Expected a "question" string.' }, { status: 400 });
     }
     question = body.question.trim();
     if (isAskScope(body.scope)) scope = body.scope;
+    if (Array.isArray(body.seenMedia)) {
+      seenMedia = new Set(
+        body.seenMedia.filter((id): id is string => typeof id === 'string').slice(0, 32),
+      );
+    }
     if (Array.isArray(body.history)) {
       history = body.history
         .filter((turn): turn is { role: 'user' | 'assistant'; content: string; sig?: unknown } => {
@@ -249,6 +264,11 @@ export async function POST(request: Request) {
             message: 'The model declined to answer that request.',
             recoverable: true,
           });
+        }
+
+        if (scope === 'site' && !result.refused) {
+          const items = mediaForAnswer(answer, retrieval.passages, seenMedia);
+          if (items.length > 0) send({ type: 'media', items });
         }
 
         // Surfaced rather than hidden: if the primary provider was down, the

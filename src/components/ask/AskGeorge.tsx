@@ -5,8 +5,10 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { streamAsk, type AskHistoryTurn } from '@/lib/rag/ask-stream';
+import type { ChatMedia } from '@/lib/rag/media';
 import { CHAT_SUGGESTIONS } from '@/lib/rag/suggestions';
 import { subscribeAskGeorge } from './ask-bus';
+import { AnswerMedia } from './AnswerMedia';
 
 type Phase = 'idle' | 'retrieving' | 'generating' | 'done' | 'error';
 
@@ -17,6 +19,8 @@ type Message = {
   phase?: Phase;
   /** Server HMAC over an assistant answer, replayed so the server can trust it. */
   sig?: string;
+  /** Pictures grounded in the passages this answer cited. */
+  media?: ChatMedia[];
 };
 
 // Shared with the ingest, which precomputes a vector for each one — see
@@ -56,6 +60,8 @@ export function AskGeorgeWidget({ indexChunks }: { indexChunks: number }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  /** Photos this thread has shown. A picture appears once per conversation. */
+  const seenMediaRef = useRef(new Set<string>());
 
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState('');
@@ -125,6 +131,7 @@ export function AskGeorgeWidget({ indexChunks }: { indexChunks: number }) {
         await streamAsk(trimmed, {
           signal: controller.signal,
           history,
+          seenMedia: [...seenMediaRef.current],
           onEvent: (event) => {
             switch (event.type) {
               case 'retrieval':
@@ -137,6 +144,12 @@ export function AskGeorgeWidget({ indexChunks }: { indexChunks: number }) {
               case 'delta':
                 setMessages((prev) =>
                   prev.map((m) => (m.id === assistantId ? { ...m, text: m.text + event.text } : m)),
+                );
+                break;
+              case 'media':
+                for (const item of event.items) seenMediaRef.current.add(item.id);
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === assistantId ? { ...m, media: event.items } : m)),
                 );
                 break;
               case 'error':
@@ -240,15 +253,18 @@ export function AskGeorgeWidget({ indexChunks }: { indexChunks: number }) {
                         Thinking…
                       </p>
                     ) : (
-                      <p className="whitespace-pre-wrap text-sm leading-relaxed text-pretty">
-                        {renderAnswer(m.text)}
-                        {m.phase === 'generating' ? (
-                          <span
-                            aria-hidden="true"
-                            className="ml-0.5 inline-block h-4 w-2 animate-pulse bg-current align-middle"
-                          />
-                        ) : null}
-                      </p>
+                      <>
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-pretty">
+                          {renderAnswer(m.text)}
+                          {m.phase === 'generating' ? (
+                            <span
+                              aria-hidden="true"
+                              className="ml-0.5 inline-block h-4 w-2 animate-pulse bg-current align-middle"
+                            />
+                          ) : null}
+                        </p>
+                        {m.media ? <AnswerMedia items={m.media} /> : null}
+                      </>
                     )}
                   </li>
                 ))}

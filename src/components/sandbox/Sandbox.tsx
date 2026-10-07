@@ -12,6 +12,8 @@ import {
 import { cn } from '@/lib/cn';
 import { Tag } from '@/components/ui/Sticker';
 import { SANDBOX_SUGGESTIONS } from '@/lib/rag/suggestions';
+import type { ChatMedia } from '@/lib/rag/media';
+import { AnswerMedia } from '@/components/ask/AnswerMedia';
 
 type Passage = {
   n: number;
@@ -46,6 +48,7 @@ type Message = {
   role: 'user' | 'assistant';
   text: string;
   phase?: Phase;
+  media?: ChatMedia[];
 };
 
 // Shared with the ingest, which precomputes a vector for each — see
@@ -247,6 +250,8 @@ export function Sandbox({
   const abortRef = useRef<AbortController | null>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const idRef = useRef(0);
+  /** Photos this thread has shown. A picture appears once per conversation. */
+  const seenMediaRef = useRef(new Set<string>());
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
@@ -287,7 +292,7 @@ export function Sandbox({
       const response = await fetch('/api/ask', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ question: trimmed }),
+        body: JSON.stringify({ question: trimmed, seenMedia: [...seenMediaRef.current] }),
         signal: controller.signal,
       });
 
@@ -335,6 +340,10 @@ export function Sandbox({
               break;
             case 'usage':
               setUsage(event);
+              break;
+            case 'media':
+              for (const item of event.items as ChatMedia[]) seenMediaRef.current.add(item.id);
+              patch((m) => ({ ...m, media: event.items }));
               break;
             case 'error':
               setNotice(event.message);
@@ -433,15 +442,18 @@ export function Sandbox({
                         Retrieving…
                       </p>
                     ) : (
-                      <p className="text-[0.9375rem] leading-relaxed whitespace-pre-wrap text-pretty">
-                        <AnswerText text={m.text} />
-                        {m.phase === 'generating' ? (
-                          <span
-                            aria-hidden="true"
-                            className="bg-cyan ml-0.5 inline-block h-4 w-2 animate-pulse align-middle"
-                          />
-                        ) : null}
-                      </p>
+                      <>
+                        <p className="text-[0.9375rem] leading-relaxed whitespace-pre-wrap text-pretty">
+                          <AnswerText text={m.text} />
+                          {m.phase === 'generating' ? (
+                            <span
+                              aria-hidden="true"
+                              className="bg-cyan ml-0.5 inline-block h-4 w-2 animate-pulse align-middle"
+                            />
+                          ) : null}
+                        </p>
+                        {m.media ? <AnswerMedia items={m.media} /> : null}
+                      </>
                     )}
                   </li>
                 ),
