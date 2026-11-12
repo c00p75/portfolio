@@ -7,7 +7,7 @@ const SOCIAL =
 
 /**
  * The visitor accepted an offer without naming a topic. These words have no
- * topical signal — searching "proceed" returns a random ADR.
+ * topical signal, searching "proceed" returns a random ADR.
  */
 const ACKNOWLEDGEMENT =
   /^(proceed|continue|go\s+ahead|go\s+on|yes|yeah|yep|yup|sure|please|ok(?:ay)?|do\s+it|tell\s+me(?:\s+more)?|more|that|this|any(?:thing)?|whatever|surprise\s+me|sounds\s+good|let'?s\s+go|why\s+not)[\s!.?,]*$/i;
@@ -20,7 +20,7 @@ export function isSocialTurn(text: string): boolean {
   if (t.length <= 2) return true;
   if (SOCIAL.test(t)) return true;
   // "Hi, how are you" is still social; "Hi, where did George study?" is not.
-  const stripped = t.replace(/^(hi+|hey+|hello)[\s,!.—–-]+/i, '').trim();
+  const stripped = t.replace(/^(hi+|hey+|hello)[\s,!., –-]+/i, '').trim();
   return stripped.length > 0 && stripped !== t && SOCIAL.test(stripped);
 }
 
@@ -37,7 +37,7 @@ export function lastAssistantContent(history: HistoryTurn[]): string | undefined
 }
 
 /**
- * The previous assistant turn is still waiting on an answer — it asked a
+ * The previous assistant turn is still waiting on an answer, it asked a
  * question or offered topics ("projects, certifications, or current roles").
  */
 export function assistantIsWaiting(lastAssistant: string | undefined): boolean {
@@ -52,7 +52,7 @@ export function assistantIsWaiting(lastAssistant: string | undefined): boolean {
 
 /**
  * Greetings, thanks, and dangling "proceed" with nothing to continue. Follow-ups
- * that accept an open offer are *not* social — they need the index.
+ * that accept an open offer are *not* social, they need the index.
  */
 export function isConversationalTurn(question: string, history: HistoryTurn[]): boolean {
   const waiting = assistantIsWaiting(lastAssistantContent(history));

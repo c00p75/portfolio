@@ -205,7 +205,7 @@ function MarqueeRow({
 
 /**
  * Tiles sit desaturated in the row and come back to colour on hover or
- * keyboard focus. Applied to the media only, never the wrapping button — the
+ * keyboard focus. Applied to the media only, never the wrapping button, the
  * accent-coloured label plaque has to stay in colour to keep its contrast.
  */
 const tileMedia =
@@ -216,7 +216,7 @@ function Tile({ item, onOpen }: { item: MediaItem; onOpen: (item: MediaItem) => 
     <button
       type="button"
       onClick={() => onOpen(item)}
-      aria-label={`Open ${item.label} — ${item.caption}`}
+      aria-label={`Open ${item.label}: ${item.caption}`}
       className="group/tile relative block h-full w-full overflow-hidden bg-black transition-[transform,filter] duration-300 ease-out hover:scale-[1.015] hover:brightness-110 focus-visible:scale-[1.015] focus-visible:brightness-110"
     >
       {item.kind === 'photo' ? (
@@ -250,7 +250,7 @@ function Tile({ item, onOpen }: { item: MediaItem; onOpen: (item: MediaItem) => 
           </span>
         </>
       )}
-      {/* Bottom label — a small mono plaque so each tile still identifies
+      {/* Bottom label, a small mono plaque so each tile still identifies
           itself while the row scrolls. */}
       <span
         aria-hidden="true"
@@ -336,7 +336,7 @@ function Lightbox({
       className="fixed inset-0 z-50 flex flex-col bg-black/92 backdrop-blur-md"
       onClick={onClose}
     >
-      {/* Header — always visible, sits above the media */}
+      {/* Header, always visible, sits above the media */}
       <header
         className="relative z-10 flex items-center justify-between gap-4 px-5 py-4 text-white sm:px-8 sm:py-5"
         onClick={(event) => event.stopPropagation()}
@@ -369,7 +369,7 @@ function Lightbox({
         </button>
       </header>
 
-      {/* Body — media centred, arrows on the sides */}
+      {/* Body, media centred, arrows on the sides */}
       <div
         className="relative flex flex-1 items-center justify-center px-4 pb-4 sm:px-16 sm:pb-8"
         onClick={(event) => event.stopPropagation()}
@@ -406,7 +406,7 @@ function Lightbox({
         </div>
       </div>
 
-      {/* Footer — caption on small screens, hint on large ones */}
+      {/* Footer, caption on small screens, hint on large ones */}
       <footer
         className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-3 text-white/60 sm:px-8 sm:py-4"
         onClick={(event) => event.stopPropagation()}

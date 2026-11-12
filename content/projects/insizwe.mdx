@@ -1,0 +1,78 @@
+---
+title: Insizwe
+tagline: An insurance broker's quote wizard, lead pipeline and staff back office
+summary: >-
+  Website and back office for Insizwe, a Zambian insurance broker. Visitors price a policy in a four-step wizard, the quote lands in a staff system as a tracked lead with its marketing source attached, and staff work it through to won or lost behind two-factor sign-in.
+client: Insizwe Insurance (via Ballo Innovations)
+role: >-
+  Design and full build: the public site, the quote wizard and pricing, and the admin API the team works leads in.
+period: '2026'
+status: production
+order: 21
+featured: false
+draft: false
+accent: orange
+category: web-app
+updated: '2026-10'
+disciplines:
+  - frontend
+stack:
+  - Next.js
+  - TypeScript
+  - GSAP
+  - Framer Motion
+  - Fastify
+  - Prisma
+  - PostgreSQL
+  - Argon2
+  - Zod
+highlights:
+  - >-
+    The quote wizard prices thirteen products, from motor to employers' liability, as sum insured times the broker's published rate plus the 5% levy, and shows basic premium, levy and total. Sliders are tuned per product, and every figure is labelled indicative, subject to underwriting.
+  - >-
+    Each quote gets a short INS reference that staff and customer can both read over the phone, and arrives in the back office with its UTM source, ad click id, landing page and visit count, so the team can see which campaigns produce business.
+  - >-
+    Leads reach the admin API server to server only, behind an API key and schema validation, with the public endpoint rate limited per visitor.
+  - >-
+    Staff sign in with an Argon2id password and an emailed one-time code. Refresh tokens rotate on every use with a short grace window, so two open tabs refreshing at once don't sign each other out. Four roles plus per-person overrides control what each person can do.
+links:
+  - label: Website
+    href: https://www.insizwebrokers.com
+    kind: live
+cover: ../../public/images/projects/insizwe.jpg
+gallery:
+  - image: ../../public/images/projects/insizwe.jpg
+    alt: >-
+      Insizwe home page: "Trusted protection across Zambia" over a city photo, with a stats panel and Get a Quote buttons
+    caption: 'Home page'
+  - image: ../../public/images/projects/ins-scroll.jpg
+    alt: >-
+      Insizwe home page section listing insurance products on dark cards over a red band
+    caption: 'Products'
+  - image: ../../public/images/projects/ins-quote.jpg
+    alt: >-
+      First step of the Insizwe quote wizard, choosing individual or commercial cover
+    caption: 'Quote wizard, step one'
+  - image: ../../public/images/projects/ins-mobile.jpg
+    alt: >-
+      Insizwe home page on a phone: Business secured with confidence, with quote and consult buttons and company stats
+    caption: 'On a phone'
+---
+
+## What it is
+
+A broker sells trust and a quick answer to "how much will this cost". The site
+leads with both: a plain-language home page, and a quote wizard that gives a real
+indicative number in four steps instead of a "we'll call you" form.
+
+## From quote to follow-up
+
+A quote isn't the end of the journey; it's the start of a sales conversation. So
+every submission becomes a lead with a status (new, contacted, qualified, won,
+lost or spam), a reference number, notes that keep their author even after a
+staff account is removed, and the marketing source that brought the visitor in.
+
+## What isn't built yet
+
+There is a customer portal page, but it's a placeholder; the work so far is the
+public site, the pricing and the staff side.

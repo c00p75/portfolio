@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 /**
  * Writing now holds both playbooks and articles. Playbooks had their own section
- * and nav slot, which one published playbook did not earn — and the split made a
+ * and nav slot, which one published playbook did not earn, and the split made a
  * reader guess which of two indexes held the thing they wanted.
  */
 export default function WritingIndex() {

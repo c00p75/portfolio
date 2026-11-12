@@ -6,7 +6,7 @@ import { site } from '@/lib/site';
  *
  * Resend rather than a form service because the domain already has DKIM and
  * SPF set up for it, so mail from here authenticates the same way the rest of
- * my sending does. Called over the REST API directly — the SDK is one `fetch`
+ * my sending does. Called over the REST API directly, the SDK is one `fetch`
  * wrapped in a dependency.
  *
  * Required: RESEND_API_KEY, CONTACT_FROM (a verified sender on the DKIM'd
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
         // Sent from my own domain so it authenticates; reply_to carries the
         // sender so hitting reply in the client goes to them, not to me.
         reply_to: email,
-        subject: `Portfolio contact — ${name}`,
+        subject: `Portfolio contact, ${name}`,
         text: `From: ${name} <${email}>\n\n${message}`,
         html:
           `<p><strong>${escapeHtml(name)}</strong> &lt;${escapeHtml(email)}&gt;</p>` +

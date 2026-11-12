@@ -23,7 +23,7 @@ type Message = {
   media?: ChatMedia[];
 };
 
-// Shared with the ingest, which precomputes a vector for each one — see
+// Shared with the ingest, which precomputes a vector for each one, see
 // `suggestions.ts`. Editing the list here alone would silently cost that.
 const SUGGESTIONS = CHAT_SUGGESTIONS;
 

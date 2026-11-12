@@ -3,7 +3,7 @@ export const site = {
   shortName: 'George',
   /** The two words that set the ceiling on how a visitor reads the whole page. */
   role: 'Software Engineer',
-  title: "George M'sapenda — Software Engineer",
+  title: "George M'sapenda, Software Engineer",
   /** Reads as one role, deliberately: an engineer with an architecture bias.
    *  The homepage headline, the résumé and this string must not disagree. */
   description:
@@ -22,8 +22,8 @@ export const site = {
    * The previous portfolio, kept live rather than deleted, and reachable from
    * the footer.
    *
-   * A path, not an absolute URL: v1 is its own deployment — a Next 13 app on
-   * contentlayer and bootstrap, which cannot share a build with this one — but
+   * A path, not an absolute URL: v1 is its own deployment, a Next 13 app on
+   * contentlayer and bootstrap, which cannot share a build with this one, but
    * it is proxied onto this domain at `/v1` (see the rewrite in
    * next.config.mjs), so the visitor stays put either way.
    *
@@ -37,7 +37,7 @@ export const site = {
     x: 'https://twitter.com/GeorgeMsapenda',
   },
   /**
-   * Four items. Decision records are no longer top-level — they are reached
+   * Four items. Decision records are no longer top-level, they are reached
    * through the case study for the system they belong to, and playbooks are
    * part of Writing rather than a section of their own.
    */

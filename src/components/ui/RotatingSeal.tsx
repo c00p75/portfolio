@@ -6,7 +6,7 @@ type RotatingSealProps = {
   /** Repeated around the ring. A trailing separator is added automatically. */
   text: string;
   accent?: Accent;
-  /** Content in the middle of the ring — usually a small glyph. */
+  /** Content in the middle of the ring, usually a small glyph. */
   children?: ReactNode;
   className?: string;
   /** Seconds per revolution. `0` disables the spin entirely. */

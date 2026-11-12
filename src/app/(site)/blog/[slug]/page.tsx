@@ -67,7 +67,7 @@ export default async function PostPage({ params }: Params) {
         {/*
          * `overflow-visible` overrides InkCard's default clip. An
          * `overflow: hidden` ancestor is a scrollport, so a `sticky` child
-         * scrolls with it instead of pinning to the viewport — the rail would
+         * scrolls with it instead of pinning to the viewport, the rail would
          * silently not stick. Nothing in this card bleeds past its corners, so
          * dropping the clip costs nothing.
          */}

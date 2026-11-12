@@ -59,7 +59,7 @@ function sse(event: SseEvent): string {
   return `data: ${JSON.stringify(event)}\n\n`;
 }
 
-/** Trim passages to what the UI needs — the full chunk text is sent for display. */
+/** Trim passages to what the UI needs, the full chunk text is sent for display. */
 function serialisePassages(passages: Retrieved[]) {
   return passages.map((p, i) => ({
     n: i + 1,
@@ -118,7 +118,7 @@ export async function POST(request: Request) {
         // An assistant turn is only replayed into the prompt if this server
         // signed it. Unsigned or tampered turns are dropped rather than
         // rejected, so an ordinary stale tab degrades to a shorter memory
-        // instead of an error — but forged assistant speech never reaches the
+        // instead of an error, but forged assistant speech never reaches the
         // model, which is what the safety rules in the system prompt assume.
         .filter((t) => t.role === 'user' || verifyAssistantTurn(t.content, t.sig))
         .map((t) => ({ role: t.role, content: t.content }));
@@ -211,7 +211,7 @@ export async function POST(request: Request) {
         const context = retrieval.passages
           .map(
             (p, i) =>
-              `[${i + 1}] ${p.chunk.title} — ${p.chunk.section} (${p.chunk.url})\n${p.chunk.text}`,
+              `[${i + 1}] ${p.chunk.title}: ${p.chunk.section} (${p.chunk.url})\n${p.chunk.text}`,
           )
           .join('\n\n---\n\n');
 
@@ -228,17 +228,17 @@ export async function POST(request: Request) {
 
         const miyagiBound =
           scope === 'miyagi'
-            ? 'These passages are Miyagi\'s written record only. If the visitor asked about anything else — other projects, George, hiring, biography, or an unrelated topic — refuse in one or two sentences and point them to the main portfolio. Do not answer the off-topic half from a loosely related passage or from memory.\n\n'
+            ? 'These passages are Miyagi\'s written record only. If the visitor asked about anything else, other projects, George, hiring, biography, or an unrelated topic, refuse in one or two sentences and point them to the main portfolio. Do not answer the off-topic half from a loosely related passage or from memory.\n\n'
             : '';
 
         const user = social
-          ? `${earlier}${miyagiBound}No passages — this is a conversational turn. Do not invent biography.${
+          ? `${earlier}${miyagiBound}No passages, this is a conversational turn. Do not invent biography.${
               scope === 'miyagi'
                 ? ' Introduce yourself as Miyagi\'s assistant and offer a Miyagi topic.'
                 : ''
             }\n\nVisitor: ${question}`
           : followUp
-            ? `${earlier}${miyagiBound}Passages:\n\n${context || '(none)'}\n\n---\n\nThe previous assistant turn asked a question or offered topics. The visitor's reply ("${question}") answers that offer — it is not a new standalone query. Answer the offer. If they accepted without picking a topic, cover the offered topics briefly and invite them to go deeper on one.\n\nVisitor: ${question}`
+            ? `${earlier}${miyagiBound}Passages:\n\n${context || '(none)'}\n\n---\n\nThe previous assistant turn asked a question or offered topics. The visitor's reply ("${question}") answers that offer, it is not a new standalone query. Answer the offer. If they accepted without picking a topic, cover the offered topics briefly and invite them to go deeper on one.\n\nVisitor: ${question}`
             : context
               ? `${earlier}${miyagiBound}Passages:\n\n${context}\n\n---\n\nQuestion: ${question}`
               : `${earlier}${miyagiBound}No passages matched in Miyagi's record. If the question is about Miyagi, say the record does not cover it. If it is about anything else, refuse as out of scope.\n\nQuestion: ${question}`;
@@ -272,12 +272,12 @@ export async function POST(request: Request) {
         }
 
         // Surfaced rather than hidden: if the primary provider was down, the
-        // trace should say so — that is the failure mode the ADR claims to
+        // trace should say so, that is the failure mode the ADR claims to
         // handle, and this is the only place a visitor can see it working.
         if (result.fellBackFrom.length > 0) {
           send({
             type: 'error',
-            message: `${result.fellBackFrom.join(', ')} unavailable — answered by ${result.providerLabel} instead.`,
+            message: `${result.fellBackFrom.join(', ')} unavailable, answered by ${result.providerLabel} instead.`,
             recoverable: true,
           });
         }
@@ -297,7 +297,7 @@ export async function POST(request: Request) {
       } catch (error) {
         const message =
           error instanceof NoProviderConfiguredError
-            ? 'Generation is unavailable (no provider key configured), but retrieval ran — the cited passages below are the real result.'
+            ? 'Generation is unavailable (no provider key configured), but retrieval ran, the cited passages below are the real result.'
             : error instanceof AllProvidersFailedError
               ? `Every generation provider failed (${error.attempts
                   .map((a) => `${a.label}: ${a.reason}`)

@@ -51,7 +51,7 @@ type Message = {
   media?: ChatMedia[];
 };
 
-// Shared with the ingest, which precomputes a vector for each — see
+// Shared with the ingest, which precomputes a vector for each, see
 // `suggestions.ts`. A prompt edited only here loses that.
 const SUGGESTIONS = SANDBOX_SUGGESTIONS;
 
@@ -276,7 +276,7 @@ export function Sandbox({
       { id: botId, role: 'assistant', text: '', phase: 'retrieving' },
     ]);
 
-    /** Update only this turn — an earlier answer must not be rewritten. */
+    /** Update only this turn, an earlier answer must not be rewritten. */
     const patch = (fn: (m: Message) => Message) =>
       setMessages((prev) => prev.map((m) => (m.id === botId ? fn(m) : m)));
 
@@ -598,10 +598,10 @@ export function Sandbox({
                       <div className="font-mono text-on-ink-muted mt-2.5 flex flex-wrap gap-x-3 gap-y-1 text-[0.5625rem] uppercase">
                         <span>RRF {p.score.toFixed(4)}</span>
                         <span className={p.denseRank ? 'text-cyan' : undefined}>
-                          dense {p.denseRank ? `#${p.denseRank}` : '—'}
+                          dense {p.denseRank ? `#${p.denseRank}` : 'n/a'}
                         </span>
                         <span className={p.lexicalRank ? 'text-yellow' : undefined}>
-                          bm25 {p.lexicalRank ? `#${p.lexicalRank}` : '—'}
+                          bm25 {p.lexicalRank ? `#${p.lexicalRank}` : 'n/a'}
                         </span>
                         <span>{p.tokens} tok</span>
                       </div>

@@ -1,0 +1,58 @@
+---
+title: Seneca
+tagline: A commodity trader site with a research blog that builds its own contents and SEO
+summary: >-
+  Website for Seneca Commodities, which sources and trades agricultural commodities and has interests in mining. Besides the company pages, it carries a market commentary blog on copper, gold and critical minerals, so each post has to read well and be findable.
+client: Seneca Commodities Limited (via Ballo Innovations)
+role: Design and build of the site.
+period: '2024 to 2026'
+status: production
+order: 30
+featured: false
+draft: false
+accent: lime
+category: landing-page
+updated: '2026-02'
+disciplines:
+  - frontend
+stack:
+  - Next.js
+  - React
+  - Framer Motion
+  - Bootstrap
+  - DOMPurify
+  - JSON-LD
+highlights:
+  - >-
+    Fifteen market commentary posts, from Zambian copper output to the rare-earth question behind the F-47 fighter, each with its own category, date and cover image.
+  - >-
+    Each post builds its own table of contents: headings get anchor ids when the post renders and the contents list is generated from them, so a long analysis piece is navigable without anyone maintaining links by hand.
+  - >-
+    Post pages emit schema.org Article structured data, a canonical URL and Open Graph and Twitter cards, with the summary taken from the post's first paragraph.
+  - >-
+    A branded loading state spells SENECA with the C turning as the spinner.
+links:
+  - label: Website
+    href: https://seneca-delta.vercel.app
+    kind: live
+cover: ../../public/images/projects/seneca.png
+gallery:
+  - image: ../../public/images/projects/seneca.png
+    alt: >-
+      Seneca home page: Your African trade partner, beside a photo of a haul truck in an open-pit mine
+    caption: 'Home page'
+---
+
+## What it is
+
+A seven-page site (home, about, team, warehousing, blog, posts, contact) for a
+commodity trading company. The pages that matter commercially are warehousing and
+the blog: one says what Seneca can physically handle, the other shows that it
+follows the markets it trades in.
+
+## The blog
+
+Posts live in a single typed data module rather than a CMS, which suits a small
+team that publishes occasionally. The rendering side does the work: headings
+become anchors, the contents list builds itself, and every post goes out with
+structured data so search engines read it as an article.

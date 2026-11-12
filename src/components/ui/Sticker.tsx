@@ -35,7 +35,7 @@ export const accentBorder: Record<Accent, string> = {
 type StickerProps = {
   children: ReactNode;
   accent?: Accent;
-  /** Degrees of rotation. Kept small — these read as applied vinyl, not confetti. */
+  /** Degrees of rotation. Kept small, these read as applied vinyl, not confetti. */
   rotate?: number;
   /** Small print under the main label. */
   caption?: ReactNode;
@@ -81,7 +81,7 @@ export function Sticker({
 }
 
 /**
- * The round variant from the reference — used sparingly, for a single
+ * The round variant from the reference, used sparingly, for a single
  * "seal of approval" style mark.
  */
 export function StickerSeal({
@@ -118,7 +118,7 @@ export function StickerSeal({
 }
 
 /**
- * A quieter inline tag for stack lists and metadata rows — same family as the
+ * A quieter inline tag for stack lists and metadata rows, same family as the
  * stickers but without rotation or drop shadow, so it can be used in bulk.
  */
 export function Tag({

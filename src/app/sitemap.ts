@@ -5,7 +5,7 @@ import { allAdrs, allPlaybooks, allPosts, allProjects } from '@/lib/content';
 export default function sitemap(): MetadataRoute.Sitemap {
   const url = (path: string) => `${site.url}${path}`;
 
-  /* `/architecture` and `/playbooks` are gone — both now permanently redirect
+  /* `/architecture` and `/playbooks` are gone, both now permanently redirect
      (see next.config.mjs), and a redirecting URL does not belong in a sitemap.
      Their detail pages keep their URLs and are still listed below. */
   const staticRoutes: MetadataRoute.Sitemap = [

@@ -107,7 +107,7 @@ export function AskMiyagi() {
 
       {!started ? (
         <p className="am-intro">
-          It answers from what is written about Miyagi — install, tools, modes, XP, safety,
+          It answers from what is written about Miyagi, install, tools, modes, XP, safety,
           roadmaps. Other projects and biography are out of scope. If something is not in the
           record it says so rather than inventing it.
         </p>
@@ -154,7 +154,7 @@ export function AskMiyagi() {
           className="am-input"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Ask about Miyagi — safety, modes, roadmaps…"
+          placeholder="Ask about Miyagi, safety, modes, roadmaps…"
           maxLength={400}
           autoComplete="off"
         />

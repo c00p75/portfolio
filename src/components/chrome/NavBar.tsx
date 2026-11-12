@@ -13,12 +13,12 @@ function Wordmark({ onClick }: { onClick?: () => void }) {
       href="/"
       onClick={onClick}
       className="text-on-ink flex shrink-0 items-center gap-3 pl-3"
-      aria-label={`${site.name} — home`}
+      aria-label={`${site.name}, home`}
     >
       {/* Keycap mark, drawn in CSS rather than set in a keyboard face: two
           rounded outlines with a serif initial centred in each. Squares are
           sized in em off the letter, so the whole mark scales with one font
-          size. aria-hidden — the link's own label carries the full name. */}
+          size. aria-hidden, the link's own label carries the full name. */}
       <span aria-hidden="true" className="flex items-center gap-[0.22em] text-[1.05rem] sm:text-[1.2rem]">
         <span className="keycap">G</span>
         <span className="keycap">M</span>
@@ -56,7 +56,7 @@ export function NavBar() {
   }, [open]);
 
   /*
-   * Hide on the way down, reveal on the way up — the bar is out of the way
+   * Hide on the way down, reveal on the way up, the bar is out of the way
    * while reading and one upward flick away when wanted.
    *
    * Measured in a frame rather than in the listener, and only acted on past a
@@ -121,7 +121,7 @@ export function NavBar() {
             <Wordmark />
 
             <div className="flex items-center gap-2 sm:gap-4">
-              {/* Plain sentence-case links, generously spaced — the reference
+              {/* Plain sentence-case links, generously spaced, the reference
                   has no chips or CTA button up here; Contact is just a link. */}
               <ul className="hidden items-center gap-6 lg:flex xl:gap-8">
                 {[...site.nav, { href: '/contact', label: 'Contact' }].map((item) => (

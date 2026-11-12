@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import { adrsByProject, allProjects, featuredProjects } from '@/lib/content';
+import { allProjects, projectCategories } from '@/lib/content';
 import { otherWork } from '@/lib/other-work';
-import { ProjectCard } from '@/components/work/ProjectCard';
+import { WorkGallery, type GalleryProject } from '@/components/work/WorkGallery';
 import { EdgeRail, InkCard, SectionHeading } from '@/components/ui/Frame';
 import { ArrowLink } from '@/components/ui/ArrowLink';
 import { SailPath } from '@/components/work/SailPath';
@@ -22,9 +22,25 @@ const SKILL_LENS = [
 ] as const;
 
 export default function WorkIndex() {
-  const featured = featuredProjects(4);
-  const featuredSlugs = new Set(featured.map((p) => p.slug));
-  const more = allProjects().filter((p) => !featuredSlugs.has(p.slug));
+  const labels = new Map(projectCategories.map((c) => [c.key, c.label]));
+  const projects: GalleryProject[] = allProjects()
+    .sort((x, y) => Number(y.featured) - Number(x.featured) || x.order - y.order)
+    .map((p) => ({
+      slug: p.slug,
+      url: p.url,
+      title: p.title,
+      tagline: p.tagline,
+      period: p.period,
+      status: p.status,
+      category: p.category,
+      categoryLabel: labels.get(p.category) ?? p.category,
+      featured: p.featured,
+      accent: p.accent,
+      cover: p.cover
+        ? { src: p.cover.src, width: p.cover.width, height: p.cover.height, blurDataURL: p.cover.blurDataURL }
+        : undefined,
+    }));
+  const filters = projectCategories.map(({ key, label }) => ({ key, label }));
 
   return (
     <>
@@ -32,7 +48,7 @@ export default function WorkIndex() {
         className="pt-2 pb-3"
         left="Work"
         center="Case studies"
-        right={`${featured.length} featured`}
+        right={`${projects.length} projects`}
       />
 
       {/* The trail spans the whole page: the boat's route begins in the intro
@@ -77,59 +93,27 @@ export default function WorkIndex() {
         </InkCard>
       </div>
 
-      {/* Featured — the sell */}
-      <section className="px-edge pt-6 sm:pt-10" aria-labelledby="featured-work">
+      {/* Every project, one filterable grid */}
+      <section className="px-edge pt-6 sm:pt-10" aria-labelledby="all-work">
         <InkCard className="px-card py-14 sm:py-20">
           <SectionHeading
             index="01"
-            eyebrow="Featured"
-            title={<span id="featured-work">Selected projects</span>}
-            lead="The four systems that best show how I work: hard constraints, clear architecture, and something running."
+            eyebrow={`${projects.length} projects`}
+            title={<span id="all-work">Things I’ve built</span>}
+            lead="Products, platforms and client sites. Case studies come first; filter by what kind of thing it is."
           />
-          {/* Cards stretch to a shared row height — every project now has a
-              cover band, so the body is the only variable and `mt-auto` on the
-              stack list keeps the footers on one line. */}
-          {featured.length > 0 ? (
-            <div className="mt-12 grid gap-5 md:grid-cols-2">
-              {featured.map((project) => (
-                <ProjectCard
-                  key={project.slug}
-                  project={project}
-                  decisionCount={adrsByProject(project.slug).length}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-on-ink mt-10 text-sm">No projects published yet.</p>
-          )}
+          <div className="mt-12">
+            <WorkGallery projects={projects} filters={filters} />
+          </div>
         </InkCard>
       </section>
 
-      {/* More projects — secondary, denser */}
-      {more.length > 0 ? (
-        <section className="px-edge pt-6 sm:pt-10" aria-labelledby="more-work">
-          <InkCard className="px-card py-14 sm:py-20">
-            <SectionHeading
-              index="02"
-              eyebrow="More projects"
-              title={<span id="more-work">Also worth a look</span>}
-              lead="Production SaaS and trading infrastructure that didn’t need a full featured slot."
-            />
-            <div className="border-ink-line mt-10 border-t">
-              {more.map((project) => (
-                <ProjectCard key={project.slug} project={project} variant="compact" />
-              ))}
-            </div>
-          </InkCard>
-        </section>
-      ) : null}
-
-      {/* Client / employer — conventional “other work” */}
+      {/* Client / employer, conventional “other work” */}
       {otherWork.length > 0 ? (
         <section className="px-edge pt-6 sm:pt-10" aria-labelledby="client-work">
           <InkCard className="px-card py-14 sm:py-20">
             <SectionHeading
-              index="03"
+              index="02"
               eyebrow="Client & employer"
               title={<span id="client-work">Other work</span>}
               lead="Substantial delivery I can’t name in full, or whose hardest problems are already covered above."

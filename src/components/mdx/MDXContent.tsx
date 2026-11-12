@@ -15,7 +15,7 @@ const cache = new Map<string, Compiled>();
 
 /**
  * Velite compiles MDX to a function body that closes over a JSX runtime, so
- * building the component means evaluating our own build output — not user
+ * building the component means evaluating our own build output, not user
  * input. This is the intended usage for this pipeline.
  */
 function getMDXComponent(code: string): Compiled {
@@ -55,7 +55,7 @@ export function MDXContent({ code, className }: { code: string; className?: stri
    * call during render and cannot see through the module-level cache above. The
    * identity it exists to protect *is* stable here: the same `code` string
    * always returns the same component instance, so no remount occurs. Compiling
-   * MDX at runtime is unavoidable with this content pipeline — the compiled
+   * MDX at runtime is unavoidable with this content pipeline, the compiled
    * output is a function body, not a static import.
    */
   const Compiled = getMDXComponent(code);

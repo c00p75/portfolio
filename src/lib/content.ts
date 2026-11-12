@@ -15,7 +15,7 @@ export type { Adr, Playbook, Post, Profile, Project };
 
 const byDateDesc = (a: string, b: string) => new Date(b).getTime() - new Date(a).getTime();
 
-/** Drafts are scaffolds — visible in development, hidden from production listings. */
+/** Drafts are scaffolds, visible in development, hidden from production listings. */
 const showDrafts = process.env.NODE_ENV === 'development';
 
 /* ------------------------------ Projects -------------------------------- */
@@ -30,6 +30,14 @@ export function featuredProjects(limit = 3): Project[] {
   const featured = allProjects().filter((p) => p.featured);
   return (featured.length > 0 ? featured : allProjects()).slice(0, limit);
 }
+
+export const projectCategories: { key: Project['category']; label: string; lead: string }[] = [
+  { key: 'web-app', label: 'Web apps', lead: 'Products people sign in to and use.' },
+  { key: 'mobile-app', label: 'Mobile apps', lead: 'Built for the phone first.' },
+  { key: 'platform', label: 'Platforms & backends', lead: 'Services other products run on.' },
+  { key: 'developer-tool', label: 'Developer tools', lead: 'Tools for people who write code.' },
+  { key: 'landing-page', label: 'Landing pages & sites', lead: 'Marketing and company sites for clients.' },
+];
 
 export function projectBySlug(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);
@@ -59,7 +67,7 @@ export function adrBySlug(slug: string): Adr | undefined {
 
 /**
  * The decision records belonging to one project, newest decision first. This is
- * how ADRs reach a reader now — through the case study for the system they were
+ * how ADRs reach a reader now, through the case study for the system they were
  * made in, rather than through an index of their own.
  */
 export function adrsByProject(projectSlug: string): Adr[] {
@@ -71,7 +79,7 @@ export function projectForAdr(adr: Adr): Project | undefined {
   return adr.project ? projectBySlug(adr.project) : undefined;
 }
 
-/** Every record that has no project set — reachable only by direct link. */
+/** Every record that has no project set, reachable only by direct link. */
 export function orphanAdrs(): Adr[] {
   return allAdrs().filter((a) => !a.project);
 }

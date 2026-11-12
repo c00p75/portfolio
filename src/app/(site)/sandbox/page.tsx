@@ -9,7 +9,7 @@ import { Blueprint } from '@/components/blueprints';
 import { adrBySlug, formatDate } from '@/lib/content';
 
 export const metadata: Metadata = {
-  title: 'Sandbox — retrieval over my own writing',
+  title: 'Sandbox: retrieval over my own writing',
   description:
     'A working hybrid retrieval pipeline over this site: BM25 and dense search combined by reciprocal rank fusion, streamed generation, and a live trace of each stage.',
 };
@@ -35,7 +35,7 @@ export default function SandboxPage() {
       <div className="relative z-10 px-edge">
         <InkCard className="px-card py-14 sm:py-20">
           {/* The robot sits to the right of the copy, standing where the walk
-              trail below begins — the trail's first waypoint is x=0.82, so this
+              trail below begins, the trail's first waypoint is x=0.82, so this
               reads as the pose it holds before it sets off. Dropped below `lg`,
               where there is no room beside the text for it to be anything but
               a squeezed thumbnail. */}

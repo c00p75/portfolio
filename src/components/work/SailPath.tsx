@@ -16,18 +16,18 @@ const ROUTE: Waypoint[] = [
    *
    * The next two waypoints share that x deliberately. The intro is a straight
    * vertical drop, and it has to land exactly where path-following takes over
-   * — so the opening leg of the route is vertical, and the landing point is
+   *, so the opening leg of the route is vertical, and the landing point is
    * directly below the berth however far along it falls.
    */
   { x: 0.744, y: 0.09 },
   { x: 0.744, y: 0.13 },
   { x: 0.744, y: 0.18 },
   /*
-   * Only now does it start to sail — and it tacks: full width left, full width
+   * Only now does it start to sail, and it tacks: full width left, full width
    * right, repeatedly.
    *
-   * The reason is the facing. A boat never rotates to its heading — it only
-   * mirrors, left or right — so the *only* heading it can honestly express is a
+   * The reason is the facing. A boat never rotates to its heading, it only
+   * mirrors, left or right, so the *only* heading it can honestly express is a
    * horizontal one. On a steeply descending leg the hull points sideways while
    * the motion is mostly downward, and the two visibly disagree. Keeping each
    * leg shallow makes horizontal the dominant component of every movement, so
@@ -36,7 +36,7 @@ const ROUTE: Waypoint[] = [
    * That is what sets the vertical spacing: each crossing drops only 0.10 of
    * the page while covering better than half its width, which at this page's
    * proportions is roughly 30° off horizontal. Fewer, longer legs would be
-   * calmer but steeper — and steeper is precisely the thing that breaks.
+   * calmer but steeper, and steeper is precisely the thing that breaks.
    *
    * The two ends are not symmetrical. The far left stops around 0.38, short of
    * the margin, because that side is where every heading, lead and body
@@ -52,7 +52,7 @@ const ROUTE: Waypoint[] = [
   { x: 0.4, y: 0.7 },
   /*
    * Coming into the berth. The last wide tack used to run out to 0.92 and then
-   * drop almost straight down onto 0.74 — a hook, then a vertical slide. The
+   * drop almost straight down onto 0.74, a hook, then a vertical slide. The
    * hull only mirrors left or right, so a steep finish looks like the boat is
    * being dragged sideways.
    *
@@ -89,18 +89,18 @@ export function SailPath() {
          * with some presence rather than a thumbnail drifting off the bottom of
          * the page.
          *
-         * Over the last 8% — the coast into the berth — so the growth and the
+         * Over the last 8%, the coast into the berth, so the growth and the
          * slowing glide are one arrival. The old 3% window fired after the
          * boat had already stopped moving sideways, which read as a pop.
          *
          * To 70% of the opening size, not all of it: arriving at exactly the
          * hero size invites the comparison with the top of the page and reads as
-         * a reset rather than an ending — and at full size the boat needs more
+         * a reset rather than an ending, and at full size the boat needs more
          * clearance than the closing rail leaves it.
          */
         outro: { from: 0.92, scale: 4.3 * 0.7 },
         /*
-         * The hero size, not the travelling size — see `intro` below. At
+         * The hero size, not the travelling size, see `intro` below. At
          * 4.3× this lays out at 30rem and the boat travels at 1/4.3 of it,
          * which is the same ~126px it was before, but rasterised from a
          * layer that is never scaled up.

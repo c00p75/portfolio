@@ -8,7 +8,7 @@ import type { IndexArtifact, Retriever } from './types';
  * BM25 index costs a few milliseconds over this corpus, and doing it per request
  * would put that on every user's latency for no reason. Miyagi is a separate
  * index over the same artifact so BM25 and dense never see another project's
- * chunks — filtering after top-K would still leak them.
+ * chunks, filtering after top-K would still leak them.
  */
 let cachedSite: StaticHybridRetriever | null = null;
 let cachedMiyagi: StaticHybridRetriever | null = null;
@@ -41,7 +41,7 @@ export function indexMeta(scope: AskScope = 'site') {
   };
 }
 
-/** True when `npm run ingest` has not been run — the UI says so rather than failing opaquely. */
+/** True when `npm run ingest` has not been run, the UI says so rather than failing opaquely. */
 export function indexIsEmpty(scope: AskScope = 'site'): boolean {
   return scopedChunks(scope).length === 0;
 }

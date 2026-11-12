@@ -12,12 +12,14 @@ role: >-
   Sole author. Protocol surface, the execution confinement model, the
   cross-platform speech pipeline, and the packaging that ships it.
 period: '2026'
-status: prototype
+status: production
 statusNote: 'Published to npm as miyagi-mcp and installable with npx. No users yet, so the gamification is still an untested hypothesis.'
 order: 9
 featured: false
 draft: false
 accent: orange
+category: developer-tool
+updated: '2026-08'
 disciplines:
   - architecture
   - ai
@@ -87,6 +89,12 @@ links:
   - label: Source
     href: https://github.com/c00p75/miyagi
     kind: repo
+cover: ../../public/images/projects/miyagi.png
+gallery:
+  - image: ../../public/images/projects/miyagi.png
+    alt: >-
+      Miyagi product page: the Miyagi wordmark, a speech bubble reading "Wax on. Wax off." and the npx install command
+    caption: 'Product page'
 ---
 
 ## The problem
@@ -116,7 +124,7 @@ The execution path is the part worth describing. The tool signature accepts an
 destructive commands is useful signal. It just isn't load-bearing. The server
 independently matches the command against a two-tier denylist. Catastrophic
 shapes never run. Destructive ones are explained and dry-run until a human types
-`RUN` into an elicitation prompt — the flag is only the fallback for clients
+`RUN` into an elicitation prompt, the flag is only the fallback for clients
 that cannot ask. The two inputs are ORed and never substituted, so the caller
 can add caution but can't remove it.
 
@@ -141,7 +149,7 @@ an interrupted write costs the last change and not the profile.
 **A denylist is a backstop, not a sandbox.** The pattern table catches named
 catastrophes and a longer list of merely destructive shapes. They aren't what
 makes the tool safe. The real boundary is the MCP client's own approval prompt,
-with a human reading the command before it runs — and, for the destructive tier,
+with a human reading the command before it runs, and, for the destructive tier,
 an elicitation that requires typing `RUN`. The screen exists for the narrower
 case that prompt handles badly: a model proposing something obviously
 destructive to someone who is clicking through. Defence in depth, with the depth

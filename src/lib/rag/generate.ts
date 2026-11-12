@@ -2,7 +2,7 @@
  * The generation provider boundary.
  *
  * Retrieval is the interesting half of this system and it runs entirely on a
- * local artifact — generation is the only step that needs a vendor at all. So
+ * local artifact, generation is the only step that needs a vendor at all. So
  * rather than binding the route to one, providers are declared in priority
  * order and tried in turn: the first one with a key configured gets the
  * request, and if it fails for a reason another provider could survive
@@ -41,7 +41,7 @@ type ProviderSpec = {
 /**
  * Priority order. Groq leads because it is free and the fastest of the four,
  * which matters more than raw model quality for a six-passage grounded answer.
- * Anthropic sits last only because no key is configured — on quality of
+ * Anthropic sits last only because no key is configured, on quality of
  * citation discipline it would lead.
  */
 const PROVIDERS: ProviderSpec[] = [
@@ -57,7 +57,7 @@ const PROVIDERS: ProviderSpec[] = [
     id: 'gemini',
     label: 'Gemini · 3.5 Flash',
     envKey: 'GEMINI_API_KEY',
-    // 2.5 Flash is closed to new keys — it 404s with "no longer available to
+    // 2.5 Flash is closed to new keys, it 404s with "no longer available to
     // new users" rather than an auth error, which reads like a broken URL.
     model: 'gemini-3.5-flash',
     price: { input: 0, output: 0 },
@@ -104,7 +104,7 @@ export type GenerateOptions = {
   signal?: AbortSignal;
 };
 
-/** No provider has a usable key — distinct from every provider failing. */
+/** No provider has a usable key, distinct from every provider failing. */
 export class NoProviderConfiguredError extends Error {
   constructor() {
     super('No generation provider is configured.');
@@ -129,7 +129,7 @@ function reasonFor(error: unknown): string {
 /**
  * Rewrites stray citation notations into the one the UI renders.
  *
- * The system prompt asks for `[2]`, and the stronger models comply — but the
+ * The system prompt asks for `[2]`, and the stronger models comply, but the
  * open-weight ones drift into the CJK-bracket form they were trained on
  * (`【2】`, `【2†L4-L9】`), which the renderer shows as literal noise. Prompting
  * alone did not hold, so the stream is normalised as well.
@@ -146,7 +146,7 @@ class CitationNormalizer {
   push(text: string): string {
     this.pending += text;
     const opener = this.pending.lastIndexOf('\u3010');
-    // An opener with no closer after it is an incomplete marker — hold it.
+    // An opener with no closer after it is an incomplete marker, hold it.
     const holdFrom =
       opener !== -1 && !this.pending.slice(opener).includes('\u3011') ? opener : this.pending.length;
 
@@ -155,7 +155,7 @@ class CitationNormalizer {
     return CitationNormalizer.rewrite(emit);
   }
 
-  /** Emits whatever is still held — an unterminated marker stays as authored. */
+  /** Emits whatever is still held, an unterminated marker stays as authored. */
   flush(): string {
     const rest = CitationNormalizer.rewrite(this.pending);
     this.pending = '';
@@ -172,8 +172,7 @@ class CitationNormalizer {
 }
 
 /**
- * A failure the next provider might survive. An aborted request is not one —
- * the visitor closed the tab, so falling back would burn a second provider's
+ * A failure the next provider might survive. An aborted request is not one, * the visitor closed the tab, so falling back would burn a second provider's
  * quota on an answer nobody is waiting for.
  */
 function isWorthFallingBack(error: unknown): boolean {
@@ -257,7 +256,7 @@ async function runAnthropic(
  * Stream an answer from the first provider that works.
  *
  * `onDelta` may be called by more than one provider only if the first fails
- * *before* emitting anything — once a provider has streamed a token the answer
+ * *before* emitting anything, once a provider has streamed a token the answer
  * is committed to it, because splicing two models' prose mid-sentence would
  * produce something neither of them would have written.
  */

@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
 /**
- * Work-header sketches — browser + phone only. Same pen + motion contract as
+ * Work-header sketches, browser + phone only. Same pen + motion contract as
  * the homepage hero doodles (`.doodle` / `.doodle-draw` in globals.css).
  */
 
@@ -31,7 +31,7 @@ function P({ d, dashed }: { d: string; dashed?: boolean }) {
   );
 }
 
-/** Browser + phone — shipped product surfaces, packed to fill the panel. */
+/** Browser + phone, shipped product surfaces, packed to fill the panel. */
 function ProductSurfaces() {
   return (
     <svg viewBox="0 0 280 170" className="h-full w-full" aria-hidden="true" preserveAspectRatio="xMidYMid meet">

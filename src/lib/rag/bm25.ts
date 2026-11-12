@@ -88,7 +88,7 @@ export function bm25Search(index: Bm25Index, query: string, topK: number): [numb
     if (!posting) continue;
 
     // Robertson/Sparck-Jones IDF with the +1 that keeps it non-negative for
-    // terms appearing in more than half the corpus — without it, common terms
+    // terms appearing in more than half the corpus, without it, common terms
     // in a small corpus actively subtract from the score.
     const df = posting.size;
     const idf = Math.log(1 + (index.docCount - df + 0.5) / (df + 0.5));

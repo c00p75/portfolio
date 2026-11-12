@@ -29,7 +29,7 @@ type Photo = {
 
 /**
  * Photos tied to one specific fact. A fact is illustrated only when its
- * `pattern` matches the answer *and* a passage the answer cited — the first so
+ * `pattern` matches the answer *and* a passage the answer cited, the first so
  * the picture shows what the visitor is reading, the second so a model that
  * says "I can't find an award" does not get a trophy photo underneath.
  *
@@ -45,7 +45,7 @@ const FACTS: { pattern: RegExp; photos: Photo[] }[] = [
         id: 'award-certificate',
         image: awardSolo,
         alt: "George M'sapenda holding the Ballo Innovations Company of the Year certificate",
-        caption: 'Ballo Innovations, Company of the Year for ICT Services — Zambia Business Awards.',
+        caption: 'Ballo Innovations, Company of the Year for ICT Services, Zambia Business Awards.',
         href: '/about',
       },
       {
@@ -88,7 +88,7 @@ const FACTS: { pattern: RegExp; photos: Photo[] }[] = [
         id: 'portrait',
         image: portrait,
         alt: "Portrait of George M'sapenda in a navy suit",
-        caption: "George M'sapenda — software engineer and CTO, Lusaka.",
+        caption: "George M'sapenda, software engineer and CTO, Lusaka.",
         href: '/about',
       },
     ],

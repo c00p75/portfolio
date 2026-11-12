@@ -22,7 +22,7 @@ function rrfScore(rank: number): number {
 
 /**
  * The in-process retriever backing ADR-001. Brute-force scoring over an index
- * small enough to hold in memory — correct at this corpus size, deliberately
+ * small enough to hold in memory, correct at this corpus size, deliberately
  * not correct past a few thousand chunks (the ingest script enforces the ceiling).
  */
 export class StaticHybridRetriever implements Retriever {
@@ -62,7 +62,7 @@ export class StaticHybridRetriever implements Retriever {
     let degradedReason: string | undefined;
 
     // An artifact built without an embedding key carries no vectors. That is a
-    // known degraded mode, not an error — skip the dense path rather than
+    // known degraded mode, not an error, skip the dense path rather than
     // scoring against empty arrays and pretending the result is hybrid.
     const hasVectors = this.artifact.dimensions > 0;
 
@@ -89,10 +89,10 @@ export class StaticHybridRetriever implements Retriever {
       // This is the documented degraded mode, not an outage: lexical retrieval
       // still answers, and the telemetry stream says the answer is degraded.
       degradedReason = !hasVectors
-        ? 'Index was built without embeddings — lexical (BM25) retrieval only. Run `npm run ingest` with VOYAGE_API_KEY set to enable dense retrieval.'
+        ? 'Index was built without embeddings, lexical (BM25) retrieval only. Run `npm run ingest` with VOYAGE_API_KEY set to enable dense retrieval.'
         : error instanceof EmbeddingError
-          ? `Embedding unavailable (${error.message}) — lexical retrieval only`
-          : 'Embedding unavailable — lexical retrieval only';
+          ? `Embedding unavailable (${error.message}), lexical retrieval only`
+          : 'Embedding unavailable, lexical retrieval only';
     }
 
     // --- Fusion ----------------------------------------------------------
@@ -121,7 +121,7 @@ export class StaticHybridRetriever implements Retriever {
       .flatMap(([docIndex, meta]) => {
         const indexed = this.artifact.chunks[docIndex];
         if (!indexed) return [];
-        // Drop the embedding — it is large and the caller never needs it.
+        // Drop the embedding, it is large and the caller never needs it.
         const { embedding: _embedding, ...chunk } = indexed;
         return [{ chunk, score: meta.score, denseRank: meta.denseRank, lexicalRank: meta.lexicalRank }];
       });

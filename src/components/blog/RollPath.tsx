@@ -5,15 +5,15 @@ import { ScrollTrail, type Waypoint } from '@/components/ui/ScrollTrail';
  *
  * Flatter than the flight and shallower than the sail. A ball rolls on ground,
  * so like the robot's walk this spends its length crossing the page rather than
- * diving down it — and no loops, since a ball that left the ground would have
+ * diving down it, and no loops, since a ball that left the ground would have
  * nothing to roll on.
  *
- * The route begins under the sheet in the intro — see the offset below — and
+ * The route begins under the sheet in the intro, see the offset below, and
  * keeps to the far right the whole way down. The page is a column of reading,
  * and the text starts at the left of every card, so the ball is confined to the
  * strip beside it.
  *
- * The strip is narrow on purpose — 0.86 to 0.97, hugging the right margin. The
+ * The strip is narrow on purpose, 0.86 to 0.97, hugging the right margin. The
  * reading column is the point of the page, and a ball crossing it while a
  * paragraph is being read is worse than no animation at all.
  *
@@ -21,7 +21,7 @@ import { ScrollTrail, type Waypoint } from '@/components/ui/ScrollTrail';
  * of equal amplitude produce a sine wave, which is the one thing a rolling ball
  * should not look like: you can predict where it will be. So the spacing runs
  * from 0.025 to 0.10 of the route and the swings from a hair to the full width
- * of the strip — quick jinks, a long lazy drift, one near-vertical drop, a hard
+ * of the strip, quick jinks, a long lazy drift, one near-vertical drop, a hard
  * cut back. No two beats repeat.
  */
 const ROUTE: Waypoint[] = [
@@ -64,7 +64,7 @@ export function RollPath() {
        *
        * The card is the wrong thing to hide behind here: on this theme its
        * panel is the same colour as the page, so it occludes nothing. The sheet
-       * image does, being opaque — so the route's first waypoint has to land
+       * image does, being opaque, so the route's first waypoint has to land
        * inside the sheet's own box for the ball to come out from under it.
        * 15rem is the card's top padding plus roughly half the sheet's height,
        * and the sheet scales with the viewport, so this holds across widths.

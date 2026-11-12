@@ -32,7 +32,7 @@
   --tone-cream-line: #cfc7b9;
   /* Text tones */
   --tone-on-ink: #efeae2;
-  /* The muted label tone — eyebrows, mono captions, timestamps. `InkCard` no
+  /* The muted label tone, eyebrows, mono captions, timestamps. `InkCard` no
      longer paints its own black, so anything using the on-ink tones now sits
      on the page grey, which is far lighter than the ink it was tuned for. This
      is the darkest value that still clears 4.5:1 against --tone-page at the
@@ -113,7 +113,7 @@
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-jb), ui-monospace, 'SFMono-Regular', monospace;
 
-  /* Display scale — clamped so the huge headline never causes overflow. */
+  /* Display scale, clamped so the huge headline never causes overflow. */
   --text-mega: clamp(3.2rem, 13.5vw, 15rem);
   --text-mega--line-height: 0.82;
   --text-mega--letter-spacing: -0.02em;
@@ -143,7 +143,7 @@
   --spacing-gutter: clamp(1rem, 4vw, 3rem);
 
   /* Cards below the hero float on the page with a thin margin of page colour
-     around them, so their own padding is the rest of the gutter — edge + card
+     around them, so their own padding is the rest of the gutter, edge + card
      == gutter, which is what keeps card contents aligned with the nav and the
      hero headline instead of sitting a second gutter further in. */
   --spacing-edge: clamp(0.5rem, 1.25vw, 1rem);
@@ -170,7 +170,7 @@
   html {
     /*
      * 18px base instead of the browser's 16px. Every size in the system is
-     * expressed in rem — type, spacing, the radii — so this is the single
+     * expressed in rem, type, spacing, the radii, so this is the single
      * lever that scales the whole site up a step rather than a per-component
      * override. Percent rather than px so a reader's own browser setting is
      * still respected.
@@ -214,7 +214,7 @@
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    /* The page must never scroll sideways — wide children scroll themselves. */
+    /* The page must never scroll sideways, wide children scroll themselves. */
     overflow-x: hidden;
   }
 
@@ -272,7 +272,7 @@
   }
 
   /* -------------------------------------------------------------------------
-     Keycap wordmark — the nav's "GM" mark. A rounded outline with a serif
+     Keycap wordmark, the nav's "GM" mark. A rounded outline with a serif
      capital centred inside, one span per letter. Everything is in em so the
      pair scales from the parent's font-size alone; the border is deliberately
      heavy (0.11em) to match the drawn reference at small sizes.
@@ -293,7 +293,7 @@
   }
 
   /* -------------------------------------------------------------------------
-     Dog-eared corner — the nav band reads as a sheet with its top-left corner
+     Dog-eared corner, the nav band reads as a sheet with its top-left corner
      already turned back. The gradient does the whole trick: the first half is
      the page showing through the gap the corner left behind, the second half
      is the underside of the folded flap, lit a shade lighter than the ink so
@@ -311,7 +311,7 @@
   }
 
   /* The underside of the turned-back flap: a triangle hinged on the crease.
-     It has to be much lighter than the ink to read at all — flap tones only a
+     It has to be much lighter than the ink to read at all, flap tones only a
      step off the card's own black vanish. So the crease edge lands near the
      cream and falls away to ink across the triangle, which is what sells the
      curl. Clipped to the band, so it needs no shadow of its own. */
@@ -333,7 +333,7 @@
   }
 
   /* -------------------------------------------------------------------------
-     Hero doodles — the loose architecture sketches on the grid paper.
+     Hero doodles, the loose architecture sketches on the grid paper.
      All motion is decorative and slow; the reduced-motion block in the base
      layer flattens every animation below to a near-zero duration, which leaves
      the sketches drawn and static rather than removing them.
@@ -347,7 +347,7 @@
   }
 
   /* One pen for every sketch. `vector-effect` is not an inherited SVG property,
-     so setting it on a <g> does nothing for the children — without this rule
+     so setting it on a <g> does nothing for the children, without this rule
      each doodle's strokes scale with its own viewBox and the large diagrams
      render visibly heavier than the small ones. */
   .doodle svg :is(path, rect, circle, ellipse, line, polyline, polygon) {
@@ -362,7 +362,7 @@
   }
 
   /* The self-drawing loop: a single travelling dash sweeps along each path,
-     draws the whole stroke, then retreats — endlessly. Every path declares
+     draws the whole stroke, then retreats, endlessly. Every path declares
      `pathLength="360"` so one set of keyframes fits any geometry. */
   .doodle-draw > * {
     animation:
@@ -436,7 +436,7 @@
     /* Neumorphic rim rather than a drawn outline: a highlight along the upper
        edge and a shadow under the lower one, inside and out, so the ring reads
        as a swell raised out of the surface and lit from above. A 1px border
-       reads as ink on paper — which is right for the plane's contrail and wrong
+       reads as ink on paper, which is right for the plane's contrail and wrong
        for water. Every length divides by `--wake-k` with the rest, so the rim
        keeps its weight relative to the hull at any size. */
     box-shadow:
@@ -485,7 +485,7 @@
 
   /* The splash thrown up when the boat lands.
      Anchored at the waterline inside the sprite, so it inherits the hull's
-     scale exactly as the wake does — and sized in the same travelling units,
+     scale exactly as the wake does, and sized in the same travelling units,
      divided up by --wake-k.
      Nothing runs until `.is-splashing` is set: the component adds it on the
      frame of impact and the class is re-applied from scratch each time, which
@@ -515,7 +515,7 @@
     opacity: 0;
   }
 
-  /* Thrown out and up, then pulled back down past the waterline — the arc is
+  /* Thrown out and up, then pulled back down past the waterline, the arc is
      in the keyframes rather than in an easing curve, so the rise and the fall
      can have different shapes the way a real one does. */
   .splash.is-splashing .splash-drop {
@@ -569,7 +569,7 @@
 
   /* The boat riding on the swell. Like the plane's hover this runs on its own
      clock rather than on scroll, because water does not stop when the reader
-     does — the boat is at its most obviously afloat when nothing else moves.
+     does, the boat is at its most obviously afloat when nothing else moves.
      Slower and shallower than the plane's bob: a hull sits in the water rather
      than holding station in air. Two out-of-phase periods keep it from
      metronoming. */
@@ -629,7 +629,7 @@
   }
 
   /* -------------------------------------------------------------------------
-     Ask George — a cool, blue-and-ink conic ring around the chat entry. Only
+     Ask George, a cool, blue-and-ink conic ring around the chat entry. Only
      deep and mid blues alternating with the card's own ink; kept at reduced
      opacity and a slow sweep so it reads as an AI control without competing
      with the coloured stickers. Reduced-motion (base layer) freezes the angle
@@ -809,7 +809,7 @@
     margin-block: 0.4em;
   }
 
-  /* Inline code — excludes code inside highlighted blocks. */
+  /* Inline code, excludes code inside highlighted blocks. */
   .prose-architect :not(pre) > code {
     font-family: var(--font-mono);
     font-size: 0.86em;
@@ -873,7 +873,7 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Marquee — the About page's "In the room" gallery scrolls two rows in
+   Marquee, the About page's "In the room" gallery scrolls two rows in
    opposite directions. The list inside each row contains the item set twice;
    the animation slides the track exactly one set's width so the loop is
    seamless when it snaps back to 0. `--marquee-duration` is set inline so the
@@ -909,7 +909,7 @@
     animation-name: marquee-right;
   }
   /* Pause every track in the group whenever any row is hovered or a tile
-   * inside it takes keyboard focus — the two rows are a single composition
+   * inside it takes keyboard focus, the two rows are a single composition
    * and it feels off if only one stops. `:has(:focus-visible)` (rather than
    * `:focus-within`) means the pause is triggered by real keyboard focus
    * only: when the lightbox closes and restores focus to the tile

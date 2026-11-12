@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const adr = adrBySlug(slug);
   if (!adr) return {};
   return {
-    title: `${adr.ref} — ${adr.title}`,
+    title: `${adr.ref}: ${adr.title}`,
     description: adr.summary,
     openGraph: { title: adr.title, description: adr.summary, type: 'article' },
   };
@@ -84,7 +84,7 @@ export default async function AdrPage({ params }: Params) {
   /**
    * The single source of truth for which bands this record has, in order. Both
    * the contents index and the band numbering read from it, so a record without
-   * a trade-off matrix numbers 01, 02, 03 rather than skipping to 04 — and the
+   * a trade-off matrix numbers 01, 02, 03 rather than skipping to 04, and the
    * index can never list a section the page does not render.
    */
   const sections = [
@@ -113,7 +113,7 @@ export default async function AdrPage({ params }: Params) {
       <div className="px-edge">
         <InkCard className="px-card py-14 sm:py-20">
           {/* The record's parent. There is no records index any more, so this is
-              the only way back up — and it is also the context a reader needs
+              the only way back up, and it is also the context a reader needs
               before the decision means anything. */}
           {project ? (
             <nav aria-label="Breadcrumb" className="mb-7">

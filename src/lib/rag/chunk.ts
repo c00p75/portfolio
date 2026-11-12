@@ -18,8 +18,8 @@ const MIN_TOKENS = 40;
  *
  * The chat is an easier oracle than the writing it draws on: a visitor who
  * would never read an ADR end to end will happily ask where a key lives. So
- * operational detail — the endpoint behind a documented gap, what a compromise
- * would enable — gets fenced, and retrieval never sees it. This is deliberately
+ * operational detail, the endpoint behind a documented gap, what a compromise
+ * would enable, gets fenced, and retrieval never sees it. This is deliberately
  * a build-time cut rather than an instruction to the model: a passage that is
  * not in the index cannot be leaked by a model having a bad day.
  *
@@ -38,7 +38,7 @@ function cleanMdx(raw: string): string {
       .replace(PRIVATE_BLOCK, '')
       // import/export lines from MDX.
       .replace(/^\s*(import|export)\s.+$/gm, '')
-      // JSX tags — keep their text content, drop the markup.
+      // JSX tags, keep their text content, drop the markup.
       .replace(/<\/?[A-Za-z][^>]*>/g, '')
       // Images: keep alt text only.
       .replace(/!\[([^\]]*)]\([^)]*\)/g, '$1')
@@ -109,7 +109,7 @@ export function chunkDocument(input: {
         tokens,
       });
     } else if (chunks.length > 0) {
-      // Too small to stand alone — fold it into the previous chunk instead of
+      // Too small to stand alone, fold it into the previous chunk instead of
       // shipping a fragment that will never win a ranking.
       const prev = chunks[chunks.length - 1]!;
       prev.text = `${prev.text}\n\n${text}`;

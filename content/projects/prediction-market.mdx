@@ -1,5 +1,5 @@
 ---
-title: Prediction market platform
+title: ZM Predicts
 tagline: Binary event markets with an automated market maker and a double-entry ledger underneath
 summary: >-
   A platform where users trade YES/NO positions on real-world events. Prices come
@@ -7,16 +7,19 @@ summary: >-
   movement is a double-entry ledger posting, and settlement pays out positions when
   an event resolves. Most of it is ordinary web work sitting on top of two things
   that aren't ordinary at all: pricing and money.
-client: Employer product, name withheld
+client: Opinionated Tech (Hytel)
 role: >-
   Full-stack feature development across the trading, wallet, settlement and admin
-  surfaces, in a remote engineering team.
-period: '2025 — 2026'
+  surfaces, and the reconciliation engine behind them, in a remote engineering
+  team.
+period: '2025 to 2026'
 status: production
 order: 5
 featured: false
 draft: false
 accent: cyan
+category: web-app
+updated: '2026-06'
 disciplines:
   - architecture
   - payments
@@ -30,6 +33,10 @@ stack:
   - Zustand
   - Tailwind
   - LMSR
+  - tRPC
+  - Firebase Cloud Functions
+  - Firestore
+  - Turborepo
 highlights:
   - >-
     Prices come from a logarithmic market scoring rule rather than from matching
@@ -50,6 +57,25 @@ highlights:
     Markets are embeddable in partner media sites as a widget, with affiliate
     attribution carried through so commission can be traced back to the placement
     that produced the trade.
+  - >-
+    Five checks run over the same records and answer different questions: is a
+    department inside its approved budget, do related revenue and expenses tie out,
+    are the records clean, does our view agree with the institution's general
+    ledger, and are approved expenses actually paid at the amount approved.
+  - >-
+    They produce tracked exceptions rather than blocking writes. A reconciliation
+    engine that refuses data it can't reconcile is useless to a finance office,
+    because the whole reason they need one is that the data is already inconsistent.
+    The output is a worklist, not a validation error.
+  - >-
+    Money is tracked through a lifecycle of committed, then spent, then paid,
+    instead of as a single amount. Those are three genuinely different states, and
+    collapsing them is what produces a budget that looks fine right up until the
+    invoices land.
+  - >-
+    An AI pass suggests object codes for records that look miscategorised, and never
+    applies them. A suggestion a human accepts is a workflow. A silent
+    recategorisation inside someone's books is a liability.
 metrics:
   - label: Pricing mechanism
     value: LMSR
@@ -67,7 +93,45 @@ metrics:
     value: '3% on profit'
     basis: 'Charged on realised profit rather than on traded volume.'
     direction: neutral
-links: []
+  - label: Reconciliation checks
+    value: '5'
+    basis: >-
+      Budget vs actual, revenue-to-expense tie-out, data quality, general-ledger
+      match, and three-way invoice/expense/payment match.
+    direction: neutral
+  - label: Tracked exception types
+    value: '18'
+    basis: 'Distinct exception types the five checks can raise, each separately triaged.'
+    direction: neutral
+  - label: AI categorisations applied automatically
+    value: '0'
+    basis: >-
+      Structural. The AI pass annotates records with a suggested object code, and
+      the suggestion requires human acceptance. Same reasoning as confining an
+      assistant's write access elsewhere in this portfolio.
+    direction: down-is-good
+links:
+  - label: ZM Predicts
+    href: https://www.zambiapredict.com
+    kind: live
+cover: ../../public/images/projects/zm-predicts.png
+gallery:
+  - image: ../../public/images/projects/zm-predicts.png
+    alt: >-
+      ZM Predicts home page: Opinions that matter, with a featured market priced at 0.50 YES and NO and a stake calculator
+    caption: 'Home page and featured market'
+  - image: ../../public/images/projects/zm-markets.jpg
+    alt: >-
+      ZM Predicts markets page with search, filters and a spotlight market
+    caption: 'Markets'
+  - image: ../../public/images/projects/zm-scroll.jpg
+    alt: >-
+      ZM Predicts market summary with implied odds and platform stats for active markets and open interest
+    caption: 'Market stats'
+  - image: ../../public/images/projects/zm-mobile.jpg
+    alt: >-
+      ZM Predicts on a phone, with the featured market and stake buttons
+    caption: 'On a phone'
 ---
 
 ## Why an automated market maker
@@ -90,8 +154,33 @@ settlements, the property you want isn't that the arithmetic is correct. It's th
 incorrect arithmetic is *detectable*. Double-entry hands you an invariant to check
 instead of a number to trust.
 
+## Reconciliation: why exceptions rather than validation
+
+The instinct with financial data is to validate on the way in and reject whatever
+doesn't balance. That instinct is wrong here, and understanding why is most of the
+design.
+
+A finance office adopting a reconciliation tool already has inconsistent records.
+That's why they're adopting it. A system that refuses the inconsistent ones
+imports a clean subset and leaves the actual problem sitting outside the tool. So
+every check writes exceptions instead: typed, tracked, assignable and countable.
+The product is the worklist.
+
+## Reconciliation: the part that is genuinely hard
+
+The five checks aren't independent, and they can contradict each other. A record
+can sit inside budget, tie out against revenue, and still fail the general-ledger
+match. Which of those an administrator should act on depends on context the system
+doesn't have. Most checks recompute on every write so the position stays current.
+The general-ledger tie-out is heavy enough that it runs on demand and after a
+journal import instead.
+
+Deciding which checks are cheap enough to run continuously and which have to be
+explicit is the same shape of problem as splitting risk limits between an order
+path and a supervision loop, elsewhere in this portfolio. The cost of evaluating a
+rule determines where that rule is allowed to live.
+
 ## A note on this write-up
 
-This was built for an employer and the product is not named here. The engineering
-described is my own work on it; the commercial detail, the numbers and the brand
-are theirs.
+This was built for an employer. The engineering described is my own work on
+it; the commercial detail, the numbers and the brand are theirs.

@@ -18,7 +18,7 @@ import { cn } from '@/lib/cn';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: `${site.name} — ${site.role} based in ${site.location}. CTO at Ballo Innovations; building payments, messaging, and AI systems end to end.`,
+  description: `${site.name}: ${site.role} based in ${site.location}. CTO at Ballo Innovations; building payments, messaging, and AI systems end to end.`,
 };
 
 const focus = [
@@ -29,7 +29,7 @@ const focus = [
 ] as const;
 
 /**
- * The right column of the intro — a vertical cluster of stickers, one per fact.
+ * The right column of the intro, a vertical cluster of stickers, one per fact.
  * Rotation stays on each sticker; the group as a whole is centred in the column.
  */
 const factStickers: FactSticker[] = [
@@ -40,7 +40,7 @@ const factStickers: FactSticker[] = [
   { label: 'CAT · US / EU / GCC', caption: 'Timezones', accent: 'lime', rotate: -1 },
 ];
 
-/** Habits that show up in the work — short enough to scan. */
+/** Habits that show up in the work, short enough to scan. */
 const principles: {
   t: string;
   d: string;
@@ -74,7 +74,7 @@ const principles: {
 
 /**
  * The photo grid beside the talk video. `span` widens a tile to the full two
- * columns — used for the two group shots, which need the horizontal room.
+ * columns, used for the two group shots, which need the horizontal room.
  */
 type Photo = {
   src: StaticImageData;
@@ -123,7 +123,7 @@ const teamGroupPhoto: Photo = {
 
 /**
  * The desk shot mirrors the video's portrait shape, which is why it sits at
- * the top of the left column — the two "at the work" moments read as a pair.
+ * the top of the left column, the two "at the work" moments read as a pair.
  */
 const atTheDeskPhoto: Photo = {
   src: coolPhoto,
@@ -135,7 +135,7 @@ const atTheDeskPhoto: Photo = {
 };
 
 /**
- * Leadership role first. Internships stay, but shorter — they support the
+ * Leadership role first. Internships stay, but shorter, they support the
  * story without competing with Ballo / Hytel.
  */
 const experience: {
@@ -149,7 +149,7 @@ const experience: {
   {
     org: 'Ballo Innovations',
     role: 'Chief Technology Officer',
-    period: 'Dec 2023 — present',
+    period: 'Dec 2023 to present',
     place: 'Hybrid · Lusaka, Zambia',
     current: true,
     points: [
@@ -161,7 +161,7 @@ const experience: {
   {
     org: 'Hytel',
     role: 'Software Engineer',
-    period: 'Nov 2025 — present',
+    period: 'Nov 2025 to present',
     place: 'Hybrid · US / Dubai / Zambia / Australia / Philippines',
     current: true,
     points: [
@@ -172,21 +172,21 @@ const experience: {
   {
     org: 'Torre.ai',
     role: 'Software Engineer Intern',
-    period: 'Jul 2025 — Sep 2025',
+    period: 'Jul 2025 to Sep 2025',
     place: 'Remote · San Francisco Bay Area',
     points: ['Built full-stack product features in a fully remote engineering team.'],
   },
   {
     org: 'Silverbrain AI',
     role: 'Front-End Developer Intern',
-    period: 'Mar 2024 — Jun 2024',
+    period: 'Mar 2024 to Jun 2024',
     place: 'Remote · Geneva, Switzerland',
     points: ['Shipped responsive Next.js interfaces wired to backend APIs.'],
   },
 ];
 
 /**
- * A tiny helper to keep the media-carousel rows readable — each `Photo`
+ * A tiny helper to keep the media-carousel rows readable, each `Photo`
  * const already carries everything a carousel `MediaItem` needs, and the
  * `key` argument disambiguates copies of the same photo appearing in both
  * rows.
@@ -246,7 +246,7 @@ export default function AboutPage() {
       {/*
        * Intro and experience share one positioning context so the sticker
        * rail can stay pinned across both, then release at "How I work".
-       * Nothing here may clip overflow — that would kill the sticky.
+       * Nothing here may clip overflow, that would kill the sticky.
        */}
       <div className="px-edge">
         <div className="relative mx-auto max-w-[110rem]">
@@ -381,8 +381,7 @@ export default function AboutPage() {
           {/*
            * The sticky rail. Absolutely positioned over the right-hand column
            * both cards share, so it pins under the nav from the intro all the
-           * way down and releases at the bottom of the experience card —
-           * i.e. as "How I work" arrives. Decorative and non-interactive, so
+           * way down and releases at the bottom of the experience card, * i.e. as "How I work" arrives. Decorative and non-interactive, so
            * pointer events pass through to the card underneath.
            */}
           {/* No aria-hidden on either copy: whichever one is `display:none`
@@ -457,7 +456,7 @@ export default function AboutPage() {
            * Two-row marquee: the top row drifts left, the bottom row drifts
            * right, so the wall never feels static. Hovering (or tabbing into)
            * a row pauses it, and clicking any tile opens it in a lightbox at
-           * a comfortable size — a full-screen play view for the video, a
+           * a comfortable size, a full-screen play view for the video, a
            * fit-to-viewport image for the photos.
            */}
           <MediaCarousel
@@ -492,13 +491,13 @@ export default function AboutPage() {
 
       {/*
        * Signature card. The footer already carries the primary CTA, so this
-       * closes the page with a smaller, human moment — a portrait, a name,
-       * and a couple of ways in — rather than a duplicate hero-scale CTA.
+       * closes the page with a smaller, human moment, a portrait, a name,
+       * and a couple of ways in, rather than a duplicate hero-scale CTA.
        */}
       <section className="px-edge pt-6 sm:pt-10" aria-label="Signature">
         <InkCard className="overflow-hidden">
           <div className="grid items-stretch lg:grid-cols-[0.9fr_1.1fr]">
-            {/* Cream panel with the portrait — no grid, photo grounded rather than fading into ink. */}
+            {/* Cream panel with the portrait, no grid, photo grounded rather than fading into ink. */}
             <div className="bg-cream text-on-cream relative isolate min-h-72 overflow-hidden lg:min-h-full lg:rounded-r-[6rem]">
               <Image
                 src={portrait}

@@ -9,8 +9,8 @@ export const contentType = 'image/png';
 
 /**
  * Prerender one card per record at build time. Without this the route is served
- * on demand, and the first crawler to request it — usually the one that matters,
- * because it is the link someone just pasted into LinkedIn — pays the render.
+ * on demand, and the first crawler to request it, usually the one that matters,
+ * because it is the link someone just pasted into LinkedIn, pays the render.
  */
 export function generateStaticParams() {
   return allAdrs().map((a) => ({ slug: a.slug }));
@@ -68,7 +68,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           fontFamily: 'JetBrains Mono',
         }}
       >
-        {/* Top rail: record number, status, domain — the same three facts the
+        {/* Top rail: record number, status, domain, the same three facts the
             page header leads with. */}
         {/* Built as a flat array rather than nested fragments: satori resolves
             `align-items` against direct flex children only, so a divider inside

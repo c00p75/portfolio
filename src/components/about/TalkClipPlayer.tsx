@@ -6,8 +6,8 @@ import { cn } from '@/lib/cn';
 /**
  * Portrait talk clip with a custom play button overlaid on the poster.
  *
- * The native `controls` bar is kept — it's the familiar way to pause, seek and
- * scrub — but before the first click the overlay is what signals "this is a
+ * The native `controls` bar is kept, it's the familiar way to pause, seek and
+ * scrub, but before the first click the overlay is what signals "this is a
  * video". Once the clip has started we let the native chrome take over and
  * the overlay stays out of the way for the rest of the session.
  */

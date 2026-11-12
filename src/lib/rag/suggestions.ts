@@ -40,7 +40,7 @@ export const ALL_SUGGESTIONS: string[] = [
 ];
 
 /**
- * Cache key for a query. Deliberately forgiving — trailing whitespace, casing
+ * Cache key for a query. Deliberately forgiving, trailing whitespace, casing
  * and a missing question mark should still hit a precomputed vector, since a
  * visitor who retypes a chip by hand is asking the same question.
  */

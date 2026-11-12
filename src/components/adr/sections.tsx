@@ -12,7 +12,7 @@ const scoreMeta: Record<Score, { label: string; dots: number; tone: string }> = 
 
 /**
  * Score is conveyed by a filled/empty pip count *and* a text label, never by
- * colour alone — the matrix has to survive greyscale printing and colour
+ * colour alone, the matrix has to survive greyscale printing and colour
  * vision deficiency.
  */
 function ScoreCell({ score }: { score: Score }) {
@@ -96,7 +96,7 @@ export function TradeoffMatrix({ adr }: { adr: Adr }) {
                     {score ? (
                       <ScoreCell score={score} />
                     ) : (
-                      <span className="text-on-ink-muted text-xs">—</span>
+                      <span className="text-on-ink-muted text-xs">n/a</span>
                     )}
                   </td>
                 );
@@ -248,7 +248,7 @@ export function FailureModes({ adr }: { adr: Adr }) {
  * Quantified outcomes. Each carries the basis so a number is never bare.
  *
  * Takes the metrics rather than the record so project case studies can render
- * the same strip — both collections use the identical metric shape, which is
+ * the same strip, both collections use the identical metric shape, which is
  * what keeps `basis` required in both places.
  */
 export function MetricsStrip({

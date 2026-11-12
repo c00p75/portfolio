@@ -52,7 +52,7 @@ const LAST_RELEASE = 0.9;
 
 /**
  * Scroll progress at which the block in the given landing position lets go.
- * Position 0 is the block directly above the floor — the first to land.
+ * Position 0 is the block directly above the floor, the first to land.
  */
 function releaseAt(position: number, count: number) {
   if (count < 2) return FIRST_RELEASE;
@@ -66,7 +66,7 @@ function clamp01(n: number) {
 }
 
 type Motion = {
-  /** Vertical offset from the resting position — negative is above it. */
+  /** Vertical offset from the resting position, negative is above it. */
   y: number;
   /** Degrees to add to the block's resting rotation. */
   tilt: number;
@@ -81,7 +81,7 @@ type Motion = {
 
 const AT_REST: Motion = { y: 0, tilt: 0, squash: 0, blur: 0, impact: 0, opacity: 1 };
 
-/** Off the pile and out of sight — where a block waits before it is dropped. */
+/** Off the pile and out of sight, where a block waits before it is dropped. */
 const OFF_STAGE: Motion = {
   y: -DROP_DISTANCE,
   tilt: AIR_TILT,
@@ -130,8 +130,8 @@ function falling(t: number): Motion {
 }
 
 /**
- * The leap. A quick crouch — which shoves the pile down, the way pushing off
- * does — then a launch that decelerates as it climbs, the mirror of the fall.
+ * The leap. A quick crouch, which shoves the pile down, the way pushing off
+ * does, then a launch that decelerates as it climbs, the mirror of the fall.
  */
 function leaping(t: number): Motion {
   if (t >= 1) return OFF_STAGE;
@@ -153,7 +153,7 @@ function leaping(t: number): Motion {
 
   const u = (t - CROUCH_PORTION) / (1 - CROUCH_PORTION);
   return {
-    // Fast off the pile, slowing as it climbs — thrown, not lifted.
+    // Fast off the pile, slowing as it climbs, thrown, not lifted.
     y: -DROP_DISTANCE * (2 * u - u * u),
     tilt: AIR_TILT * u,
     // Stretches as it launches, the opposite of the landing squash.
@@ -215,7 +215,7 @@ export function FactStickerStack({
   }, []);
 
   useEffect(() => {
-    // No flight for reduced motion — the finished pile, immediately.
+    // No flight for reduced motion, the finished pile, immediately.
     if (reducedMotion) {
       flights.current = stickers.map(() => ({ dir: 'down', at: -Infinity }));
       tick((n) => n + 1);
@@ -251,7 +251,7 @@ export function FactStickerStack({
         progress = clamp01(-rect.top / Math.max(1, rect.height * ASSEMBLE_OVER));
       } else {
         // Inline: the root is only as tall as the cluster, so drive it off the
-        // viewport instead — the pile assembles as it rises into view.
+        // viewport instead, the pile assembles as it rises into view.
         const vh = window.innerHeight || 1;
         progress = clamp01((vh * 0.85 - rect.top) / (vh * 0.55));
       }
@@ -265,7 +265,7 @@ export function FactStickerStack({
         const wanted: Direction =
           progress >= releaseAt(total - 2 - i, total - 1) ? 'down' : 'up';
         const current = flights.current[i];
-        // Nothing to do if it is already going that way — or, for a block
+        // Nothing to do if it is already going that way, or, for a block
         // that has never moved, if it is already parked off-stage.
         if (current ? current.dir === wanted : wanted === 'up') continue;
         (wanted === 'down' ? falls : leaps).push(i);
@@ -383,7 +383,7 @@ export function FactStickerStack({
               {isFloor ? (
                 <>
                   {/*
-                   * Floor contact — sits below the sticker (not behind it).
+                   * Floor contact, sits below the sticker (not behind it).
                    * Cream, not black: black-on-ink (#0b0b0b) disappears.
                    */}
                   <span

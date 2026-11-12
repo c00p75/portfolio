@@ -9,7 +9,7 @@ export type TocEntry = {
   items?: TocEntry[];
 };
 
-/** Flatten to two levels — deeper nesting turns a rail into an outline. */
+/** Flatten to two levels, deeper nesting turns a rail into an outline. */
 function flatten(entries: TocEntry[], depth = 0): { id: string; title: string; depth: number }[] {
   return entries.flatMap((entry) => {
     const id = entry.url.replace(/^#/, '');

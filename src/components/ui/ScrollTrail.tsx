@@ -6,7 +6,7 @@ import { cn } from '@/lib/cn';
 
 /**
  * A paper craft that travels down a page as you scroll, drawing its trail
- * behind it — the effect from the Ballo Innovations about page, rebuilt
+ * behind it, the effect from the Ballo Innovations about page, rebuilt
  * without GSAP.
  *
  * Ballo does this with ScrollTrigger + MotionPathPlugin, and reveals the trail
@@ -17,12 +17,12 @@ import { cn } from '@/lib/cn';
  * craft's nose.
  *
  * Native: `getPointAtLength` for position, a sample just ahead for heading,
- * and `stroke-dashoffset` for the trail — so the line is genuinely drawn to
+ * and `stroke-dashoffset` for the trail, so the line is genuinely drawn to
  * exactly where the craft is.
  */
 
 /**
- * The route, as waypoints the craft passes through — not Bézier control
+ * The route, as waypoints the craft passes through, not Bézier control
  * points. Hand-placed control points make every join a potential kink: two
  * curves meeting at a shared point still jerk unless their handles are
  * collinear. These are anchors; the handles are derived below, so the whole
@@ -38,11 +38,11 @@ export type Waypoint = { x: number; y: number; loop?: boolean };
  *
  * `fly` turns to face the direction of travel, banks into corners, and can
  * fly loops. `sail` stays upright and rocks: a boat that pitched over to
- * follow a descending path — let alone inverted through a loop — would read
+ * follow a descending path, let alone inverted through a loop, would read
  * as a shipwreck, so heading is deliberately ignored.
  *
  * `roll` spins by distance covered rather than by a clock, so the ball turns
- * exactly once per circumference travelled — rolling without slipping. Get that
+ * exactly once per circumference travelled, rolling without slipping. Get that
  * wrong in either direction and it reads as a ball skidding.
  */
 export type TrailMotion = 'fly' | 'sail' | 'walk' | 'roll';
@@ -73,7 +73,7 @@ const STRIDE = 34;
 
 /**
  * Frame order while moving: left contact, right contact. The standing pose is
- * deliberately not in the cycle — it means "stopped", and putting it between
+ * deliberately not in the cycle, it means "stopped", and putting it between
  * steps would read as the robot hesitating on every stride.
  */
 const WALK_CYCLE = [1, 2] as const;
@@ -118,7 +118,7 @@ const MAX_TRAIL = 0.13;
 /**
  * Time constant for the tail catching the craft up, in seconds. While the
  * reader scrolls, the head outruns this and the trail sits at `MAX_TRAIL`;
- * when they stop, the head stops and the tail closes the gap — the contrail
+ * when they stop, the head stops and the tail closes the gap, the contrail
  * dispersing behind an aircraft that has passed.
  */
 const CATCH_UP_TAU = 0.62;
@@ -133,8 +133,7 @@ const PRINTS = 26;
 /**
  * How far the reader has to scroll before the craft lets go of its berth.
  *
- * The drop is triggered, not scrubbed. Scrubbing it against scroll position —
- * which is what this did — means every scroll pause leaves the craft frozen
+ * The drop is triggered, not scrubbed. Scrubbing it against scroll position, * which is what this did, means every scroll pause leaves the craft frozen
  * halfway down, hanging in mid-air with nothing holding it up. A fall is not a
  * thing you can be partway through and stationary: either it is up, or it is
  * falling, or it has landed.
@@ -144,7 +143,7 @@ const DROP_TRIGGER = 0.012;
 /**
  * Seconds the fall itself takes, once triggered. Short on purpose: the craft
  * covers most of a screen height, and anything slower reads as lowering rather
- * than dropping — the acceleration curve cannot sell weight on its own if the
+ * than dropping, the acceleration curve cannot sell weight on its own if the
  * whole fall lasts longer than a real one would.
  */
 const DROP_SECONDS = 0.42;
@@ -156,7 +155,7 @@ const RISE_SECONDS = 0.34;
  * Where the craft rests when the reader has asked for reduced motion.
  *
  * The start of the route, not the end. Parking at the end is the loudest static
- * state there is — a craft that has visibly finished a journey the reader never
+ * state there is, a craft that has visibly finished a journey the reader never
  * saw it take, sitting at the foot of a page whose trail is fully drawn. At the
  * start it simply reads as waiting.
  *
@@ -169,7 +168,7 @@ const REDUCED_REST = 0.02;
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
 
 /**
- * The impact. A hull hitting water does not settle in one motion — it slaps,
+ * The impact. A hull hitting water does not settle in one motion, it slaps,
  * rings, and damps out fast. This is deliberately shorter, faster and harsher
  * than the swell the boat rides afterwards: a fraction of a second of real
  * shake is what sells the fall as having had weight behind it.
@@ -225,7 +224,7 @@ function handles(prev: number[], a: number[], b: number[], next: number[]) {
 /**
  * A full circle starting at `p`, entered along `tangent`, as four cubic arcs.
  * It ends where it began travelling the same way, so the glide either side is
- * undisturbed — a loop splices into a smooth path without breaking it.
+ * undisturbed, a loop splices into a smooth path without breaking it.
  */
 function loopAt(p: number[], tangent: number[], r: number) {
   const len = Math.hypot(tangent[0]!, tangent[1]!) || 1;
@@ -254,7 +253,7 @@ function loopAt(p: number[], tangent: number[], r: number) {
  *
  * Given as an element id rather than as y fractions, because the fractions
  * that line up with a section today stop lining up the moment its content
- * changes length — and this route is shared by a page whose sections are
+ * changes length, and this route is shared by a page whose sections are
  * generated from content files.
  */
 export type Pin = {
@@ -264,7 +263,7 @@ export type Pin = {
    * Which way the craft should face for the pinned stretch.
    *
    * Needed because facing is normally read from the direction of travel, and a
-   * pinned run has none — it holds one `x`, so the craft simply keeps whatever
+   * pinned run has none, it holds one `x`, so the craft simply keeps whatever
    * heading it arrived with, which is a coin toss decided by the waypoint
    * before the section.
    */
@@ -281,7 +280,7 @@ type PinSpan = { from: number; to: number; face: 'left' | 'right' };
  * Waypoints inside the span are dropped and replaced with held ones, and the
  * held run is entered and left one waypoint early on each side. Without that
  * lead-in the spline would still be swinging across the page as it arrived and
- * would bulge back over the column — Catmull-Rom handles are derived from the
+ * would bulge back over the column, Catmull-Rom handles are derived from the
  * neighbours, so a point's position is not enough to control its tangent.
  */
 function applyPins(route: Waypoint[], pins: Pin[], root: HTMLElement, h: number) {
@@ -345,7 +344,7 @@ function buildPath(route: Waypoint[], w: number, h: number) {
  *
  * Each term is a sine whose amplitude is divided by its own frequency, making
  * the derivative `1 + Σ aᵢ·cos(…)`. Keeping `Σ|aᵢ| < 1` therefore keeps it
- * strictly increasing — it surges and eases but never stalls or reverses,
+ * strictly increasing, it surges and eases but never stalls or reverses,
  * whichever way the page is scrolled. Integer frequencies land the curve back
  * on 0 and 1, so the ends still line up with the top and bottom of the page.
  */
@@ -361,8 +360,8 @@ function paceRaw(p: number) {
 
 /**
  * The second term carries a phase offset, so the raw curve does not start at
- * zero. Both ends are off by the same amount — integer frequencies see to
- * that — so subtracting the value at zero lands it exactly on 0 and 1 without
+ * zero. Both ends are off by the same amount, integer frequencies see to
+ * that, so subtracting the value at zero lands it exactly on 0 and 1 without
  * touching the shape between.
  */
 const PACE_AT_ZERO = paceRaw(0);
@@ -418,7 +417,7 @@ export function ScrollTrail({
     /**
      * Grow back up over the closing stretch of the route, from this fraction of
      * it onwards. Requires `intro`, since that is where the hero size is
-     * declared — and because the element is laid out at hero size, the return
+     * declared, and because the element is laid out at hero size, the return
      * leg is still only ever scaling down from it.
      *
      * `scale` is the size to arrive at, in the same units as `intro.scale`, and
@@ -429,7 +428,7 @@ export function ScrollTrail({
     outro?: { from: number; scale?: number };
     /**
      * Grow toward the reader over the closing stretch, without the hero drop
-     * `intro`/`outro` imply — the craft simply walks nearer as the page ends.
+     * `intro`/`outro` imply, the craft simply walks nearer as the page ends.
      *
      * Same rasterisation rule as `intro`: the sprite is laid out at its
      * *arrival* size and travels at `1/scale` of it, so the whole run is a
@@ -475,7 +474,7 @@ export function ScrollTrail({
   /*
    * Neither a rolling ball nor a boat leaves anything behind.
    *
-   * The ball has no real-world equivalent to draw — a line behind it just reads
+   * The ball has no real-world equivalent to draw, a line behind it just reads
    * as the ball dragging a pen. The boat did have one, and it was drawn as
    * spreading arcs rather than a stroke, but the hull already carries its own
    * rings: two wakes competing for the same idea, with the trailing one adding
@@ -500,7 +499,7 @@ export function ScrollTrail({
 
   /**
    * Held in state rather than read once inside the animation effect, so that a
-   * reader who changes the setting gets the change without a reload — and so
+   * reader who changes the setting gets the change without a reload, and so
    * the effect below rebuilds around it instead of having decided at mount.
    */
   const [reducedMotion, setReducedMotion] = useState(
@@ -557,8 +556,8 @@ export function ScrollTrail({
         const mark = printsRef.current[i];
         if (!mark) continue;
 
-        // Snapped to a fixed grid so marks stay put on the ground — or the
-        // water — as the craft advances, instead of sliding along with it.
+        // Snapped to a fixed grid so marks stay put on the ground, or the
+        // water, as the craft advances, instead of sliding along with it.
         const stride = Math.floor(headPx / spacing) - i;
         const dist = stride * spacing;
 
@@ -639,8 +638,8 @@ export function ScrollTrail({
       /*
        * The intro is a drop, not a glide: the craft falls from its hero berth
        * to the point where it starts travelling, the same way the About page's
-       * blocks land. Free fall is `y ∝ t²` — real gravity, accelerating rather
-       * than easing out — and the last stretch is the landing: a couple of
+       * blocks land. Free fall is `y ∝ t²`, real gravity, accelerating rather
+       * than easing out, and the last stretch is the landing: a couple of
        * decaying rebounds with a squash on first contact.
        *
        * Both ends are points on the route, so when the drop finishes the craft
@@ -649,8 +648,8 @@ export function ScrollTrail({
       /** In the middle of the drop: not on the route, and not yet on water. */
       const airborne = !!intro && dropRef.current > 0 && dropRef.current < 1;
       /**
-       * Actually on the water. Everything that means "floating" — the wake,
-       * the idle bob — is gated on this, so none of it plays while the craft
+       * Actually on the water. Everything that means "floating", the wake,
+       * the idle bob, is gated on this, so none of it plays while the craft
        * is still berthed or still falling.
        */
       const afloat = !intro || dropRef.current >= 1;
@@ -703,7 +702,7 @@ export function ScrollTrail({
          * The return leg. The craft grows back to the size it opened at over
          * the closing stretch, so the route reads as an arrival rather than the
          * craft simply running out of page at thumbnail size. Same smoothstep,
-         * same size — this is the intro ramp run backwards.
+         * same size, this is the intro ramp run backwards.
          */
         if (outro && progress > outro.from) {
           const target = outro.scale ?? intro.scale;
@@ -730,7 +729,7 @@ export function ScrollTrail({
 
       /*
        * The impact shake, as a fraction of full violence: 1 at the instant of
-       * contact, 0 once it has rung out. Squared so it collapses fast — a hull
+       * contact, 0 once it has rung out. Squared so it collapses fast, a hull
        * that damped linearly would look like it was bobbing, not recovering.
        */
       let impact = 0;
@@ -768,7 +767,7 @@ export function ScrollTrail({
 
         /*
          * Which way it is walking. The sprite is drawn facing left, so the
-         * mirror goes on when the route carries it right — the same rule the
+         * mirror goes on when the route carries it right, the same rule the
          * boat uses. Read over a long lookahead and ignored below a few
          * pixels, so a near-vertical stretch cannot spin it on the spot.
          */
@@ -801,13 +800,13 @@ export function ScrollTrail({
         orientation = ` rotate(${spinRef.current.toFixed(1)}deg)`;
       } else if (motion === 'sail') {
         /*
-         * A boat keeps its mast up — it never rotates to the heading. What it
+         * A boat keeps its mast up, it never rotates to the heading. What it
          * does do is come about: the sprite is drawn facing left, so it is
          * mirrored whenever the route is carrying it right.
          *
          * The direction is read over a long lookahead and only acted on past a
-         * few pixels of travel, so near-vertical stretches — where the sign of
-         * dx is basically noise — do not make it flap between headings.
+         * few pixels of travel, so near-vertical stretches, where the sign of
+         * dx is basically noise, do not make it flap between headings.
          */
         const ahead = path.getPointAtLength(Math.min(total, here + 40));
         const dx = ahead.x - at.x;
@@ -816,7 +815,7 @@ export function ScrollTrail({
          * `x`: `dx` there is noise around zero, so the boat would otherwise keep
          * whatever facing the approach happened to leave it with.
          *
-         * Otherwise the heading decides — except while the craft is dropping.
+         * Otherwise the heading decides, except while the craft is dropping.
          * During the fall `at` has been replaced by the drop position while
          * `ahead` is still sampled from the route near its start, so the two are
          * not on the same stretch and their difference is meaningless. Reading it
@@ -826,8 +825,7 @@ export function ScrollTrail({
         if (pin) flipRef.current = pin.face === 'right';
         else if (!airborne && Math.abs(dx) > 4) flipRef.current = dx > 0;
 
-        // Rock on a slow swell, independent of which way the route curves —
-        // plus, for a fraction of a second after touchdown, the judder of a
+        // Rock on a slow swell, independent of which way the route curves, // plus, for a fraction of a second after touchdown, the judder of a
         // hull that has just hit the water hard. The two simply add: the swell
         // is already there underneath as the impact rings out.
         rock =
@@ -836,7 +834,7 @@ export function ScrollTrail({
           SHAKE_DEG * impact * Math.sin(impactPhase);
 
         // A vertical judder off the same phase but a different multiple, so
-        // the hull is not simply pivoting about a point — it is being thrown.
+        // the hull is not simply pivoting about a point, it is being thrown.
         const lift = SHAKE_LIFT * impact * Math.sin(impactPhase * 1.7);
 
         orientation =
@@ -862,7 +860,7 @@ export function ScrollTrail({
          *
          * Inside a loop that rule has to stop applying: the heading sweeps the
          * whole circle, so re-deciding the mirror would flip the sprite twice
-         * per loop — and being inverted at the top of a loop is the point. The
+         * per loop, and being inverted at the top of a loop is the point. The
          * mirror is only re-evaluated while the path runs roughly straight.
          */
         const looping = Math.abs(turn) > LOOP_TURN;
@@ -870,7 +868,7 @@ export function ScrollTrail({
         const flipped = flipRef.current;
         const rotation = flipped ? heading - nose : heading + nose;
 
-        // Bank into turns — but not in a loop, where the roll is the loop
+        // Bank into turns, but not in a loop, where the roll is the loop
         // itself and a clamped lean would just sit it at an angle.
         const bank = looping ? 0 : Math.max(-16, Math.min(16, turn * 0.55)) * (flipped ? -1 : 1);
 
@@ -878,7 +876,7 @@ export function ScrollTrail({
       }
 
       // Position on the outer element, orientation on the sprite. Keeping them
-      // apart means the ripples — which sit in the outer one — stay flat on
+      // apart means the ripples, which sit in the outer one, stay flat on
       // the water instead of rocking and mirroring along with the hull.
       craft.style.transform = `translate(calc(${at.x.toFixed(1)}px - 50%), calc(${at.y.toFixed(1)}px - 50%))`;
       const squashY = 1 - squash * 0.13;
@@ -897,7 +895,7 @@ export function ScrollTrail({
       /*
        * A craft that opens as the hero has to paint over the card it sits in,
        * but only while it is sitting there. Once it has dropped and set off it
-       * belongs to the background like every other trail — passing behind the
+       * belongs to the background like every other trail, passing behind the
        * cards rather than over them. One stacking level, switched at the
        * handover, rather than two elements.
        */
@@ -909,8 +907,8 @@ export function ScrollTrail({
       if (sprite) {
         /*
          * Scaled about its centre, which is where the translation above puts
-         * the route's point. Anchoring the scale to the bottom instead — as
-         * this did, for the sake of the landing squash — leaves the craft
+         * the route's point. Anchoring the scale to the bottom instead, as
+         * this did, for the sake of the landing squash, leaves the craft
          * hanging half a hero-height below its own position once it has shrunk,
          * and detaches it from the wake, which is anchored to the box.
          */
@@ -928,7 +926,7 @@ export function ScrollTrail({
       const wake = wakeRef.current;
       if (wake) {
         /*
-         * Only the tilt is cancelled — the scale is inherited on purpose, so
+         * Only the tilt is cancelled, the scale is inherited on purpose, so
          * the rings stay proportional to the hull at any size. Holding them at
          * a constant size instead left them as a small ellipse tucked under
          * the hero boat, which is why there appeared to be no wake at rest.
@@ -938,14 +936,14 @@ export function ScrollTrail({
          */
         wake.style.transform = `rotate(${(flipRef.current ? rock : -rock).toFixed(1)}deg)`;
         /*
-         * Hidden only while the craft is genuinely airborne — not while it is
+         * Hidden only while the craft is genuinely airborne, not while it is
          * parked at the top of the page. A boat sitting in its berth is still
          * a boat sitting on water, and before the reader has scrolled at all
          * the wake is the only thing telling them so.
          *
          * But barely there at hero size. The rings inherit the hull's scale, so
          * at 4× they are 4× the line weight and 4× the spread of the travelling
-         * wake — plenty to read as a graphic drawn around the boat rather than a
+         * wake, plenty to read as a graphic drawn around the boat rather than a
          * disturbance in a surface. Fading them to a fifth is what keeps the
          * berth still.
          */
@@ -955,7 +953,7 @@ export function ScrollTrail({
       /*
        * The idle float is held off for the same reason. It is the animation
        * that says "sitting on water", and a boat still in its berth in mid-air
-       * is doing neither — bobbing gently while suspended is what made the
+       * is doing neither, bobbing gently while suspended is what made the
        * hero read as floating in space rather than waiting to fall.
        *
        * Cleared to '' rather than set to a value, so the stylesheet's own
@@ -986,8 +984,8 @@ export function ScrollTrail({
 
       /*
        * The drop runs on this clock, not on scroll. Scroll only picks the
-       * target — up while the reader is at the very top, down once they have
-       * moved past the trigger — and the fall covers the distance at its own
+       * target, up while the reader is at the very top, down once they have
+       * moved past the trigger, and the fall covers the distance at its own
        * rate. That is what makes it impossible to catch the craft suspended:
        * pausing a scroll no longer pauses a fall.
        *
@@ -1005,14 +1003,13 @@ export function ScrollTrail({
             : Math.max(0, dropRef.current - rate);
 
         // Impact is an event, so it is stamped on the frame the fall completes
-        // rather than derived from the drop position — which would restart the
+        // rather than derived from the drop position, which would restart the
         // shake every frame the craft sat at 1.
         if (before < 1 && dropRef.current >= 1) {
           landedAtRef.current = now;
           /*
-           * Restart the splash. Re-adding the class is not enough on its own —
-           * the browser coalesces the remove and the add into no change at all
-           * — so the layout read between them is load-bearing: it forces the
+           * Restart the splash. Re-adding the class is not enough on its own, * the browser coalesces the remove and the add into no change at all
+           *, so the layout read between them is load-bearing: it forces the
            * style recalculation that makes this two events rather than none.
            */
           const splash = splashRef.current;
@@ -1109,13 +1106,13 @@ export function ScrollTrail({
       /*
        * Mapped against absolute scroll positions rather than the element's
        * offset from the fold. The earlier form assumed the region began below
-       * the first screen; a region that starts at the top of the page — as it
-       * does when the craft opens as the hero — was already a tenth of the way
+       * the first screen; a region that starts at the top of the page, as it
+       * does when the craft opens as the hero, was already a tenth of the way
        * along before the reader had scrolled at all.
        *
        * Centred on the middle of the viewport: both ends are offset by the same
        * half-screen, which makes progress track `(scrolled + vh/2 - top) /
-       * height` — the craft sits level with the reader's eye the whole way
+       * height`, the craft sits level with the reader's eye the whole way
        * down. Offsetting the two ends by different amounts, as this did
        * before, runs the craft ahead of the scroll and leaves it below the
        * fold for most of the page.
@@ -1135,7 +1132,7 @@ export function ScrollTrail({
      * its final height when this effect first runs: web fonts swap, images
      * without intrinsic dimensions reserve no space, and sections hydrate late.
      * Measured too early, `rect.height` is short, `endAt` collapses onto
-     * `startAt`, and progress clamps to 1 — the craft lands at the foot of the
+     * `startAt`, and progress clamps to 1, the craft lands at the foot of the
      * page before the reader has scrolled at all. Which of those races is won
      * depends on the browser and on whether the assets are cached, so the same
      * build animates in one browser and sits parked in the next.
@@ -1154,7 +1151,7 @@ export function ScrollTrail({
       measure();
 
       /*
-       * A page restored mid-scroll — a reload, or a back navigation — should
+       * A page restored mid-scroll, a reload, or a back navigation, should
        * find the craft already sailing. Without this the drop would play from
        * the berth on arrival, at a point where the berth is far off screen.
        */
@@ -1169,7 +1166,7 @@ export function ScrollTrail({
     window.addEventListener('resize', relayout);
     window.addEventListener('load', relayout);
     // The route is measured against the whole document, so the body's height is
-    // what matters — the root only tracks it because it is stretched to fit.
+    // what matters, the root only tracks it because it is stretched to fit.
     const observer =
       typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(relayout);
     observer?.observe(document.body);
@@ -1219,14 +1216,13 @@ export function ScrollTrail({
         className,
       )}
     >
-      {/* One path per trail segment. They all carry the same `d` — set from
-          the measured box in `layout()` — and differ only in the window their
+      {/* One path per trail segment. They all carry the same `d`, set from
+          the measured box in `layout()`, and differ only in the window their
           dash pattern exposes and how faint they are. */}
       <svg ref={svgRef} className="text-on-page-muted h-full w-full">
         {marks || trailless ? (
           <>
-            {/* Unstroked: it exists only so the marks — and the craft itself —
-                have a curve to be measured against. */}
+            {/* Unstroked: it exists only so the marks, and the craft itself, have a curve to be measured against. */}
             <path
               ref={(el) => {
                 pathsRef.current[0] = el;
@@ -1303,7 +1299,7 @@ export function ScrollTrail({
                  * out at hero size. `--wake-k` is the shrink the travelling
                  * boat ends up at, so multiplying the CSS sizes by it makes
                  * the *travelling* wake the designed one and the hero's
-                 * proportionally larger — rather than the other way round.
+                 * proportionally larger, rather than the other way round.
                  */
                 style={{ '--wake-k': 1 / (intro?.scale ?? 1) } as CSSProperties}
               >
@@ -1314,9 +1310,7 @@ export function ScrollTrail({
             ) : null}
 
             {/*
-             * The landing splash. A one-shot, so it lives outside the wake —
-             * the wake's opacity is driven every frame and would fight it —
-             * and it is triggered by a class the component re-applies on
+             * The landing splash. A one-shot, so it lives outside the wake, * the wake's opacity is driven every frame and would fight it, * and it is triggered by a class the component re-applies on
              * impact rather than by anything scroll-derived.
              */}
             {motion === 'sail' && intro ? (
@@ -1347,7 +1341,7 @@ export function ScrollTrail({
              * Airflow off the tail. Unlike the boat's wake this belongs to the
              * craft, not the world, so it lives inside the rotating element
              * and streams backwards along the fuselage. The container is
-             * turned to the sprite's own axis — hence the nose offset — and
+             * turned to the sprite's own axis, hence the nose offset, and
              * the streaks run from there.
              */}
             {motion === 'fly' ? (

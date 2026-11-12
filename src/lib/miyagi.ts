@@ -51,7 +51,7 @@ export const MODES: readonly { name: string; xp: string; detail: string }[] = [
   {
     name: 'Focus',
     xp: '0 XP',
-    detail: 'The command runs. Nothing else surfaces unless it is dangerous — refusals still report in every mode.',
+    detail: 'The command runs. Nothing else surfaces unless it is dangerous, refusals still report in every mode.',
   },
 ];
 
@@ -75,7 +75,7 @@ export const TOOLS: readonly { name: string; detail: string }[] = [
   { name: 'run_teaching_command', detail: 'Execute or dry-run a command and return a teaching card. Depth follows the session mode.' },
   { name: 'verify_step', detail: 'A read-only probe confirms the outcome exists on your machine. This is where most of the XP is.' },
   { name: 'verify_quiz_answer', detail: 'Grade the quiz, update streaks, XP, mastery and the review schedule.' },
-  { name: 'review_due_items', detail: 'The spaced-repetition session — everything whose interval has elapsed, most overdue first.' },
+  { name: 'review_due_items', detail: 'The spaced-repetition session, everything whose interval has elapsed, most overdue first.' },
   { name: 'get_user_stats', detail: 'XP, level, title, both streaks, badges, per-command mastery and lifetime totals.' },
   { name: 'export_roadmap_notes', detail: 'Write a ROADMAP_PROGRESS.md of the session, or of everything you have practised.' },
 ];

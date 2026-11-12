@@ -46,7 +46,7 @@ export function StatusPill({
 
 /**
  * Portfolio project teaser. Optimised for a hiring scan: name, one line of what
- * it is, role, stack — not a second essay before the case study.
+ * it is, role, stack, not a second essay before the case study.
  */
 export function ProjectCard({
   project,

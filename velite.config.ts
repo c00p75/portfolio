@@ -84,6 +84,10 @@ const projects = defineCollection({
       featured: s.boolean().default(false),
       draft: s.boolean().default(false),
       accent: s.enum(['cyan', 'pink', 'yellow', 'orange', 'lime']).default('cyan'),
+      /** What kind of thing it is; drives the grouping on the work index. */
+      category: s.enum(['web-app', 'mobile-app', 'landing-page', 'developer-tool', 'platform']),
+      /** Last month of real activity (YYYY-MM); orders the "Recent work" row. */
+      updated: s.string().regex(/^\d{4}-\d{2}$/),
       /** The capability areas this project demonstrates; drives home-page grouping. */
       disciplines: s.array(s.enum(['architecture', 'ai', 'mobile', 'payments', 'frontend', 'data'])).default([]),
       stack: s.array(s.string()).default([]),

@@ -1,0 +1,56 @@
+---
+title: Kleench wallet
+tagline: How a social commerce wallet moves money, written for the Bank of Zambia
+summary: >-
+  Kleench is a Zambian social commerce app where buyers back creators and pay with mobile money. My part was the wallet: how balances, escrow, withdrawals and compliance work, written up as an interactive document for the central bank, with simulators that step through each money flow.
+client: Ballo Innovations
+role: >-
+  Wallet and money-movement architecture, and the interactive regulatory document that presents it. The Kleench app itself was built by another engineer.
+period: '2026'
+status: prototype
+order: 23
+featured: false
+draft: false
+accent: orange
+category: platform
+updated: '2026-06'
+disciplines:
+  - mobile
+  - payments
+stack:
+  - Next.js
+  - TypeScript
+  - Double-entry ledger
+  - KYC tiers
+  - AML rules
+highlights:
+  - >-
+    Every wallet is three sub-ledgers (available, escrowed and pending) on a double-entry ledger, and a transfer either commits fully or rolls back. The sum of every sub-ledger must always equal a segregated trust account at a licensed bank, one to one, and any mismatch alerts finance.
+  - >-
+    Marketplace payments sit in escrow until release, when the seller is paid net of the platform fee and 15% withholding tax, which is queued for the revenue authority. Withdrawals park funds in pending, so a failed mobile money payout returns to available instead of vanishing.
+  - >-
+    Four KYC tiers, from a phone number with a zero balance up to lending and insurance, each with its own documents and balance cap. Audit records are hash-chained so tampering shows.
+  - >-
+    Phase one deliberately holds no customer money: balances are ledger entries and real funds move through licensed partners, which is what lets the product launch before it needs a money-holding licence.
+links: []
+cover: ../../public/images/projects/kleench.png
+gallery:
+  - image: ../../public/images/projects/kleench.png
+    alt: >-
+      The Kleench logo, a stylised K in blue, red and orange
+    caption: 'Kleench logo'
+---
+
+## What it is
+
+A wallet is the part of a commerce app a regulator cares about, so it had to be
+explained before it was built. The document walks the Bank of Zambia through the
+ledger, escrow, KYC, anti-money-laundering rules and what happens when the
+national payment switch goes down: person-to-person and escrow keep working, and
+mobile money flows queue until it's back.
+
+## Status
+
+This is a design, not a running system. The Kleench app itself is a prototype
+built by another engineer; its wallet screens are interface only, and the money
+movement described here is what they would sit on.

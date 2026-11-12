@@ -29,7 +29,7 @@ const ROUTE: Waypoint[] = [
 /**
  * The three exports, measured rather than guessed. Their content boxes are
  * 679, 698 and 640px tall inside images of 701, 769 and 769px, with different
- * amounts of blank space under the feet — so each frame carries the two ratios
+ * amounts of blank space under the feet, so each frame carries the two ratios
  * `ScrollTrail` needs to scale them to a common height and land the feet on
  * one line.
  *
@@ -66,8 +66,7 @@ const FRAMES: WalkFrame[] = [
 /**
  * The robot walks nearer as the page runs out: it spends the route at 96px of
  * content height and arrives at the full 184. Declared as the arrival size with
- * a scale-down, not the other way round, so the closing frames stay sharp —
- * a composited layer is rasterised at its layout size.
+ * a scale-down, not the other way round, so the closing frames stay sharp, * a composited layer is rasterised at its layout size.
  */
 const GROW = { from: 0.62, scale: 184 / 96 };
 

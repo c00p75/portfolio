@@ -11,7 +11,7 @@ type VeliteImage = { src: string; width?: number; height?: number; blurDataURL?:
  * It matters because the two cannot share a layout. A desktop capture is about
  * 16:10, so "full width, height follows the aspect" is right for it. The same
  * rule applied to a 1:2.2 phone screen renders a column of a page more than two
- * thousand pixels tall — the picture is not wrong, it is just being asked to be
+ * thousand pixels tall, the picture is not wrong, it is just being asked to be
  * a shape it is not.
  */
 function isPortrait(img: VeliteImage) {
@@ -27,7 +27,7 @@ const PHONE_WIDTH = 'w-full max-w-[19rem]';
 
 /**
  * Case-study media: optional screen recording, then a screenshot gallery.
- * Cover lives on the card / hero — this block is the evidence strip.
+ * Cover lives on the card / hero, this block is the evidence strip.
  */
 export function ProjectMedia({
   video,
@@ -107,10 +107,10 @@ export function ProjectMedia({
  */
 const BAND = 'border-ink-line relative aspect-2/1 overflow-hidden border-b bg-black/20';
 
-/** First letters of the project name — the placeholder's only real content. */
+/** First letters of the project name, the placeholder's only real content. */
 function monogram(title: string) {
   return title
-    .split(/[\s—–-]+/)
+    .split(/[\s, –-]+/)
     .filter(Boolean)
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase() ?? '')
@@ -118,7 +118,7 @@ function monogram(title: string) {
 }
 
 /**
- * Stands in for a cover on projects with no shippable screenshot — several are
+ * Stands in for a cover on projects with no shippable screenshot, several are
  * internal systems with nothing I can publish a picture of. Deliberately
  * abstract and labelled as such: a mocked-up fake screenshot would be a claim
  * about what the product looks like, and this is not that.

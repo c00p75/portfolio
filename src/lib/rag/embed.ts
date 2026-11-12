@@ -4,7 +4,7 @@
  * Everything provider-specific lives in this file on purpose: moving off Voyage
  * means rewriting `embed` and re-running the ingest, and touching nothing else.
  * Anthropic does not offer an embeddings endpoint, so this is a second vendor by
- * necessity — which is exactly why it is isolated behind one function.
+ * necessity, which is exactly why it is isolated behind one function.
  */
 
 export const EMBED_MODEL = 'voyage-3.5-lite';
@@ -83,7 +83,7 @@ export async function embedQuery(text: string, signal?: AbortSignal): Promise<nu
 
 /**
  * Cosine similarity. Vectors from Voyage arrive L2-normalised, so this is a dot
- * product in practice — but the norms are computed anyway, because silently
+ * product in practice, but the norms are computed anyway, because silently
  * depending on an undocumented provider guarantee is how retrieval quality
  * degrades without anyone noticing.
  */

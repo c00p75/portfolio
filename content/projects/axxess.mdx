@@ -1,0 +1,67 @@
+---
+title: Axxess
+tagline: A governance consultancy site that sells short courses and takes event bookings
+summary: >-
+  Site for Axxess Corporate Consulting, which runs governance training, board effectiveness reviews and company secretarial services in Zambia. Its job is to sell courses and fill events, so the events page is built around registration.
+client: Axxess Corporate Consulting Limited
+role: Design and build of the site.
+period: '2025'
+status: production
+order: 32
+featured: false
+draft: false
+accent: cyan
+category: landing-page
+updated: '2025-06'
+disciplines:
+  - frontend
+stack:
+  - Next.js
+  - GSAP
+  - ScrollTrigger
+  - Locomotive Scroll
+  - EmailJS
+  - Material UI
+  - Sass
+highlights:
+  - >-
+    Event registration happens in a modal that already knows which event and fee you clicked, collects company and contact details, and sends them from the browser through EmailJS, so there is no server to run or maintain.
+  - >-
+    The events page scrolls sideways: Locomotive Scroll's smooth scrolling is bridged to GSAP ScrollTrigger so a pinned section can move horizontally in step with the wheel.
+  - >-
+    A carousel of ten short courses, from getting a board ready to the do's and don'ts of minute taking, sits on the home page as the main call to action.
+links:
+  - label: Website
+    href: https://www.axxesscorporate.com
+    kind: live
+cover: ../../public/images/projects/axxess.jpg
+gallery:
+  - image: ../../public/images/projects/axxess.jpg
+    alt: >-
+      Axxess home page: "Trusted Advisory, Your Success, Our Expertise" over a photo of a handshake
+    caption: 'Home page'
+  - image: ../../public/images/projects/ax-services.jpg
+    alt: >-
+      Axxess services page header over a photo of a consultant meeting
+    caption: 'Services'
+  - image: ../../public/images/projects/ax-events.jpg
+    alt: >-
+      Axxess events page header, where visitors pick an event and register
+    caption: 'Events'
+  - image: ../../public/images/projects/ax-mobile.jpg
+    alt: >-
+      Axxess home page on a phone, with the Trusted Advisory hero and Learn More button
+    caption: 'On a phone'
+---
+
+## What it is
+
+Five pages (home, about, services, events, contact) for a professional services
+firm whose revenue comes from training seats and advisory work. The site leads
+with courses and events rather than a generic "about us".
+
+## Registration without a backend
+
+The firm needed bookings, not accounts. Choosing an event opens a form pre-filled
+with that event's name and fee; the submission is emailed straight to the firm,
+with clear success and failure states that close themselves after a few seconds.

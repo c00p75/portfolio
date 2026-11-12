@@ -31,7 +31,7 @@ export function EdgeRail({
 }
 
 /**
- * The black content card the whole site sits inside — the single strongest
+ * The black content card the whole site sits inside, the single strongest
  * structural cue from the reference layout.
  */
 export function InkCard({ children, className }: { children: ReactNode; className?: string }) {
@@ -76,7 +76,7 @@ export function Bleed({ children, className }: { children: ReactNode; className?
 }
 
 /**
- * Section heading with an eyebrow index — used to number the sections the way
+ * Section heading with an eyebrow index, used to number the sections the way
  * the reference numbers its layout regions.
  */
 export function SectionHeading({
@@ -105,7 +105,7 @@ export function SectionHeading({
         </div>
       )}
       <h2 className="font-display text-display text-balance uppercase">{title}</h2>
-      {/* Body copy takes the full text tone, not `muted` — the muted tone is
+      {/* Body copy takes the full text tone, not `muted`, the muted tone is
           for labels and eyebrows, and at paragraph length it read as washed
           out against the card. */}
       {lead ? <p className="max-w-2xl text-base leading-relaxed text-pretty">{lead}</p> : null}

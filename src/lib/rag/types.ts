@@ -60,7 +60,7 @@ export type RetrievalResult = {
 
 /**
  * The seam this whole design turns on. Swapping the in-process index for
- * pgvector means writing one more implementation of this — the route handler
+ * pgvector means writing one more implementation of this, the route handler
  * never learns which one it has.
  */
 export interface Retriever {

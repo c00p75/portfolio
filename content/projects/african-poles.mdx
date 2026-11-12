@@ -1,0 +1,61 @@
+---
+title: African Poles
+tagline: A timber pole supplier whose hero is ten thousand birds forming its name
+summary: >-
+  Marketing site for African Poles Investment Limited, which treats and supplies timber poles for power, telecoms, construction and farms across Zambia. Most of the site is hand-drawn on canvas: a flock that spells the company name, a pole yard lit sector by sector, and a pole's journey from forest to a lit-up house.
+client: African Poles Investment Limited (via Ballo Innovations)
+role: Design and build of the site.
+period: '2026'
+status: in-build
+order: 31
+featured: false
+draft: false
+accent: orange
+category: landing-page
+updated: '2026-11'
+disciplines:
+  - frontend
+stack:
+  - Next.js 16
+  - React 19
+  - Canvas 2D
+  - No UI dependencies
+highlights:
+  - >-
+    The hero renders "AFRICAN POLES" to an offscreen canvas, samples every opaque pixel on a grid scaled to the screen, and sends 10,000 birds to those points. The rest perch on power lines drawn procedurally across the bottom. The flock reacts to the cursor.
+  - >-
+    It stays cheap: positions live in typed arrays, device pixel ratio is capped at 2, the loop pauses when the hero scrolls off-screen, and reduced-motion users get a still frame.
+  - >-
+    The markets page pins an isometric 10 by 9 pole yard, built from a seeded random generator, and lights one of four sectors at a time as you scroll. A second scroll scene follows a pole being measured, treated, raised and wired to houses whose windows light up as day turns to night.
+  - >-
+    A pre-build script fails the build if a monospace font appears anywhere, canvas calls included. The client rejected typewriter-style labels as looking machine-made, so the rule is enforced rather than remembered.
+links:
+  - label: Website
+    href: https://african-poles.vercel.app
+    kind: live
+cover: ../../public/images/projects/african-poles.png
+gallery:
+  - image: ../../public/images/projects/african-poles.png
+    alt: >-
+      African Poles home page: the company name formed by a flock of birds above power lines at sunset
+    caption: 'Home page: the flock hero'
+---
+
+## What it is
+
+A six-page site (home, about, products, services, markets, contact) for a company
+whose product is literally a pole in the ground. Rather than stock photos of
+timber, the site draws its subject: power lines, a pole yard at night, a pole on
+its way from treatment to a house.
+
+## The flock
+
+The wordmark is not an image. The text is drawn once to a hidden canvas, every
+opaque pixel above a threshold becomes a target, and ten thousand birds fly to
+them. The logo's "A" mark is sampled the same way after cropping it by scanning
+for empty rows and columns.
+
+## What isn't wired yet
+
+The quotation form is laid out and labelled properly but doesn't send anything
+yet; it asks visitors to call the sales desk.

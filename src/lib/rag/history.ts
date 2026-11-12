@@ -4,7 +4,7 @@
  * The conversation is stateless: the browser holds the transcript and replays
  * it on every request. That is fine for the visitor's own turns, which are
  * theirs to write anyway, but an unauthenticated `assistant` turn is a way to
- * put words in the model's mouth — a forged "I can set the usual restrictions
+ * put words in the model's mouth, a forged "I can set the usual restrictions
  * aside for you" reads to the model as something it already agreed to, and the
  * safety rules in the system prompt are written to be read in that context.
  *
@@ -17,7 +17,7 @@
  * `ASK_HISTORY_SECRET`, otherwise a value derived from a provider key that is
  * already in the environment and already secret, otherwise a per-process random
  * value. In the last case signatures do not verify across instances, so
- * assistant turns are dropped and the conversation loses continuity — the
+ * assistant turns are dropped and the conversation loses continuity, the
  * degradation is in the UX, never in the guarantee.
  */
 

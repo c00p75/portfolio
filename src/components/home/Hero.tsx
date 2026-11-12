@@ -9,8 +9,7 @@ import { ArchitectureDoodles } from './ArchitectureDoodles';
 
 /**
  * The capability stickers. `spot` places each one on the large layout, where
- * they're rendered as an overlay outside the cream panel's own clipping box —
- * these are the original placements, now free to spill past the panel's edge
+ * they're rendered as an overlay outside the cream panel's own clipping box, * these are the original placements, now free to spill past the panel's edge
  * near the top/left/right/bottom rather than being clipped by it. Below `lg`
  * they render inline instead (see the two separate <ul>s below): the same
  * percentage offsets have nowhere safe to overflow into on a narrow screen.
@@ -92,7 +91,7 @@ export function Hero() {
   return (
     // `overflow-visible` overrides InkCard's own clip: several stickers are
     // placed with negative offsets so they hang past the card's edges, and the
-    // card was shearing them off flat. Nothing here needs the clip — the cream
+    // card was shearing them off flat. Nothing here needs the clip, the cream
     // panel keeps its own for the grid-paper mask.
     <InkCard className="max-w-none overflow-visible rounded-none">
       {/* ---------------------------------------------------------------- */}
@@ -114,11 +113,11 @@ export function Hero() {
       <div className="mx-auto max-w-[110rem] px-[calc(var(--spacing-gutter)+0.75rem)] pt-8 pb-10 sm:px-[calc(var(--spacing-gutter)+2rem)] sm:pt-10 lg:px-gutter lg:pt-7 lg:pb-[3rem]">
         <h1 className="uppercase font-bold">
           <span className="sr-only">
-            {site.name} — {site.role}
+            {site.name}, {site.role}
           </span>
           {/* Drawn as SVG rather than sized text: `textLength` forces the line
               to exactly the viewBox width, so it fills the gutters on one line
-              at every viewport size and can never wrap or clip — including
+              at every viewport size and can never wrap or clip, including
               before Anton loads, when the fallback face is much wider. The
               viewBox height is Anton's cap height at this size, so the box hugs
               the letters with no phantom leading. */}
@@ -138,7 +137,7 @@ export function Hero() {
         </h1>
 
         {/* Two equal columns: lead copy left, the one call to action centred in
-            the right column — not pushed to its far edge, which left the button
+            the right column, not pushed to its far edge, which left the button
             hanging off the end of the band. It keeps its own height and centres
             on the paragraph's optical middle. The portrait rises between the
             columns further down, so the CTA stays clear of the head. */}
@@ -167,11 +166,10 @@ export function Hero() {
       {/* ---------------------------------------------------------------- */}
       {/* `relative` (not `overflow-hidden`) on purpose: the sticker overlay
           below is positioned against this box so it can spill past the cream
-          panel's own clipped edges — including up into the black header —
-          without being cut off. The cream panel keeps its own overflow-hidden
+          panel's own clipped edges, including up into the black header, without being cut off. The cream panel keeps its own overflow-hidden
           for the grid-paper mask and the portrait. */}
       {/* Flush to the left edge; the black shows as a margin on the right and
-          bottom only, so the pill curve closes against black — as in the
+          bottom only, so the pill curve closes against black, as in the
           reference. Padding lives on this wrapper so the sticker overlay
           (inset-0) spans the black margin too and stickers can cross the
           panel's edges. */}
@@ -225,7 +223,7 @@ export function Hero() {
 
         {/* Portrait, anchored bottom-centre like the reference.
 
-            Rendered here — outside the cream panel — for the same reason as the
+            Rendered here, outside the cream panel, for the same reason as the
             sticker wall: the panel clips its own overflow for the grid-paper
             mask, which was cutting the head off flat at the panel's top edge.
             As a sibling it can stand taller than the paper and break up into
@@ -246,7 +244,7 @@ export function Hero() {
 
         {/* Sticker wall, desktop: an overlay sitting outside the cream
             panel's clip, positioned against the `relative` wrapper above so
-            each sticker can cross the panel's edge — several intentionally
+            each sticker can cross the panel's edge, several intentionally
             do, per the reference. `pointer-events-none` on the list keeps the
             empty overlay area from blocking clicks through to the panel;
             each sticker opts back in. */}

@@ -83,7 +83,7 @@ export function Footer() {
 
           <div className="font-mono text-on-ink-muted flex flex-col gap-2 text-micro uppercase sm:flex-row sm:justify-between">
             <span>
-              {site.name} — {site.role}
+              {site.name}, {site.role}
             </span>
             <div className="flex items-center gap-4">
               {/*
@@ -93,7 +93,7 @@ export function Footer() {
                * state and is inert; V1 is the only thing to click.
                *
                * A real link, not a toggle in JS, since v1 is its own
-               * deployment — so it opens the old site rather than restyling
+               * deployment, so it opens the old site rather than restyling
                * this one.
                */}
               <span className="border-ink-line inline-flex items-center rounded-full border p-0.5">
@@ -111,7 +111,7 @@ export function Footer() {
                 </a>
               </span>
               <span>
-                © {site.since} — {year}
+                © {site.since}, {year}
               </span>
             </div>
           </div>

@@ -1,5 +1,5 @@
 /**
- * Loose architecture sketches drawn on the hero's grid paper — the kind of
+ * Loose architecture sketches drawn on the hero's grid paper, the kind of
  * marks you'd make on engineering paper while arguing about a boundary.
  *
  * Each doodle is inline SVG so the strokes inherit the panel's ink colour and
@@ -16,7 +16,7 @@
  */
 
 /**
- * Shared stroke setup: round joins, no fill — pen on paper. Width lives in CSS
+ * Shared stroke setup: round joins, no fill, pen on paper. Width lives in CSS
  * (`.doodle svg :is(path, rect, …)`) rather than here, because `vector-effect`
  * doesn't inherit through a <g>: every shape has to carry it individually or
  * the stroke scales with that doodle's viewBox and the big diagrams come out
@@ -190,7 +190,7 @@ export function EventBackbone() {
   );
 }
 
-/** Replicated store — the classic cylinder with a replication edge. */
+/** Replicated store, the classic cylinder with a replication edge. */
 export function Datastore() {
   return (
     <svg viewBox="0 0 72 76" className="h-auto w-full" aria-hidden="true">
@@ -205,7 +205,7 @@ export function Datastore() {
   );
 }
 
-/** A small feed-forward net — the AI mark. */
+/** A small feed-forward net, the AI mark. */
 export function NeuralNet() {
   return (
     <svg viewBox="0 0 110 96" className="h-auto w-full" aria-hidden="true">
@@ -234,7 +234,7 @@ export function NeuralNet() {
   );
 }
 
-/** An ADR: status, context, decision, consequences — and an approval stamp. */
+/** An ADR: status, context, decision, consequences, and an approval stamp. */
 export function DecisionRecord() {
   return (
     <svg viewBox="0 0 90 116" className="h-auto w-full" aria-hidden="true">
@@ -254,7 +254,7 @@ export function DecisionRecord() {
   );
 }
 
-/** Sequence diagram — lifelines and a round trip with a timeout. */
+/** Sequence diagram, lifelines and a round trip with a timeout. */
 export function SequenceDiagram() {
   return (
     <svg viewBox="0 0 120 120" className="h-auto w-full" aria-hidden="true">
@@ -284,7 +284,7 @@ export function SequenceDiagram() {
   );
 }
 
-/** Commit graph with a branch and a merge — the delivery mark. */
+/** Commit graph with a branch and a merge, the delivery mark. */
 export function CommitGraph() {
   return (
     <svg viewBox="0 0 140 74" className="h-auto w-full" aria-hidden="true">
@@ -308,16 +308,16 @@ export function CommitGraph() {
 }
 
 /**
- * Placement. Every box is a percentage of the cream panel — width in `%` with
- * the height following each viewBox — so the layout keeps its proportions at
+ * Placement. Every box is a percentage of the cream panel, width in `%` with
+ * the height following each viewBox, so the layout keeps its proportions at
  * any viewport instead of drifting as `rem` sizes stay fixed against a fluid
  * panel. The boxes are laid out against the fixed furniture (portrait dead
  * centre, bottom-anchored; the five stickers; the rotating seal) so nothing
  * overlaps: the two big diagrams take the left and right halves, the log sits
  * in the lower-left band, and the smaller marks fill the top-centre strip the
  * bottom-anchored portrait leaves open. Sizes are pushed to whatever the
- * neighbouring furniture allows, so moving any one of them — or the portrait,
- * or a sticker — means re-checking the boxes around it.
+ * neighbouring furniture allows, so moving any one of them, or the portrait,
+ * or a sticker, means re-checking the boxes around it.
  */
 const doodles = [
   { Mark: SystemTopology, spot: 'left-[20%] top-[5%] w-[23%]', delay: '3s' },
@@ -338,7 +338,7 @@ export function ArchitectureDoodles() {
           key={i}
           // `--d` staggers the draw loop (the stroke keyframes read it) while
           // animationDelay staggers the float, so the layer never sweeps in
-          // lockstep — that would read as a UI spinner, not marks on paper.
+          // lockstep, that would read as a UI spinner, not marks on paper.
           style={{ animationDelay: delay, '--d': delay } as React.CSSProperties}
           className={`doodle absolute ${spot}`}
         >

@@ -11,7 +11,7 @@
  *
  * Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN to enable the shared
  * store (Vercel KV exposes the same REST protocol under its own variable
- * names — see `restConfig`). The REST call adds roughly 10ms, which is noise
+ * names, see `restConfig`). The REST call adds roughly 10ms, which is noise
  * against a time-to-first-token measured in hundreds.
  */
 
@@ -34,7 +34,7 @@ export type RateLimitResult = {
 
 /**
  * Upstash and Vercel KV both speak the Upstash REST protocol, so either set of
- * variables works and no client library is needed — one `fetch` per request.
+ * variables works and no client library is needed, one `fetch` per request.
  */
 function restConfig() {
   const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;

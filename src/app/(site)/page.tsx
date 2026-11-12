@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { allPlaybooks, allPosts, featuredProjects, formatDate } from '@/lib/content';
+import { allPlaybooks, allPosts, allProjects, formatDate } from '@/lib/content';
 import { Hero } from '@/components/home/Hero';
 import { SelectedWork } from '@/components/home/SelectedWork';
 import { AskChatButton } from '@/components/ask/AskChatButton';
@@ -68,7 +68,11 @@ const practice = [
 
 export default function HomePage() {
   const meta = indexMeta();
-  const projects = featuredProjects(4);
+  // Only what is live: featured first, then the rest in their usual order.
+  const projects = allProjects()
+    .filter((p) => p.status === 'production')
+    .sort((a, b) => Number(b.featured) - Number(a.featured) || a.order - b.order)
+    .slice(0, 4);
   const playbooks = allPlaybooks().slice(0, 2);
   const posts = allPosts().slice(0, 3);
 
@@ -116,7 +120,7 @@ export default function HomePage() {
       </section>
 
       {/* -------------------------- How I work ------------------------------- */}
-      {/* Engineering, leadership and architecture as one job — not a process
+      {/* Engineering, leadership and architecture as one job, not a process
           strip that only talks about decisions. */}
       <section className="px-edge pt-6 sm:pt-10" aria-labelledby="how-i-work">
         <InkCard className="px-card py-14 sm:py-20">
@@ -156,7 +160,7 @@ export default function HomePage() {
       </section>
 
       {/* ----------------------------- AI & retrieval ------------------------- */}
-      {/* The other capability strip. The sandbox is the exhibit — a working
+      {/* The other capability strip. The sandbox is the exhibit, a working
           pipeline beats any claim about having built one. */}
       <section className="px-edge pt-6 sm:pt-10" aria-labelledby="ai">
         <InkCard className="px-card py-14 sm:py-20">
@@ -211,7 +215,7 @@ export default function HomePage() {
             </div>
 
             {/*
-             * The exhibit. Written for a reader who does not build these — it
+             * The exhibit. Written for a reader who does not build these, it
              * answers "what will it tell me, and can I trust it" rather than
              * naming the algorithms. The counts come from the built artefact,
              * so they cannot drift from what actually ships. Engineers get the

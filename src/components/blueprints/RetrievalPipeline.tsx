@@ -148,7 +148,7 @@ export function RetrievalPipeline() {
           {/*
            * Colour carries one meaning only: teal is the dense/vector path,
            * yellow is the lexical path. Fusion, generation and the stream are
-           * left uncoloured — an extra hue there just invites the reader to
+           * left uncoloured, an extra hue there just invites the reader to
            * hunt for a distinction that does not exist.
            */}
 
@@ -198,7 +198,7 @@ export function RetrievalPipeline() {
           {/* The link the diagram was missing: the artefact built on deploy is
               what the request path scores against. */}
           <Arrow d="M 302 120 C 344 128, 372 166, 392 209" />
-          {/* Right-aligned and clear of the curve it labels — centred on the
+          {/* Right-aligned and clear of the curve it labels, centred on the
               path put the text underneath the stroke. */}
           <text x="322" y="170" textAnchor="end" fill="currentColor" className="font-mono" fontSize="8.5" opacity="0.55">
             loaded on cold start

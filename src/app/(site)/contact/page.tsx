@@ -58,7 +58,7 @@ export default function ContactPage() {
             {/*
              * The form lives on the cream panel: it is the point of the page,
              * and this was the largest block on it doing the least. The single
-             * sticker stays as the brand note — two plus the form was clutter.
+             * sticker stays as the brand note, two plus the form was clutter.
              */}
             <div className="bg-cream text-on-cream relative isolate overflow-hidden px-card py-14 sm:py-16 lg:rounded-l-[8rem] lg:pl-20">
               <div
